@@ -119,22 +119,54 @@
             text-align: center;
             margin-bottom: 40px;
             animation: fadeIn 0.8s ease-out;
+            position: sticky;
+            top: 0;
+            background: var(--bg-dark);
+            z-index: 1000;
+            padding: 20px 0;
+            transition: all 0.4s ease;
+            border-bottom: 1px solid transparent;
         }
-        
+
+        header.scrolled {
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border);
+            backdrop-filter: blur(10px);
+            background: rgba(10, 10, 10, 0.95);
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 24px;
+            flex-wrap: wrap;
+            transition: all 0.4s ease;
+        }
+
+        header.scrolled .header-content {
+            gap: 16px;
+        }
+
         .profile-image {
             width: 320px;
             height: 320px;
             object-fit: cover;
-            margin: 0 auto 48px;
-            display: block;
             border: 1px solid var(--border);
-            transition: all 0.3s ease;
+            transition: all 0.4s ease;
+            flex-shrink: 0;
         }
-        
+
+        header.scrolled .profile-image {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+        }
+
         .profile-image:hover {
             border-color: var(--accent);
         }
-        
+
         .name-header {
             display: flex;
             align-items: baseline;
@@ -142,6 +174,12 @@
             gap: 24px;
             margin-bottom: 0;
             flex-wrap: wrap;
+            transition: all 0.4s ease;
+        }
+
+        header.scrolled .name-header {
+            gap: 12px;
+            align-items: center;
         }
 
         h1 {
@@ -150,6 +188,11 @@
             margin: 0;
             color: var(--text-light);
             letter-spacing: -0.02em;
+            transition: all 0.4s ease;
+        }
+
+        header.scrolled h1 {
+            font-size: 1.5rem;
         }
 
         .tagline {
@@ -158,12 +201,22 @@
             font-weight: 500;
             margin: 0;
             position: relative;
+            transition: all 0.4s ease;
+        }
+
+        header.scrolled .tagline {
+            font-size: 0.9rem;
         }
 
         .tagline::before {
             content: '•';
             margin-right: 16px;
             color: var(--accent);
+            transition: all 0.4s ease;
+        }
+
+        header.scrolled .tagline::before {
+            margin-right: 8px;
         }
         
         .location {
@@ -365,9 +418,16 @@
             text-decoration: none;
             font-weight: 400;
             font-size: 0.95rem;
-            transition: all 0.3s ease;
-            z-index: 999;
+            transition: all 0.4s ease;
+            z-index: 1001;
             backdrop-filter: blur(10px);
+        }
+
+        header.scrolled ~ * .floating-contact-btn,
+        body.scrolled .floating-contact-btn {
+            top: 24px;
+            padding: 10px 20px;
+            font-size: 0.9rem;
         }
 
         .floating-contact-btn:hover {
@@ -453,10 +513,12 @@
 
     <div class="container">
         <header>
-            <img src="images/profile.jpg" alt="Burt Herman" class="profile-image">
-            <div class="name-header">
-                <h1>Burt Herman</h1>
-                <p class="tagline">Media Innovation / Technology</p>
+            <div class="header-content">
+                <img src="images/profile.jpg" alt="Burt Herman" class="profile-image">
+                <div class="name-header">
+                    <h1>Burt Herman</h1>
+                    <p class="tagline">Media Innovation / Technology</p>
+                </div>
             </div>
         </header>
         
@@ -540,11 +602,11 @@
         function openModal() {
             document.getElementById('bioModal').style.display = 'block';
         }
-        
+
         function closeModal() {
             document.getElementById('bioModal').style.display = 'none';
         }
-        
+
         // Close modal when clicking outside of it
         window.onclick = function(event) {
             const modal = document.getElementById('bioModal');
@@ -552,12 +614,31 @@
                 modal.style.display = 'none';
             }
         }
-        
+
         // Close modal with Escape key
         document.addEventListener('keydown', function(event) {
             if (event.key === 'Escape') {
                 closeModal();
             }
+        });
+
+        // Handle header shrinking on scroll
+        let lastScrollTop = 0;
+        const header = document.querySelector('header');
+        const contactBtn = document.querySelector('.floating-contact-btn');
+
+        window.addEventListener('scroll', function() {
+            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+
+            if (scrollTop > 100) {
+                header.classList.add('scrolled');
+                document.body.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+                document.body.classList.remove('scrolled');
+            }
+
+            lastScrollTop = scrollTop;
         });
     </script>
 </body>
