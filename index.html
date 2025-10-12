@@ -126,10 +126,14 @@
             padding: 20px 0;
             transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
             border-bottom: 1px solid transparent;
+            margin-left: -24px;
+            margin-right: -24px;
+            padding-left: 24px;
+            padding-right: 24px;
         }
 
         header.scrolled {
-            padding: 12px 0;
+            padding: 12px 24px;
             border-bottom: 1px solid var(--border);
             backdrop-filter: blur(10px);
             background: rgba(10, 10, 10, 0.95);
@@ -416,13 +420,13 @@
             position: fixed;
             top: 32px;
             right: 32px;
-            padding: 12px 24px;
+            padding: 14px 32px;
             background: var(--bg-dark);
             color: var(--text-light);
             border: 1px solid var(--border);
             text-decoration: none;
             font-weight: 400;
-            font-size: 0.95rem;
+            font-size: 1rem;
             transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
             z-index: 1001;
             backdrop-filter: blur(10px);
@@ -430,9 +434,9 @@
 
         header.scrolled ~ * .floating-contact-btn,
         body.scrolled .floating-contact-btn {
-            top: 24px;
-            padding: 10px 20px;
-            font-size: 0.9rem;
+            top: 20px;
+            padding: 12px 28px;
+            font-size: 0.95rem;
         }
 
         .floating-contact-btn:hover {
