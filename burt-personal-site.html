@@ -5,16 +5,84 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Burt Herman - Media Innovation & Technology</title>
     <meta name="description" content="Burt Herman builds the future of trusted media at the intersection of journalism, technology and community.">
-    
-    <!-- Google Analytics - Replace with your tracking ID -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=GA_MEASUREMENT_ID"></script>
+    <meta name="keywords" content="journalism, media innovation, technology, AI in journalism, Hacks/Hackers, media technology, trusted media, community journalism">
+    <meta name="author" content="Burt Herman">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://burtherman.com/">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://burtherman.com/">
+    <meta property="og:title" content="Burt Herman - Media Innovation & Technology">
+    <meta property="og:description" content="Building the future of trusted media at the intersection of journalism, technology and community. Co-founder of Hacks/Hackers.">
+    <meta property="og:image" content="https://burtherman.com/images/profile.jpg">
+    <meta property="og:image:width" content="320">
+    <meta property="og:image:height" content="320">
+    <meta property="og:site_name" content="Burt Herman">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://burtherman.com/">
+    <meta property="twitter:title" content="Burt Herman - Media Innovation & Technology">
+    <meta property="twitter:description" content="Building the future of trusted media at the intersection of journalism, technology and community. Co-founder of Hacks/Hackers.">
+    <meta property="twitter:image" content="https://burtherman.com/images/profile.jpg">
+
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-16824932-2"></script>
     <script>
         window.dataLayer = window.dataLayer || [];
         function gtag(){dataLayer.push(arguments);}
         gtag('js', new Date());
-        gtag('config', 'GA_MEASUREMENT_ID');
+        gtag('config', 'UA-16824932-2');
     </script>
-    
+
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "Person",
+        "name": "Burt Herman",
+        "url": "https://burtherman.com",
+        "image": "https://burtherman.com/images/profile.jpg",
+        "jobTitle": "Media Innovation & Technology Expert",
+        "description": "Building the future of trusted media at the intersection of journalism, technology and community. Co-founder of Hacks/Hackers.",
+        "address": {
+            "@type": "PostalAddress",
+            "addressLocality": "Brooklyn",
+            "addressRegion": "New York",
+            "addressCountry": "US"
+        },
+        "alumniOf": {
+            "@type": "Organization",
+            "name": "Stanford University"
+        },
+        "worksFor": [
+            {
+                "@type": "Organization",
+                "name": "Hacks/Hackers",
+                "url": "https://hackshackers.com"
+            }
+        ],
+        "sameAs": [
+            "https://linkedin.com/in/burtherman",
+            "https://hackshackers.com"
+        ],
+        "knowsAbout": [
+            "Journalism",
+            "Media Innovation",
+            "Artificial Intelligence",
+            "Technology",
+            "Community Building"
+        ]
+    }
+    </script>
+
     <style>
         * {
             margin: 0;
@@ -31,8 +99,10 @@
             --border: #262626;
         }
         
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap');
+
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', 'Helvetica Neue', sans-serif;
+            font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
             line-height: 1.6;
             color: var(--text-light);
             background: var(--bg-dark);
@@ -47,7 +117,7 @@
         
         header {
             text-align: center;
-            margin-bottom: 80px;
+            margin-bottom: 40px;
             animation: fadeIn 0.8s ease-out;
         }
         
@@ -65,25 +135,41 @@
             border-color: var(--accent);
         }
         
+        .name-header {
+            display: flex;
+            align-items: baseline;
+            justify-content: center;
+            gap: 24px;
+            margin-bottom: 0;
+            flex-wrap: wrap;
+        }
+
         h1 {
-            font-size: 3.5rem;
-            font-weight: 300;
-            margin-bottom: 16px;
+            font-size: 4.5rem;
+            font-weight: 400;
+            margin: 0;
             color: var(--text-light);
             letter-spacing: -0.02em;
         }
-        
+
         .tagline {
-            font-size: 1.25rem;
+            font-size: 1.5rem;
             color: var(--text-muted);
-            font-weight: 400;
-            margin-bottom: 12px;
+            font-weight: 500;
+            margin: 0;
+            position: relative;
+        }
+
+        .tagline::before {
+            content: '•';
+            margin-right: 16px;
+            color: var(--accent);
         }
         
         .location {
             color: var(--text-muted);
             font-size: 0.95rem;
-            margin-bottom: 40px;
+            margin-bottom: 20px;
         }
         
         .bio-short {
@@ -293,15 +379,25 @@
             .container {
                 padding: 40px 20px;
             }
-            
+
+            .name-header {
+                flex-direction: column;
+                gap: 8px;
+                align-items: center;
+            }
+
             h1 {
                 font-size: 2.5rem;
             }
-            
+
             .tagline {
                 font-size: 1.1rem;
             }
-            
+
+            .tagline::before {
+                display: none;
+            }
+
             .profile-image {
                 width: 240px;
                 height: 240px;
@@ -326,19 +422,45 @@
 <body>
     <div class="container">
         <header>
-            <img src="https://via.placeholder.com/320" alt="Burt Herman" class="profile-image">
-            <h1>Burt Herman</h1>
-            <p class="tagline">Media Innovation & Technology</p>
-            <p class="location">Brooklyn, New York</p>
+            <img src="images/profile.jpg" alt="Burt Herman" class="profile-image">
+            <div class="name-header">
+                <h1>Burt Herman</h1>
+                <p class="tagline">Media Innovation / Technology</p>
+            </div>
         </header>
         
         <main>
             <div class="bio-short">
-                <p>I build the future of trusted media at the intersection of journalism, technology and community. Co-founder of Hacks/Hackers, pioneering conversations around AI's transformative potential for journalism and helping newsrooms adapt while maintaining their commitment to public trust.</p>
+                <p>I build the future of trusted media at the intersection of journalism, technology and community. Co-founder of <a href="https://hackshackers.com" target="_blank" rel="noopener noreferrer" style="color: var(--accent); text-decoration: none;">Hacks/Hackers</a>, pioneering conversations around AI's transformative potential for journalism and helping newsrooms adapt while maintaining their commitment to public trust.</p>
             </div>
-            
-            <button class="read-more-btn" onclick="openModal()">Read Full Bio</button>
-            
+
+            <div style="text-align: center;">
+                <button class="read-more-btn" onclick="openModal()">Read Full Bio</button>
+            </div>
+
+            <div class="section">
+                <h3 style="color: var(--text-light); font-size: 1.8rem; font-weight: 500; margin-bottom: 24px; text-align: center;">Writing and other links</h3>
+                <div class="links-list" style="text-align: left; max-width: 600px; margin: 0 auto; line-height: 1.8;">
+                    <p style="margin: 12px 0;"><span style="color: var(--accent);">•</span> <span style="color: var(--text-muted); margin-left: 8px; font-size: 0.9rem;">Nieman Lab:</span> <a href="https://www.niemanlab.org/2024/12/the-year-we-stop-talking-about-ai/" target="_blank" rel="noopener noreferrer" style="color: var(--accent); text-decoration: underline; margin-left: 6px; font-size: 1rem;">The year we stop talking about AI</a> <span style="color: var(--text-muted); font-size: 0.85rem;">(Dec 2024)</span></p>
+
+                    <p style="margin: 12px 0;"><span style="color: var(--accent);">•</span> <span style="color: var(--text-muted); margin-left: 8px; font-size: 0.9rem;">YouTube:</span> <a href="https://www.youtube.com/watch?v=o32zU2VXdMc" target="_blank" rel="noopener noreferrer" style="color: var(--accent); text-decoration: underline; margin-left: 6px; font-size: 1rem;">AI Real Talk: How publishers can survive the AI age, a chat with Cloudflare VP of Product Will Allen</a> <span style="color: var(--text-muted); font-size: 0.85rem;">(Oct 2024)</span></p>
+
+                    <p style="margin: 12px 0;"><span style="color: var(--accent);">•</span> <span style="color: var(--text-muted); margin-left: 8px; font-size: 0.9rem;">Hacks/Hackers:</span> <a href="https://www.hackshackers.com/ai-journalism-and-society-at-this-moment-in-history/" target="_blank" rel="noopener noreferrer" style="color: var(--accent); text-decoration: underline; margin-left: 6px; font-size: 1rem;">AI, journalism and society at this moment in history</a> <span style="color: var(--text-muted); font-size: 0.85rem;">(Oct 2024)</span></p>
+
+                    <p style="margin: 12px 0;"><span style="color: var(--accent);">•</span> <span style="color: var(--text-muted); margin-left: 8px; font-size: 0.9rem;">Hacks/Hackers:</span> <a href="https://www.hackshackers.com/when-politicians-flood-the-zone-a-template-for-brainstorming-ai-solutions-to-information-overload/" target="_blank" rel="noopener noreferrer" style="color: var(--accent); text-decoration: underline; margin-left: 6px; font-size: 1rem;">When politicians flood the zone: AI solutions to information overload</a> <span style="color: var(--text-muted); font-size: 0.85rem;">(Sep 2024)</span></p>
+
+                    <p style="margin: 12px 0;"><span style="color: var(--accent);">•</span> <span style="color: var(--text-muted); margin-left: 8px; font-size: 0.9rem;">Hacks/Hackers:</span> <a href="https://www.hackshackers.com/how-apple-signals-the-decline-of-apps-and-the-web-itself/" target="_blank" rel="noopener noreferrer" style="color: var(--accent); text-decoration: underline; margin-left: 6px; font-size: 1rem;">How Apple signals the decline of apps and the web itself</a> <span style="color: var(--text-muted); font-size: 0.85rem;">(Jun 2024)</span></p>
+
+                    <p style="margin: 12px 0;"><span style="color: var(--accent);">•</span> <span style="color: var(--text-muted); margin-left: 8px; font-size: 0.9rem;">YouTube:</span> <a href="https://www.youtube.com/watch?v=1-g9IUSwPJM&t=5s" target="_blank" rel="noopener noreferrer" style="color: var(--accent); text-decoration: underline; margin-left: 6px; font-size: 1rem;">AI Real Talk: To Sue or Not to Sue: The Legal Battle Over AI and Journalism</a> <span style="color: var(--text-muted); font-size: 0.85rem;">(Sep 2024)</span></p>
+
+                    <p style="margin: 12px 0;"><span style="color: var(--accent);">•</span> <span style="color: var(--text-muted); margin-left: 8px; font-size: 0.9rem;">YouTube:</span> <a href="https://www.youtube.com/watch?v=cws6haS3g3Y&t=20s" target="_blank" rel="noopener noreferrer" style="color: var(--accent); text-decoration: underline; margin-left: 6px; font-size: 1rem;">AI Real Talk: RIP Web: AI is in your interface</a> <span style="color: var(--text-muted); font-size: 0.85rem;">(Aug 2024)</span></p>
+
+                    <p style="margin: 12px 0;"><span style="color: var(--accent);">•</span> <span style="color: var(--text-muted); margin-left: 8px; font-size: 0.9rem;">Nieman Lab:</span> <a href="https://www.niemanlab.org/2023/12/more-open-source-ai/" target="_blank" rel="noopener noreferrer" style="color: var(--accent); text-decoration: underline; margin-left: 6px; font-size: 1rem;">More open source AI</a> <span style="color: var(--text-muted); font-size: 0.85rem;">(Dec 2023)</span></p>
+
+                    <p style="margin: 12px 0;"><span style="color: var(--accent);">•</span> <span style="color: var(--text-muted); margin-left: 8px; font-size: 0.9rem;">Nieman Lab:</span> <a href="https://www.niemanlab.org/2022/12/the-year-ai-truly-arrives-and-with-it-the-reckoning/" target="_blank" rel="noopener noreferrer" style="color: var(--accent); text-decoration: underline; margin-left: 6px; font-size: 1rem;">The year AI truly arrives and with it the reckoning</a> <span style="color: var(--text-muted); font-size: 0.85rem;">(Dec 2022)</span></p>
+                </div>
+            </div>
+
             <!-- Modal -->
             <div id="bioModal" class="modal">
                 <div class="modal-content">
@@ -346,7 +468,7 @@
                     <h2>About Burt Herman</h2>
                     <p>I build the future of trusted media at the intersection of journalism, technology and community. By connecting diverse communities and developing new tools, I help newsrooms innovate and grow while maintaining their commitment to public trust.</p>
                     
-                    <p>As co-founder and principal of <span class="highlight">Hacks/Hackers</span>, I've helped create one of the world's most influential movements bridging journalism and technology. We're currently leading critical conversations around AI's transformative potential for media, while ensuring these powerful technologies serve democracy and foster trust.</p>
+                    <p>As co-founder and principal of <a href="https://hackshackers.com" target="_blank" rel="noopener noreferrer" style="color: var(--accent); text-decoration: none;">Hacks/Hackers</a>, I've helped create one of the world's most influential movements bridging journalism and technology. We're currently leading critical conversations around AI's transformative potential for media, while ensuring these powerful technologies serve democracy and foster trust.</p>
                     
                     <p>I co-founded <span class="highlight">Storify</span>, pioneering social media curation and helping establish new standards for real-time storytelling that reached millions. The platform was acquired by Livefyre and later Adobe. I also helped launch the <span class="highlight">Lenfest Institute for Journalism</span>, where we developed innovative approaches to sustaining local news, and most recently served as CEO of <span class="highlight">Lede</span>, building modern publishing tools for independent newsrooms.</p>
                     
@@ -355,12 +477,14 @@
             </div>
             
             <div class="section">
+                <h3 style="color: var(--text-light); font-size: 1.8rem; font-weight: 500; margin-bottom: 24px; text-align: center;">Speaking & Workshops</h3>
                 <div class="speaking-note">
                     <p><strong>Available for speaking engagements and workshops</strong> on media innovation, artificial intelligence in journalism, audience engagement, product development and the future of trusted information.</p>
                 </div>
             </div>
             
             <div class="section contact-section">
+                <h3 style="color: var(--text-light); font-size: 1.8rem; font-weight: 500; margin-bottom: 32px; text-align: center;">Get In Touch</h3>
                 <div class="contact-links">
                     <a href="mailto:burtherman@gmail.com" class="contact-link">
                         📧 Email
