@@ -353,7 +353,29 @@
             border-color: var(--accent);
             color: var(--accent);
         }
-        
+
+        .floating-contact-btn {
+            position: fixed;
+            top: 32px;
+            right: 32px;
+            padding: 12px 24px;
+            background: var(--bg-dark);
+            color: var(--text-light);
+            border: 1px solid var(--border);
+            text-decoration: none;
+            font-weight: 400;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            z-index: 999;
+            backdrop-filter: blur(10px);
+        }
+
+        .floating-contact-btn:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+            background: var(--bg-darker);
+        }
+
         footer {
             margin-top: 80px;
             padding-top: 32px;
@@ -402,24 +424,33 @@
                 width: 240px;
                 height: 240px;
             }
-            
+
             .bio-short {
                 font-size: 1.1rem;
             }
-            
+
             .modal-content {
                 padding: 32px 24px;
                 margin: 10% auto;
             }
-            
+
             .contact-links {
                 flex-direction: column;
                 align-items: stretch;
+            }
+
+            .floating-contact-btn {
+                top: 16px;
+                right: 16px;
+                padding: 10px 20px;
+                font-size: 0.9rem;
             }
         }
     </style>
 </head>
 <body>
+    <a href="mailto:burtherman@gmail.com" class="floating-contact-btn">Contact</a>
+
     <div class="container">
         <header>
             <img src="images/profile.jpg" alt="Burt Herman" class="profile-image">
