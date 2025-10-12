@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Burt Herman - Media Innovation & Technology</title>
+    <meta name="description" content="Burt Herman builds the future of trusted media at the intersection of journalism, technology and community.">
+    
+    <!-- Google Analytics - Replace with your tracking ID -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=GA_MEASUREMENT_ID"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'GA_MEASUREMENT_ID');
+    </script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --accent: #22d3ee; /* Subtle cyan accent */
+            --bg-dark: #0a0a0a;
+            --bg-darker: #000000;
+            --text-light: #f5f5f5;
+            --text-muted: #737373;
+            --border: #262626;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', 'Helvetica Neue', sans-serif;
+            line-height: 1.6;
+            color: var(--text-light);
+            background: var(--bg-dark);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 60px 24px;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 80px;
+            animation: fadeIn 0.8s ease-out;
+        }
+        
+        .profile-image {
+            width: 320px;
+            height: 320px;
+            object-fit: cover;
+            margin: 0 auto 48px;
+            display: block;
+            border: 1px solid var(--border);
+            transition: all 0.3s ease;
+        }
+        
+        .profile-image:hover {
+            border-color: var(--accent);
+        }
+        
+        h1 {
+            font-size: 3.5rem;
+            font-weight: 300;
+            margin-bottom: 16px;
+            color: var(--text-light);
+            letter-spacing: -0.02em;
+        }
+        
+        .tagline {
+            font-size: 1.25rem;
+            color: var(--text-muted);
+            font-weight: 400;
+            margin-bottom: 12px;
+        }
+        
+        .location {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            margin-bottom: 40px;
+        }
+        
+        .bio-short {
+            font-size: 1.25rem;
+            line-height: 1.8;
+            margin-bottom: 32px;
+            color: var(--text-muted);
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+            animation: fadeIn 0.8s ease-out 0.2s both;
+            font-weight: 300;
+        }
+        
+        .read-more-btn {
+            display: inline-block;
+            padding: 12px 32px;
+            background: transparent;
+            color: var(--text-light);
+            border: 1px solid var(--border);
+            text-decoration: none;
+            font-weight: 400;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            font-size: 0.95rem;
+            margin-bottom: 48px;
+        }
+        
+        .read-more-btn:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            animation: fadeIn 0.3s ease-out;
+        }
+        
+        .modal-content {
+            background: var(--bg-darker);
+            margin: 5% auto;
+            padding: 48px;
+            border: 1px solid var(--border);
+            width: 90%;
+            max-width: 800px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        
+        .close-btn {
+            color: var(--text-muted);
+            float: right;
+            font-size: 2rem;
+            font-weight: 300;
+            cursor: pointer;
+            transition: color 0.3s ease;
+            line-height: 1;
+        }
+        
+        .close-btn:hover {
+            color: var(--text-light);
+        }
+        
+        .modal-content h2 {
+            color: var(--text-light);
+            margin-bottom: 32px;
+            font-size: 2rem;
+            font-weight: 300;
+            letter-spacing: -0.01em;
+        }
+        
+        .modal-content p {
+            margin-bottom: 20px;
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: var(--text-muted);
+            font-weight: 300;
+        }
+        
+        .highlight {
+            color: var(--text-light);
+            font-weight: 400;
+        }
+        
+        .section {
+            margin-bottom: 48px;
+            animation: fadeIn 0.8s ease-out 0.4s both;
+        }
+        
+        .speaking-note {
+            background: transparent;
+            padding: 32px;
+            border: 1px solid var(--border);
+            margin-bottom: 48px;
+            text-align: center;
+        }
+        
+        .speaking-note p {
+            font-size: 1.05rem;
+            color: var(--text-muted);
+            font-weight: 300;
+        }
+        
+        .speaking-note strong {
+            color: var(--text-light);
+            font-weight: 400;
+        }
+        
+        .contact-section {
+            text-align: center;
+        }
+        
+        .contact-links {
+            display: flex;
+            gap: 24px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-bottom: 32px;
+        }
+        
+        .contact-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 14px 28px;
+            background: transparent;
+            color: var(--text-light);
+            text-decoration: none;
+            border: 1px solid var(--border);
+            font-weight: 400;
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
+        }
+        
+        .contact-link:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+        
+        .social-links {
+            display: flex;
+            gap: 24px;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .social-link {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.95rem;
+            transition: color 0.3s ease;
+            font-weight: 300;
+        }
+        
+        .social-link:hover {
+            color: var(--accent);
+        }
+        
+        .hh-logo-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            border: 1px solid var(--border);
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-family: monospace;
+            transition: all 0.3s ease;
+            letter-spacing: 0.05em;
+        }
+        
+        .hh-logo-link:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+        
+        footer {
+            margin-top: 80px;
+            padding-top: 32px;
+            border-top: 1px solid var(--border);
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            font-weight: 300;
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 40px 20px;
+            }
+            
+            h1 {
+                font-size: 2.5rem;
+            }
+            
+            .tagline {
+                font-size: 1.1rem;
+            }
+            
+            .profile-image {
+                width: 240px;
+                height: 240px;
+            }
+            
+            .bio-short {
+                font-size: 1.1rem;
+            }
+            
+            .modal-content {
+                padding: 32px 24px;
+                margin: 10% auto;
+            }
+            
+            .contact-links {
+                flex-direction: column;
+                align-items: stretch;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <img src="https://via.placeholder.com/320" alt="Burt Herman" class="profile-image">
+            <h1>Burt Herman</h1>
+            <p class="tagline">Media Innovation & Technology</p>
+            <p class="location">Brooklyn, New York</p>
+        </header>
+        
+        <main>
+            <div class="bio-short">
+                <p>I build the future of trusted media at the intersection of journalism, technology and community. Co-founder of Hacks/Hackers, pioneering conversations around AI's transformative potential for journalism and helping newsrooms adapt while maintaining their commitment to public trust.</p>
+            </div>
+            
+            <button class="read-more-btn" onclick="openModal()">Read Full Bio</button>
+            
+            <!-- Modal -->
+            <div id="bioModal" class="modal">
+                <div class="modal-content">
+                    <span class="close-btn" onclick="closeModal()">&times;</span>
+                    <h2>About Burt Herman</h2>
+                    <p>I build the future of trusted media at the intersection of journalism, technology and community. By connecting diverse communities and developing new tools, I help newsrooms innovate and grow while maintaining their commitment to public trust.</p>
+                    
+                    <p>As co-founder and principal of <span class="highlight">Hacks/Hackers</span>, I've helped create one of the world's most influential movements bridging journalism and technology. We're currently leading critical conversations around AI's transformative potential for media, while ensuring these powerful technologies serve democracy and foster trust.</p>
+                    
+                    <p>I co-founded <span class="highlight">Storify</span>, pioneering social media curation and helping establish new standards for real-time storytelling that reached millions. The platform was acquired by Livefyre and later Adobe. I also helped launch the <span class="highlight">Lenfest Institute for Journalism</span>, where we developed innovative approaches to sustaining local news, and most recently served as CEO of <span class="highlight">Lede</span>, building modern publishing tools for independent newsrooms.</p>
+                    
+                    <p>My career began as a foreign correspondent for <span class="highlight">The Associated Press</span>, reporting from Korea, Moscow, Central Asia and Berlin for over a decade. I'm a JSK fellow at Stanford University, where I also earned bachelor's and master's degrees and served as editor in chief of The Stanford Daily.</p>
+                </div>
+            </div>
+            
+            <div class="section">
+                <div class="speaking-note">
+                    <p><strong>Available for speaking engagements and workshops</strong> on media innovation, artificial intelligence in journalism, audience engagement, product development and the future of trusted information.</p>
+                </div>
+            </div>
+            
+            <div class="section contact-section">
+                <div class="contact-links">
+                    <a href="mailto:burtherman@gmail.com" class="contact-link">
+                        📧 Email
+                    </a>
+                    <a href="https://linkedin.com/in/burtherman" class="contact-link" target="_blank" rel="noopener noreferrer">
+                        💼 LinkedIn
+                    </a>
+                </div>
+                
+                <div class="social-links">
+                    <a href="https://hackshackers.com" class="hh-logo-link" target="_blank" rel="noopener noreferrer">Hacks/Hackers</a>
+                </div>
+            </div>
+        </main>
+        
+        <footer>
+            <p>&copy; 2025 Burt Herman</p>
+        </footer>
+    </div>
+    
+    <script>
+        function openModal() {
+            document.getElementById('bioModal').style.display = 'block';
+        }
+        
+        function closeModal() {
+            document.getElementById('bioModal').style.display = 'none';
+        }
+        
+        // Close modal when clicking outside of it
+        window.onclick = function(event) {
+            const modal = document.getElementById('bioModal');
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        }
+        
+        // Close modal with Escape key
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                closeModal();
+            }
+        });
+    </script>
+</body>
+</html>
