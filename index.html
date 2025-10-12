@@ -124,7 +124,7 @@
             background: var(--bg-dark);
             z-index: 1000;
             padding: 20px 0;
-            transition: all 0.4s ease;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
             border-bottom: 1px solid transparent;
         }
 
@@ -141,7 +141,7 @@
             justify-content: center;
             gap: 24px;
             flex-wrap: wrap;
-            transition: all 0.4s ease;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         header.scrolled .header-content {
@@ -153,14 +153,13 @@
             height: 320px;
             object-fit: cover;
             border: 1px solid var(--border);
-            transition: all 0.4s ease;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
             flex-shrink: 0;
         }
 
         header.scrolled .profile-image {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
+            width: 50px;
+            height: 50px;
         }
 
         .profile-image:hover {
@@ -174,7 +173,7 @@
             gap: 24px;
             margin-bottom: 0;
             flex-wrap: wrap;
-            transition: all 0.4s ease;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         header.scrolled .name-header {
@@ -188,7 +187,7 @@
             margin: 0;
             color: var(--text-light);
             letter-spacing: -0.02em;
-            transition: all 0.4s ease;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         header.scrolled h1 {
@@ -201,7 +200,7 @@
             font-weight: 500;
             margin: 0;
             position: relative;
-            transition: all 0.4s ease;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         header.scrolled .tagline {
@@ -212,7 +211,7 @@
             content: '•';
             margin-right: 16px;
             color: var(--accent);
-            transition: all 0.4s ease;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         header.scrolled .tagline::before {
@@ -418,7 +417,7 @@
             text-decoration: none;
             font-weight: 400;
             font-size: 0.95rem;
-            transition: all 0.4s ease;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
             z-index: 1001;
             backdrop-filter: blur(10px);
         }
