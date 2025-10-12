@@ -153,8 +153,12 @@
             height: 320px;
             object-fit: cover;
             border: 1px solid var(--border);
-            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+                        height 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+                        margin 0.5s cubic-bezier(0.4, 0, 0.2, 1);
             flex-shrink: 0;
+            will-change: width, height;
+            aspect-ratio: 1 / 1;
         }
 
         header.scrolled .profile-image {
@@ -187,7 +191,8 @@
             margin: 0;
             color: var(--text-light);
             letter-spacing: -0.02em;
-            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: font-size 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            will-change: font-size;
         }
 
         header.scrolled h1 {
@@ -200,7 +205,8 @@
             font-weight: 500;
             margin: 0;
             position: relative;
-            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: font-size 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            will-change: font-size;
         }
 
         header.scrolled .tagline {
@@ -623,10 +629,11 @@
 
         // Handle header shrinking on scroll
         let lastScrollTop = 0;
+        let ticking = false;
         const header = document.querySelector('header');
         const contactBtn = document.querySelector('.floating-contact-btn');
 
-        window.addEventListener('scroll', function() {
+        function updateHeader() {
             const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
 
             if (scrollTop > 100) {
@@ -638,6 +645,14 @@
             }
 
             lastScrollTop = scrollTop;
+            ticking = false;
+        }
+
+        window.addEventListener('scroll', function() {
+            if (!ticking) {
+                window.requestAnimationFrame(updateHeader);
+                ticking = true;
+            }
         });
     </script>
 </body>
