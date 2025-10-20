@@ -12,7 +12,7 @@ This site features:
 
 ## Live Site
 
-Visit the live site at: [burtherman.github.io/burtherman-personal-site](https://burtherman.github.io/burtherman-personal-site/)
+Visit the live site at: [burtherman.com](https://burtherman.com)
 
 ## Technology
 
@@ -27,7 +27,6 @@ Built with clean, modern HTML/CSS:
 
 - [Hacks/Hackers](https://hackshackers.com)
 - [LinkedIn](https://linkedin.com/in/burtherman)
-- [Nieman Lab Articles](https://www.niemanlab.org/author/burtherman/)
 
 ## Contact
 
