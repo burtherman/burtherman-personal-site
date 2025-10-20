@@ -160,7 +160,9 @@
             object-fit: cover;
             border: 1px solid var(--border);
             transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1),
-                        margin 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+                        margin 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+                        border-color 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+                        opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1);
             flex-shrink: 0;
             will-change: transform;
             aspect-ratio: 1 / 1;
@@ -175,9 +177,10 @@
 
         header.scrolled .profile-image {
             transform: scale(0.15625);
+            border-color: transparent;
         }
 
-        .profile-image:hover {
+        header:not(.scrolled) .profile-image:hover {
             border-color: var(--accent);
         }
 
