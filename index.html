@@ -110,9 +110,9 @@
         .container {
             max-width: 1000px;
             margin: 0 auto;
-            padding: 110px 24px 60px;
+            padding: 80px 24px 60px;
         }
-        
+
         header {
             position: fixed;
             top: 0;
@@ -134,17 +134,8 @@
             gap: 24px;
         }
 
-        .profile-image {
-            width: 50px;
-            height: 50px;
-            object-fit: cover;
-            border: 1px solid var(--border);
-            flex-shrink: 0;
-        }
-
         .name-header {
             flex: 1;
-            text-align: center;
         }
 
         h1 {
@@ -160,6 +151,48 @@
             color: var(--text-muted);
             font-weight: 400;
             margin: 4px 0 0 0;
+        }
+
+        .hero-section {
+            display: flex;
+            align-items: center;
+            gap: 40px;
+            margin-bottom: 48px;
+            animation: fadeIn 0.8s ease-out 0.2s both;
+        }
+
+        .profile-image {
+            width: 140px;
+            height: 140px;
+            object-fit: cover;
+            border: 1px solid var(--border);
+            flex-shrink: 0;
+        }
+
+        .hero-content {
+            flex: 1;
+        }
+
+        .hero-title {
+            font-size: 2rem;
+            font-weight: 300;
+            margin-bottom: 8px;
+            color: var(--text-light);
+            letter-spacing: -0.02em;
+        }
+
+        .hero-subtitle {
+            font-size: 1.1rem;
+            color: var(--accent);
+            font-weight: 400;
+            margin-bottom: 16px;
+        }
+
+        .hero-tagline {
+            font-size: 1rem;
+            color: var(--text-muted);
+            font-weight: 300;
+            line-height: 1.6;
         }
         
         .location {
@@ -392,7 +425,7 @@
         @media (max-width: 768px) {
             .container {
                 padding: 40px 20px;
-                padding-top: 100px;
+                padding-top: 80px;
             }
 
             header {
@@ -401,11 +434,6 @@
 
             .header-content {
                 gap: 12px;
-            }
-
-            .profile-image {
-                width: 40px;
-                height: 40px;
             }
 
             h1 {
@@ -419,6 +447,29 @@
             .header-contact-btn {
                 padding: 8px 16px;
                 font-size: 0.85rem;
+            }
+
+            .hero-section {
+                flex-direction: column;
+                text-align: center;
+                gap: 24px;
+            }
+
+            .profile-image {
+                width: 120px;
+                height: 120px;
+            }
+
+            .hero-title {
+                font-size: 1.6rem;
+            }
+
+            .hero-subtitle {
+                font-size: 1rem;
+            }
+
+            .hero-tagline {
+                font-size: 0.95rem;
             }
 
             .bio-short {
@@ -440,7 +491,6 @@
 <body>
     <header>
         <div class="header-content">
-            <img src="images/profile.jpg" alt="Burt Herman" class="profile-image">
             <div class="name-header">
                 <h1>Burt Herman</h1>
                 <p class="tagline">Media Innovation / Technology</p>
@@ -450,8 +500,17 @@
     </header>
 
     <div class="container">
-        
+
         <main>
+            <div class="hero-section">
+                <img src="images/profile.jpg" alt="Burt Herman" class="profile-image">
+                <div class="hero-content">
+                    <h2 class="hero-title">Burt Herman</h2>
+                    <p class="hero-subtitle">Media Innovation / Technology</p>
+                    <p class="hero-tagline">Building the future of trusted media at the intersection of journalism, technology and community</p>
+                </div>
+            </div>
+
             <div class="bio-short">
                 <p>I build the future of trusted media at the intersection of <strong style="color: var(--text-light); font-weight: 400;">journalism, technology and community</strong>. Co-founder of <a href="https://hackshackers.com" target="_blank" rel="noopener noreferrer" style="color: var(--accent); text-decoration: none;"><strong style="font-weight: 400;">Hacks/Hackers</strong></a>, pioneering conversations around <strong style="color: var(--text-light); font-weight: 400;">AI's transformative potential</strong> for journalism and helping newsrooms adapt while maintaining their commitment to public trust.</p>
             </div>
