@@ -464,6 +464,53 @@
             }
         }
         
+        .mobile-header-bar {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: var(--bg-dark);
+            border-bottom: 1px solid var(--border);
+            padding: 12px 16px;
+            z-index: 1002;
+            align-items: center;
+            justify-content: space-between;
+            backdrop-filter: blur(10px);
+            opacity: 0;
+            transform: translateY(-100%);
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+
+        .mobile-header-bar.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .mobile-header-bar .mobile-name {
+            font-size: 1.1rem;
+            font-weight: 400;
+            color: var(--text-light);
+            margin: 0;
+        }
+
+        .mobile-header-bar .mobile-contact-btn {
+            padding: 6px 16px;
+            background: transparent;
+            color: var(--text-light);
+            border: 1px solid var(--border);
+            text-decoration: none;
+            font-weight: 400;
+            font-size: 0.8rem;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .mobile-header-bar .mobile-contact-btn:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
         @media (max-width: 768px) {
             .container {
                 padding: 40px 20px;
@@ -511,16 +558,22 @@
             }
 
             .floating-contact-btn {
-                top: 16px;
-                right: 16px;
-                padding: 10px 20px;
-                font-size: 0.9rem;
+                display: none;
+            }
+
+            .mobile-header-bar {
+                display: flex;
             }
         }
     </style>
 </head>
 <body>
     <a href="mailto:burtherman@gmail.com?subject=Contact%20from%20burtherman.com&body=%0D%0A%0D%0A%0D%0A---%0D%0ASent%20via%20burtherman.com" class="floating-contact-btn">Contact</a>
+
+    <div class="mobile-header-bar">
+        <h2 class="mobile-name">Burt Herman</h2>
+        <a href="mailto:burtherman@gmail.com?subject=Contact%20from%20burtherman.com&body=%0D%0A%0D%0A%0D%0A---%0D%0ASent%20via%20burtherman.com" class="mobile-contact-btn">Contact</a>
+    </div>
 
     <div class="container">
         <header>
@@ -634,6 +687,8 @@
         // Handle header shrinking on scroll
         let ticking = false;
         const header = document.querySelector('header');
+        const mobileHeaderBar = document.querySelector('.mobile-header-bar');
+        const isMobile = window.innerWidth <= 768;
 
         function updateHeader() {
             const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
@@ -641,9 +696,19 @@
             if (scrollTop > 100) {
                 header.classList.add('scrolled');
                 document.body.classList.add('scrolled');
+
+                // Show mobile header bar on mobile devices
+                if (isMobile && mobileHeaderBar) {
+                    mobileHeaderBar.classList.add('visible');
+                }
             } else {
                 header.classList.remove('scrolled');
                 document.body.classList.remove('scrolled');
+
+                // Hide mobile header bar on mobile devices
+                if (isMobile && mobileHeaderBar) {
+                    mobileHeaderBar.classList.remove('visible');
+                }
             }
 
             ticking = false;
