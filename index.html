@@ -152,27 +152,46 @@
             gap: 16px;
         }
 
-        .profile-image {
-            width: 320px;
-            height: 320px;
+        .photo-gallery {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .photo-gallery img {
+            width: 240px;
+            height: 240px;
             object-fit: cover;
             border: 1px solid var(--border);
-            transition: width 0.3s ease, height 0.3s ease, margin 0.3s ease;
+            transition: all 0.3s ease;
             flex-shrink: 0;
             aspect-ratio: 1 / 1;
         }
 
-        header:not(.scrolled) .profile-image {
+        .photo-gallery img:hover {
+            border-color: var(--accent);
+        }
+
+        header:not(.scrolled) .photo-gallery {
             margin-bottom: 24px;
         }
 
-        header.scrolled .profile-image {
-            width: 50px;
-            height: 50px;
+        header.scrolled .photo-gallery {
+            gap: 0;
         }
 
-        .profile-image:hover {
-            border-color: var(--accent);
+        header.scrolled .photo-gallery img {
+            width: 50px;
+            height: 50px;
+            opacity: 0;
+            position: absolute;
+            transition: opacity 0.5s ease, width 0.3s ease, height 0.3s ease;
+        }
+
+        header.scrolled .photo-gallery img.active {
+            opacity: 1;
+            position: relative;
         }
 
         .name-header {
@@ -539,9 +558,21 @@
                 display: none;
             }
 
-            .profile-image {
+            .photo-gallery {
+                gap: 0;
+            }
+
+            .photo-gallery img {
                 width: 240px;
                 height: 240px;
+                opacity: 0;
+                position: absolute;
+                transition: opacity 0.5s ease;
+            }
+
+            .photo-gallery img.active {
+                opacity: 1;
+                position: relative;
             }
 
             .bio-short {
@@ -579,7 +610,11 @@
     <div class="container">
         <header>
             <div class="header-content">
-                <img src="images/profile.jpg" alt="Burt Herman" class="profile-image">
+                <div class="photo-gallery">
+                    <img src="images/profile-1.jpg" alt="Burt Herman" class="active">
+                    <img src="images/profile-2.jpg" alt="Burt Herman">
+                    <img src="images/profile-3.jpg" alt="Burt Herman">
+                </div>
                 <div class="name-header">
                     <h1>Burt Herman</h1>
                     <p class="tagline">Media Innovation / Technology</p>
@@ -685,11 +720,23 @@
             }
         });
 
+        // Handle photo rotation on mobile
+        const photos = document.querySelectorAll('.photo-gallery img');
+        const isMobile = window.innerWidth <= 768;
+        let currentPhotoIndex = 0;
+
+        if (isMobile && photos.length > 1) {
+            setInterval(() => {
+                photos[currentPhotoIndex].classList.remove('active');
+                currentPhotoIndex = (currentPhotoIndex + 1) % photos.length;
+                photos[currentPhotoIndex].classList.add('active');
+            }, 3000); // Rotate every 3 seconds
+        }
+
         // Handle header shrinking on scroll
         let ticking = false;
         const header = document.querySelector('header');
         const mobileHeaderBar = document.querySelector('.mobile-header-bar');
-        const isMobile = window.innerWidth <= 768;
 
         function updateHeader() {
             const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
