@@ -692,11 +692,14 @@
         </main>
         
         <footer>
-            <p>&copy; 2025 Burt Herman</p>
+            <p>&copy; <span id="copyright-year"></span> Burt Herman</p>
         </footer>
     </div>
     
     <script>
+        // Set copyright year
+        document.getElementById('copyright-year').textContent = new Date().getFullYear();
+
         function openModal() {
             document.getElementById('bioModal').style.display = 'block';
         }
