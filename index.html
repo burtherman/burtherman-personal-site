@@ -1,12 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://www.googletagmanager.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: https:; connect-src https://www.google-analytics.com;">
+    <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self'; script-src 'self' https://www.googletagmanager.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: https:; connect-src https://www.google-analytics.com;">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
     <title>Burt Herman - Media Innovation & Technology</title>
-    <meta name="description" content="Burt Herman builds the future of trusted media at the intersection of journalism, technology and community.">
-    <meta name="keywords" content="journalism, media innovation, technology, AI in journalism, Hacks/Hackers, media technology, trusted media, community journalism">
+    <meta name="description"
+        content="Burt Herman builds the future of trusted media at the intersection of journalism, technology and community.">
+    <meta name="keywords"
+        content="journalism, media innovation, technology, AI in journalism, Hacks/Hackers, media technology, trusted media, community journalism">
     <meta name="author" content="Burt Herman">
     <meta name="robots" content="index, follow">
     <link rel="canonical" href="https://burtherman.com/">
@@ -14,12 +21,14 @@
     <!-- Favicon -->
     <link rel="icon" type="image/jpeg" href="images/profile.jpg">
     <link rel="apple-touch-icon" href="images/profile.jpg">
+    <link rel="preload" as="image" href="images/profile-1.jpg">
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://burtherman.com/">
     <meta property="og:title" content="Burt Herman - Media Innovation & Technology">
-    <meta property="og:description" content="Building the future of trusted media at the intersection of journalism, technology and community. Co-founder of Hacks/Hackers.">
+    <meta property="og:description"
+        content="Building the future of trusted media at the intersection of journalism, technology and community. Co-founder of Hacks/Hackers.">
     <meta property="og:image" content="https://burtherman.com/images/profile.jpg">
     <meta property="og:image:width" content="320">
     <meta property="og:image:height" content="320">
@@ -29,14 +38,15 @@
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="https://burtherman.com/">
     <meta property="twitter:title" content="Burt Herman - Media Innovation & Technology">
-    <meta property="twitter:description" content="Building the future of trusted media at the intersection of journalism, technology and community. Co-founder of Hacks/Hackers.">
+    <meta property="twitter:description"
+        content="Building the future of trusted media at the intersection of journalism, technology and community. Co-founder of Hacks/Hackers.">
     <meta property="twitter:image" content="https://burtherman.com/images/profile.jpg">
 
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-2WK2XFD3ZD"></script>
     <script>
         window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
+        function gtag() { dataLayer.push(arguments); }
         gtag('js', new Date());
         gtag('config', 'G-2WK2XFD3ZD');
     </script>
@@ -84,21 +94,24 @@
 
     <link rel="stylesheet" href="css/style.css">
 </head>
+
 <body>
-    <a href="mailto:burtherman@gmail.com?subject=Contact%20from%20burtherman.com&body=%0D%0A%0D%0A%0D%0A---%0D%0ASent%20via%20burtherman.com" class="floating-contact-btn">Contact</a>
+    <a href="mailto:burtherman@gmail.com?subject=Contact%20from%20burtherman.com&body=%0D%0A%0D%0A%0D%0A---%0D%0ASent%20via%20burtherman.com"
+        class="floating-contact-btn">Contact</a>
 
     <div class="mobile-header-bar">
         <h2 class="mobile-name">Burt Herman</h2>
-        <a href="mailto:burtherman@gmail.com?subject=Contact%20from%20burtherman.com&body=%0D%0A%0D%0A%0D%0A---%0D%0ASent%20via%20burtherman.com" class="mobile-contact-btn">Contact</a>
+        <a href="mailto:burtherman@gmail.com?subject=Contact%20from%20burtherman.com&body=%0D%0A%0D%0A%0D%0A---%0D%0ASent%20via%20burtherman.com"
+            class="mobile-contact-btn">Contact</a>
     </div>
 
     <div class="container">
         <header>
             <div class="header-content">
                 <div class="photo-gallery">
-                    <img src="images/profile-1.jpg" alt="Burt Herman" class="active">
-                    <img src="images/profile-2.jpg" alt="Burt Herman">
-                    <img src="images/profile-3.jpg" alt="Burt Herman">
+                    <img src="images/profile-1.jpg" alt="Burt Herman" class="active" width="240" height="240">
+                    <img src="images/profile-2.jpg" alt="Burt Herman" width="240" height="240">
+                    <img src="images/profile-3.jpg" alt="Burt Herman" width="240" height="240">
                 </div>
                 <div class="name-header">
                     <h1>Burt Herman</h1>
@@ -106,10 +119,16 @@
                 </div>
             </div>
         </header>
-        
+
         <main>
             <div class="bio-short">
-                <p>I build the future of trusted media at the intersection of <strong class="text-light font-normal">journalism, technology and community</strong>. Co-founder of <a href="https://hackshackers.com" target="_blank" rel="noopener noreferrer" class="text-accent no-decoration"><strong class="font-normal">Hacks/Hackers</strong></a>, pioneering conversations around <strong class="text-light font-normal">AI's transformative potential</strong> for journalism and helping newsrooms adapt while maintaining their commitment to public trust.</p>
+                <p>I build the future of trusted media at the intersection of <strong
+                        class="text-light font-normal">journalism, technology and community</strong>. Co-founder of <a
+                        href="https://hackshackers.com" target="_blank" rel="noopener noreferrer"
+                        class="text-accent no-decoration"><strong class="font-normal">Hacks/Hackers</strong></a>,
+                    pioneering conversations around <strong class="text-light font-normal">AI's transformative
+                        potential</strong> for journalism and helping newsrooms adapt while maintaining their commitment
+                    to public trust.</p>
             </div>
 
             <div class="text-center">
@@ -118,25 +137,105 @@
 
             <div class="section">
                 <h3 class="text-light text-3xl font-medium mb-24 text-center">Recent writing and other links</h3>
-                <div class="links-list text-left max-w-600 mx-auto leading-relaxed">
-                    <p class="my-12"><span class="text-accent">•</span> <span class="text-muted ml-8 text-sm">YouTube:</span> <a href="https://www.youtube.com/watch?v=o32zU2VXdMc" target="_blank" rel="noopener noreferrer" class="text-accent underline ml-6 text-base">AI Real Talk: How publishers can survive the AI age, a chat with Cloudflare VP of Product Will Allen</a> <span class="text-muted text-sm">(Oct 2025)</span></p>
+                <ul class="links-list">
+                    <li class="link-item">
+                        <span class="link-bullet">•</span>
+                        <div class="link-content">
+                            <span class="link-source">YouTube</span>
+                            <a href="https://www.youtube.com/watch?v=o32zU2VXdMc" target="_blank"
+                                rel="noopener noreferrer" class="link-title">AI Real Talk: How publishers can survive
+                                the AI age, a chat with Cloudflare VP of Product Will Allen</a>
+                            <span class="link-date">(Oct 2025)</span>
+                        </div>
+                    </li>
 
-                    <p class="my-12"><span class="text-accent">•</span> <span class="text-muted ml-8 text-sm">Hacks/Hackers:</span> <a href="https://www.hackshackers.com/ai-journalism-and-society-at-this-moment-in-history/" target="_blank" rel="noopener noreferrer" class="text-accent underline ml-6 text-base">AI, journalism and society at this moment in history</a> <span class="text-muted text-sm">(May 2025)</span></p>
+                    <li class="link-item">
+                        <span class="link-bullet">•</span>
+                        <div class="link-content">
+                            <span class="link-source">Hacks/Hackers</span>
+                            <a href="https://www.hackshackers.com/ai-journalism-and-society-at-this-moment-in-history/"
+                                target="_blank" rel="noopener noreferrer" class="link-title">AI, journalism and society
+                                at this moment in history</a>
+                            <span class="link-date">(May 2025)</span>
+                        </div>
+                    </li>
 
-                    <p class="my-12"><span class="text-accent">•</span> <span class="text-muted ml-8 text-sm">Hacks/Hackers:</span> <a href="https://www.hackshackers.com/when-politicians-flood-the-zone-a-template-for-brainstorming-ai-solutions-to-information-overload/" target="_blank" rel="noopener noreferrer" class="text-accent underline ml-6 text-base">When politicians flood the zone: AI solutions to information overload</a> <span class="text-muted text-sm">(Mar 2025)</span></p>
+                    <li class="link-item">
+                        <span class="link-bullet">•</span>
+                        <div class="link-content">
+                            <span class="link-source">Hacks/Hackers</span>
+                            <a href="https://www.hackshackers.com/when-politicians-flood-the-zone-a-template-for-brainstorming-ai-solutions-to-information-overload/"
+                                target="_blank" rel="noopener noreferrer" class="link-title">When politicians flood the
+                                zone: AI solutions to information overload</a>
+                            <span class="link-date">(Mar 2025)</span>
+                        </div>
+                    </li>
 
-                    <p class="my-12"><span class="text-accent">•</span> <span class="text-muted ml-8 text-sm">Nieman Lab:</span> <a href="https://www.niemanlab.org/2024/12/the-year-we-stop-talking-about-ai/" target="_blank" rel="noopener noreferrer" class="text-accent underline ml-6 text-base">The year we stop talking about AI</a> <span class="text-muted text-sm">(Dec 2024)</span></p>
+                    <li class="link-item">
+                        <span class="link-bullet">•</span>
+                        <div class="link-content">
+                            <span class="link-source">Nieman Lab</span>
+                            <a href="https://www.niemanlab.org/2024/12/the-year-we-stop-talking-about-ai/"
+                                target="_blank" rel="noopener noreferrer" class="link-title">The year we stop talking
+                                about AI</a>
+                            <span class="link-date">(Dec 2024)</span>
+                        </div>
+                    </li>
 
-                    <p class="my-12"><span class="text-accent">•</span> <span class="text-muted ml-8 text-sm">YouTube:</span> <a href="https://www.youtube.com/watch?v=1-g9IUSwPJM&t=5s" target="_blank" rel="noopener noreferrer" class="text-accent underline ml-6 text-base">AI Real Talk: To Sue or Not to Sue: The Legal Battle Over AI and Journalism</a> <span class="text-muted text-sm">(Sep 2024)</span></p>
+                    <li class="link-item">
+                        <span class="link-bullet">•</span>
+                        <div class="link-content">
+                            <span class="link-source">YouTube</span>
+                            <a href="https://www.youtube.com/watch?v=1-g9IUSwPJM&t=5s" target="_blank"
+                                rel="noopener noreferrer" class="link-title">AI Real Talk: To Sue or Not to Sue: The
+                                Legal Battle Over AI and Journalism</a>
+                            <span class="link-date">(Sep 2024)</span>
+                        </div>
+                    </li>
 
-                    <p class="my-12"><span class="text-accent">•</span> <span class="text-muted ml-8 text-sm">YouTube:</span> <a href="https://www.youtube.com/watch?v=cws6haS3g3Y&t=20s" target="_blank" rel="noopener noreferrer" class="text-accent underline ml-6 text-base">AI Real Talk: RIP Web: AI is in your interface</a> <span class="text-muted text-sm">(Aug 2024)</span></p>
+                    <li class="link-item">
+                        <span class="link-bullet">•</span>
+                        <div class="link-content">
+                            <span class="link-source">YouTube</span>
+                            <a href="https://www.youtube.com/watch?v=cws6haS3g3Y&t=20s" target="_blank"
+                                rel="noopener noreferrer" class="link-title">AI Real Talk: RIP Web: AI is in your
+                                interface</a>
+                            <span class="link-date">(Aug 2024)</span>
+                        </div>
+                    </li>
 
-                    <p class="my-12"><span class="text-accent">•</span> <span class="text-muted ml-8 text-sm">Hacks/Hackers:</span> <a href="https://www.hackshackers.com/how-apple-signals-the-decline-of-apps-and-the-web-itself/" target="_blank" rel="noopener noreferrer" class="text-accent underline ml-6 text-base">How Apple AI signals the decline of apps and the web itself</a> <span class="text-muted text-sm">(Jun 2024)</span></p>
+                    <li class="link-item">
+                        <span class="link-bullet">•</span>
+                        <div class="link-content">
+                            <span class="link-source">Hacks/Hackers</span>
+                            <a href="https://www.hackshackers.com/how-apple-signals-the-decline-of-apps-and-the-web-itself/"
+                                target="_blank" rel="noopener noreferrer" class="link-title">How Apple AI signals the
+                                decline of apps and the web itself</a>
+                            <span class="link-date">(Jun 2024)</span>
+                        </div>
+                    </li>
 
-                    <p class="my-12"><span class="text-accent">•</span> <span class="text-muted ml-8 text-sm">Nieman Lab:</span> <a href="https://www.niemanlab.org/2023/12/more-open-source-ai/" target="_blank" rel="noopener noreferrer" class="text-accent underline ml-6 text-base">More open source AI</a> <span class="text-muted text-sm">(Dec 2023)</span></p>
+                    <li class="link-item">
+                        <span class="link-bullet">•</span>
+                        <div class="link-content">
+                            <span class="link-source">Nieman Lab</span>
+                            <a href="https://www.niemanlab.org/2023/12/more-open-source-ai/" target="_blank"
+                                rel="noopener noreferrer" class="link-title">More open source AI</a>
+                            <span class="link-date">(Dec 2023)</span>
+                        </div>
+                    </li>
 
-                    <p class="my-12"><span class="text-accent">•</span> <span class="text-muted ml-8 text-sm">Nieman Lab:</span> <a href="https://www.niemanlab.org/2022/12/the-year-ai-truly-arrives-and-with-it-the-reckoning/" target="_blank" rel="noopener noreferrer" class="text-accent underline ml-6 text-base">The year AI truly arrives and with it the reckoning</a> <span class="text-muted text-sm">(Dec 2022)</span></p>
-                </div>
+                    <li class="link-item">
+                        <span class="link-bullet">•</span>
+                        <div class="link-content">
+                            <span class="link-source">Nieman Lab</span>
+                            <a href="https://www.niemanlab.org/2022/12/the-year-ai-truly-arrives-and-with-it-the-reckoning/"
+                                target="_blank" rel="noopener noreferrer" class="link-title">The year AI truly arrives
+                                and with it the reckoning</a>
+                            <span class="link-date">(Dec 2022)</span>
+                        </div>
+                    </li>
+                </ul>
             </div>
 
             <!-- Modal -->
@@ -144,43 +243,66 @@
                 <div class="modal-content">
                     <button class="close-btn" aria-label="Close modal">&times;</button>
                     <h2 id="modal-title">About Burt Herman</h2>
-                    <p>I build the future of trusted media at the intersection of <span class="highlight">journalism, technology and community</span>. By connecting diverse communities and developing new tools, I help newsrooms innovate and grow while maintaining their commitment to public trust.</p>
-                    
-                    <p>As co-founder and principal of <a href="https://hackshackers.com" target="_blank" rel="noopener noreferrer" class="text-accent no-decoration">Hacks/Hackers</a>, I've helped create one of the world's most influential movements bridging journalism and technology. We're currently leading critical conversations around AI's transformative potential for media, while ensuring these powerful technologies serve democracy and foster trust.</p>
-                    
-                    <p>I co-founded <span class="highlight">Storify</span>, pioneering social media curation and helping establish new standards for real-time storytelling that reached millions. The platform was acquired by Livefyre and later Adobe. I also helped launch the <span class="highlight">Lenfest Institute for Journalism</span>, where we developed innovative approaches to sustaining local news, and most recently served as CEO of <span class="highlight">Lede</span>, building modern publishing tools for independent newsrooms.</p>
-                    
-                    <p>My career began as a foreign correspondent for <span class="highlight">The Associated Press</span>, reporting from Korea, Moscow, Central Asia and Berlin for over a decade. I'm a JSK fellow at Stanford University, where I also earned bachelor's and master's degrees and served as editor in chief of The Stanford Daily.</p>
+                    <p>I build the future of trusted media at the intersection of <span class="highlight">journalism,
+                            technology and community</span>. By connecting diverse communities and developing new tools,
+                        I help newsrooms innovate and grow while maintaining their commitment to public trust.</p>
+
+                    <p>As co-founder and principal of <a href="https://hackshackers.com" target="_blank"
+                            rel="noopener noreferrer" class="text-accent no-decoration">Hacks/Hackers</a>, I've helped
+                        create one of the world's most influential movements bridging journalism and technology. We're
+                        currently leading critical conversations around AI's transformative potential for media, while
+                        ensuring these powerful technologies serve democracy and foster trust.</p>
+
+                    <p>I co-founded <span class="highlight">Storify</span>, pioneering social media curation and helping
+                        establish new standards for real-time storytelling that reached millions. The platform was
+                        acquired by Livefyre and later Adobe. I also helped launch the <span class="highlight">Lenfest
+                            Institute for Journalism</span>, where we developed innovative approaches to sustaining
+                        local news, and most recently served as CEO of <span class="highlight">Lede</span>, building
+                        modern publishing tools for independent newsrooms.</p>
+
+                    <p>My career began as a foreign correspondent for <span class="highlight">The Associated
+                            Press</span>, reporting from Korea, Moscow, Central Asia and Berlin for over a decade. I'm a
+                        JSK fellow at Stanford University, where I also earned bachelor's and master's degrees and
+                        served as editor in chief of The Stanford Daily.</p>
                 </div>
             </div>
-            
+
             <div class="section contact-section">
                 <h3 class="text-light text-3xl font-medium mb-24 text-center">Get In Touch</h3>
 
                 <div class="max-w-700 mx-auto mb-32 text-center">
-                    <p class="text-lg text-muted font-normal leading-relaxed">Available for <strong class="text-light font-normal">consulting</strong>, <strong class="text-light font-normal">speaking engagements</strong> and <strong class="text-light font-normal">workshops</strong> on media innovation, artificial intelligence in journalism, audience engagement, product development and the future of trusted information.</p>
+                    <p class="text-lg text-muted font-normal leading-relaxed">Available for <strong
+                            class="text-light font-normal">consulting</strong>, <strong
+                            class="text-light font-normal">speaking engagements</strong> and <strong
+                            class="text-light font-normal">workshops</strong> on media innovation, artificial
+                        intelligence in journalism, audience engagement, product development and the future of trusted
+                        information.</p>
                 </div>
 
                 <div class="contact-links">
-                    <a href="mailto:burtherman@gmail.com?subject=Contact%20from%20burtherman.com&body=%0D%0A%0D%0A%0D%0A---%0D%0ASent%20via%20burtherman.com" class="contact-link">
+                    <a href="mailto:burtherman@gmail.com?subject=Contact%20from%20burtherman.com&body=%0D%0A%0D%0A%0D%0A---%0D%0ASent%20via%20burtherman.com"
+                        class="contact-link">
                         📧 Email
                     </a>
-                    <a href="https://linkedin.com/in/burtherman" class="contact-link" target="_blank" rel="noopener noreferrer">
+                    <a href="https://linkedin.com/in/burtherman" class="contact-link" target="_blank"
+                        rel="noopener noreferrer">
                         💼 LinkedIn
                     </a>
                 </div>
 
                 <div class="social-links">
-                    <a href="https://hackshackers.com" class="hh-logo-link" target="_blank" rel="noopener noreferrer">Hacks/Hackers</a>
+                    <a href="https://hackshackers.com" class="hh-logo-link" target="_blank"
+                        rel="noopener noreferrer">Hacks/Hackers</a>
                 </div>
             </div>
         </main>
-        
+
         <footer>
             <p>&copy; <span id="copyright-year"></span> Burt Herman</p>
         </footer>
     </div>
-    
+
     <script src="js/script.js"></script>
 </body>
+
 </html>

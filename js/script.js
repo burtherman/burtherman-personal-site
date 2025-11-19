@@ -41,14 +41,14 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Close modal when clicking outside of it
-    window.addEventListener('click', function(event) {
+    window.addEventListener('click', function (event) {
         if (event.target == modal) {
             closeModal();
         }
     });
 
     // Close modal with Escape key
-    document.addEventListener('keydown', function(event) {
+    document.addEventListener('keydown', function (event) {
         if (event.key === 'Escape' && modal && modal.style.display === 'block') {
             closeModal();
         }
@@ -56,7 +56,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Trap focus inside modal when open
     if (modal) {
-        modal.addEventListener('keydown', function(e) {
+        modal.addEventListener('keydown', function (e) {
             if (e.key === 'Tab') {
                 const focusableContent = modal.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
                 const firstFocusableElement = focusableContent[0];
@@ -79,16 +79,32 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Handle photo rotation on mobile
     const photos = document.querySelectorAll('.photo-gallery img');
-    const isMobile = window.innerWidth <= 768;
     let currentPhotoIndex = 0;
+    let rotationInterval;
 
-    if (isMobile && photos.length > 1) {
-        setInterval(() => {
-            photos[currentPhotoIndex].classList.remove('active');
-            currentPhotoIndex = (currentPhotoIndex + 1) % photos.length;
-            photos[currentPhotoIndex].classList.add('active');
-        }, 3000); // Rotate every 3 seconds
+    function startRotation() {
+        if (window.innerWidth <= 768 && photos.length > 1) {
+            if (!rotationInterval) {
+                rotationInterval = setInterval(() => {
+                    photos[currentPhotoIndex].classList.remove('active');
+                    currentPhotoIndex = (currentPhotoIndex + 1) % photos.length;
+                    photos[currentPhotoIndex].classList.add('active');
+                }, 3000); // Rotate every 3 seconds
+            }
+        } else {
+            if (rotationInterval) {
+                clearInterval(rotationInterval);
+                rotationInterval = null;
+                // Reset to first photo when not in mobile mode
+                photos.forEach(photo => photo.classList.remove('active'));
+                if (photos.length > 0) photos[0].classList.add('active');
+                currentPhotoIndex = 0;
+            }
+        }
     }
+
+    startRotation();
+    window.addEventListener('resize', startRotation);
 
     // Handle header shrinking on scroll
     let ticking = false;
@@ -119,7 +135,7 @@ document.addEventListener('DOMContentLoaded', () => {
         ticking = false;
     }
 
-    window.addEventListener('scroll', function() {
+    window.addEventListener('scroll', function () {
         if (!ticking) {
             window.requestAnimationFrame(updateHeader);
             ticking = true;
