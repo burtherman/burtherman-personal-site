@@ -185,4 +185,22 @@ document.addEventListener('DOMContentLoaded', () => {
         // Debounce slightly
         setTimeout(fixBentoGrid, 100);
     });
+
+    // Magnetic Button Effect
+    const magneticBtns = document.querySelectorAll('.magnetic-btn');
+    magneticBtns.forEach(btn => {
+        btn.addEventListener('mousemove', (e) => {
+            const rect = btn.getBoundingClientRect();
+            const x = e.clientX - rect.left - rect.width / 2;
+            const y = e.clientY - rect.top - rect.height / 2;
+
+            // Limit the movement
+            const intensity = 0.4;
+            btn.style.transform = `translate(${x * intensity}px, ${y * intensity}px)`;
+        });
+
+        btn.addEventListener('mouseleave', () => {
+            btn.style.transform = 'translate(0, 0)';
+        });
+    });
 });
