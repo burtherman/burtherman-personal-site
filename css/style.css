@@ -300,21 +300,30 @@ header.scrolled .tagline::before {
 }
 
 .read-more-btn {
-    display: inline-block;
-    padding: 12px 32px;
-    background: transparent;
+    background: rgba(255, 255, 255, 0.02);
     color: var(--text-light);
-    border: 1px solid var(--border);
-    text-decoration: none;
-    font-weight: 400;
-    transition: all 0.3s ease;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 16px;
+    padding: 12px 32px;
+    font-size: 1rem;
     cursor: pointer;
-    font-size: 0.95rem;
+    transition: all 0.3s ease;
+    font-family: inherit;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     margin-bottom: 48px;
+    /* Kept from original, not in provided snippet but makes sense to keep */
+    text-decoration: none;
+    /* Kept from original */
+    display: inline-block;
+    /* Kept from original */
 }
 
 .read-more-btn:hover {
-    border-color: var(--accent);
+    transform: translateY(-2px);
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.1);
+    box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.3);
     color: var(--accent);
 }
 
@@ -346,18 +355,32 @@ header.scrolled .tagline::before {
 .close-btn {
     color: var(--text-muted);
     float: right;
-    font-size: 2rem;
-    font-weight: 300;
+    font-size: 24px;
+    font-weight: bold;
     cursor: pointer;
-    transition: color 0.3s ease;
-    line-height: 1;
-    background: none;
-    border: none;
-    padding: 0;
+    transition: all 0.3s ease;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    margin-left: 16px;
+    margin-bottom: 16px;
 }
 
-.close-btn:hover {
-    color: var(--text-light);
+.close-btn:hover,
+.close-btn:focus {
+    color: var(--accent);
+    text-decoration: none;
+    cursor: pointer;
+    transform: translateY(-2px);
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.1);
 }
 
 .modal-content h2 {
@@ -421,18 +444,24 @@ header.scrolled .tagline::before {
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    padding: 14px 28px;
-    background: transparent;
+    padding: 12px 24px;
+    background: rgba(255, 255, 255, 0.02);
     color: var(--text-light);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 16px;
     text-decoration: none;
-    border: 1px solid var(--border);
-    font-weight: 400;
+    font-size: 1rem;
     transition: all 0.3s ease;
-    font-size: 0.95rem;
+    font-weight: 300;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
 }
 
 .contact-link:hover {
-    border-color: var(--accent);
+    transform: translateY(-2px);
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.1);
+    box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.3);
     color: var(--accent);
 }
 
@@ -459,18 +488,25 @@ header.scrolled .tagline::before {
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    padding: 8px 16px;
-    border: 1px solid var(--border);
+    padding: 12px 24px;
+    background: rgba(255, 255, 255, 0.02);
     color: var(--text-muted);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 16px;
     text-decoration: none;
     font-size: 0.95rem;
     font-family: monospace;
     transition: all 0.3s ease;
     letter-spacing: 0.05em;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
 }
 
 .hh-logo-link:hover {
-    border-color: var(--accent);
+    transform: translateY(-2px);
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.1);
+    box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.3);
     color: var(--accent);
 }
 
@@ -479,15 +515,17 @@ header.scrolled .tagline::before {
     top: 32px;
     right: 32px;
     padding: 14px 32px;
-    background: var(--bg-dark);
+    background: rgba(255, 255, 255, 0.02);
     color: var(--text-light);
-    border: 1px solid var(--border);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 16px;
     text-decoration: none;
     font-weight: 400;
     font-size: 1rem;
     transition: all 0.3s ease;
     z-index: 1001;
-    backdrop-filter: blur(10px);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
 }
 
 header.scrolled~* .floating-contact-btn,
@@ -498,9 +536,11 @@ body.scrolled .floating-contact-btn {
 }
 
 .floating-contact-btn:hover {
-    border-color: var(--accent);
+    transform: translateY(-2px);
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.1);
+    box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.3);
     color: var(--accent);
-    background: var(--bg-darker);
 }
 
 footer {
@@ -556,19 +596,24 @@ footer {
 }
 
 .mobile-header-bar .mobile-contact-btn {
-    padding: 6px 16px;
-    background: transparent;
+    padding: 8px 20px;
+    background: rgba(255, 255, 255, 0.02);
     color: var(--text-light);
-    border: 1px solid var(--border);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 16px;
     text-decoration: none;
     font-weight: 400;
-    font-size: 0.8rem;
+    font-size: 0.85rem;
     transition: all 0.3s ease;
     white-space: nowrap;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
 }
 
 .mobile-header-bar .mobile-contact-btn:hover {
-    border-color: var(--accent);
+    transform: translateY(-2px);
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.1);
     color: var(--accent);
 }
 
