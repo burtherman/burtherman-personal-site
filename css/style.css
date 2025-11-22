@@ -17,7 +17,8 @@
 
 
 body {
-    font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
     line-height: 1.6;
     color: var(--text-light);
     background: var(--bg-dark);
@@ -120,6 +121,10 @@ header.scrolled .photo-gallery img.active {
     transition: all 0.3s ease;
 }
 
+.font-mono {
+    font-family: var(--font-mono);
+}
+
 header.scrolled .name-header {
     gap: 12px;
     align-items: center;
@@ -142,6 +147,8 @@ header.scrolled h1 {
     font-size: 1.5rem;
     color: var(--text-muted);
     font-weight: 500;
+    font-family: var(--font-mono);
+    font-size: 1.1rem;
     margin: 0;
     position: relative;
     transition: font-size 0.3s ease;
@@ -619,63 +626,112 @@ footer {
     max-width: 700px;
 }
 
-/* Links List Styles */
-.links-list {
-    list-style: none;
-    padding: 0;
+/* Bento Grid Styles */
+.bento-grid {
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+    gap: 16px;
+    max-width: 100%;
     margin: 0 auto;
-    max-width: 650px;
 }
 
-.link-item {
-    margin-bottom: 12px;
-    padding: 12px;
-    border-radius: 8px;
-    transition: background-color 0.2s ease;
-    display: flex;
-    align-items: baseline;
-    gap: 12px;
+@media (min-width: 600px) {
+    .bento-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
 }
 
-.link-item:hover {
-    background-color: rgba(255, 255, 255, 0.03);
+@media (min-width: 900px) {
+    .bento-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
 }
 
-.link-bullet {
-    color: var(--accent);
-    font-size: 1.2em;
-    line-height: 1;
-}
-
-.link-content {
-    flex: 1;
-}
-
-.link-source {
-    color: var(--text-muted);
-    font-size: 0.85rem;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    margin-right: 8px;
-    font-weight: 500;
-}
-
-.link-title {
-    color: var(--accent);
+.bento-card {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 16px;
+    padding: 24px;
     text-decoration: none;
-    font-size: 1.05rem;
-    font-weight: 400;
-    border-bottom: 1px solid transparent;
-    transition: border-color 0.2s ease;
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    position: relative;
+    overflow: hidden;
+    backdrop-filter: blur(10px);
 }
 
-.link-title:hover {
-    border-bottom-color: var(--accent);
+.bento-card:hover {
+    transform: translateY(-4px);
+    background: rgba(255, 255, 255, 0.06);
+    border-color: rgba(34, 211, 238, 0.3);
+    /* Cyan accent with opacity */
+    box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
 }
 
-.link-date {
+/* Make the last item fill the remaining space in the row */
+/* Handled by JS now to avoid gaps */
+
+/* Span Classes */
+@media (min-width: 600px) {
+    .span-2-col {
+        grid-column: span 2;
+    }
+
+    .span-2-row {
+        grid-row: span 2;
+    }
+}
+
+.card-content {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.card-source {
+    color: var(--accent);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-weight: 600;
+    margin-bottom: 12px;
+    font-family: var(--font-mono);
+    opacity: 0.8;
+}
+
+.card-title {
+    color: var(--text-light);
+    font-size: 1.1rem;
+    font-weight: 500;
+    line-height: 1.4;
+    margin-bottom: 12px;
+    flex-grow: 1;
+}
+
+.span-2-col .card-title,
+.span-2-row .card-title {
+    font-size: 1.4rem;
+}
+
+.card-desc {
     color: var(--text-muted);
-    font-size: 0.85rem;
-    margin-left: 8px;
-    white-space: nowrap;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    margin-bottom: 16px;
+    font-weight: 300;
+}
+
+.card-date {
+    color: var(--text-muted);
+    font-size: 0.8rem;
+    font-family: var(--font-mono);
+    margin-top: auto;
+    opacity: 0.6;
+}
+
+.bento-card:hover .card-date {
+    opacity: 1;
+    color: var(--accent);
 }

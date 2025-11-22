@@ -119,6 +119,7 @@ document.addEventListener('DOMContentLoaded', () => {
             document.body.classList.add('scrolled');
 
             // Show mobile header bar on mobile devices
+            const isMobile = window.innerWidth <= 768;
             if (isMobile && mobileHeaderBar) {
                 mobileHeaderBar.classList.add('visible');
             }
@@ -127,6 +128,7 @@ document.addEventListener('DOMContentLoaded', () => {
             document.body.classList.remove('scrolled');
 
             // Hide mobile header bar on mobile devices
+            const isMobile = window.innerWidth <= 768;
             if (isMobile && mobileHeaderBar) {
                 mobileHeaderBar.classList.remove('visible');
             }
@@ -140,5 +142,47 @@ document.addEventListener('DOMContentLoaded', () => {
             window.requestAnimationFrame(updateHeader);
             ticking = true;
         }
+    });
+
+    // Fix Bento Grid Layout
+    function fixBentoGrid() {
+        const grid = document.querySelector('.bento-grid');
+        if (!grid) return;
+
+        const items = grid.querySelectorAll('.bento-card');
+        if (items.length === 0) return;
+
+        const lastItem = items[items.length - 1];
+
+        // Reset first to get natural position
+        lastItem.style.gridColumn = '';
+
+        // Get grid info
+        const gridStyle = window.getComputedStyle(grid);
+        const gridCols = gridStyle.gridTemplateColumns.split(' ').length;
+
+        if (gridCols <= 1) return; // No need to fix for single column
+
+        // Calculate current column of last item
+        const gridRect = grid.getBoundingClientRect();
+        const itemRect = lastItem.getBoundingClientRect();
+        const gap = parseFloat(gridStyle.gap) || 16;
+        const colWidth = (gridRect.width - (gap * (gridCols - 1))) / gridCols;
+
+        // 0-based index
+        const colIndex = Math.round((itemRect.left - gridRect.left) / (colWidth + gap));
+
+        // If it's not the last column, span to the end
+        if (colIndex < gridCols - 1) {
+            // +1 for 1-based grid line
+            lastItem.style.gridColumn = `${colIndex + 1} / -1`;
+        }
+    }
+
+    // Run on load and resize
+    fixBentoGrid();
+    window.addEventListener('resize', () => {
+        // Debounce slightly
+        setTimeout(fixBentoGrid, 100);
     });
 });
