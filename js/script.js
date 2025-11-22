@@ -142,6 +142,12 @@ document.addEventListener('DOMContentLoaded', () => {
             window.requestAnimationFrame(updateHeader);
             ticking = true;
         }
+
+        // Scroll Progress Bar
+        const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+        const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+        const scrolled = (winScroll / height) * 100;
+        document.getElementById("progressBar").style.width = scrolled + "%";
     });
 
     // Fix Bento Grid Layout

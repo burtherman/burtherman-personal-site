@@ -16,6 +16,25 @@
     --gradient-glow: linear-gradient(135deg, rgba(34, 211, 238, 0.4) 0%, rgba(129, 140, 248, 0.4) 50%, rgba(192, 132, 252, 0.4) 100%);
 }
 
+/* Scroll Progress Bar */
+.progress-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: transparent;
+    z-index: 9999;
+}
+
+.progress-bar {
+    height: 100%;
+    background: var(--gradient-primary);
+    width: 0%;
+    transition: width 0.1s ease-out;
+    box-shadow: 0 0 10px rgba(34, 211, 238, 0.5);
+}
+
 
 
 body {
