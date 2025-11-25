@@ -85,18 +85,26 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Handle photo rotation on mobile
+    // Handle photo rotation on mobile with touch/swipe support
     const photos = document.querySelectorAll('.photo-gallery img');
+    const photoGallery = document.querySelector('.photo-gallery');
     let currentPhotoIndex = 0;
     let rotationInterval;
+    let touchStartX = 0;
+    let touchEndX = 0;
+
+    function changePhoto(newIndex) {
+        photos[currentPhotoIndex].classList.remove('active');
+        currentPhotoIndex = newIndex;
+        photos[currentPhotoIndex].classList.add('active');
+    }
 
     function startRotation() {
         if (window.innerWidth <= 768 && photos.length > 1) {
             if (!rotationInterval) {
                 rotationInterval = setInterval(() => {
-                    photos[currentPhotoIndex].classList.remove('active');
-                    currentPhotoIndex = (currentPhotoIndex + 1) % photos.length;
-                    photos[currentPhotoIndex].classList.add('active');
+                    const nextIndex = (currentPhotoIndex + 1) % photos.length;
+                    changePhoto(nextIndex);
                 }, 3000); // Rotate every 3 seconds
             }
         } else {
@@ -107,6 +115,48 @@ document.addEventListener('DOMContentLoaded', () => {
                 photos.forEach(photo => photo.classList.remove('active'));
                 if (photos.length > 0) photos[0].classList.add('active');
                 currentPhotoIndex = 0;
+            }
+        }
+    }
+
+    // Touch/swipe controls for mobile
+    if (photoGallery && window.innerWidth <= 768) {
+        photoGallery.addEventListener('touchstart', (e) => {
+            touchStartX = e.changedTouches[0].screenX;
+        }, { passive: true });
+
+        photoGallery.addEventListener('touchend', (e) => {
+            touchEndX = e.changedTouches[0].screenX;
+            handleSwipe();
+        }, { passive: true });
+
+        function handleSwipe() {
+            const swipeThreshold = 50;
+            const diff = touchStartX - touchEndX;
+
+            if (Math.abs(diff) > swipeThreshold) {
+                // Clear auto-rotation on manual swipe
+                if (rotationInterval) {
+                    clearInterval(rotationInterval);
+                    rotationInterval = null;
+                }
+
+                if (diff > 0) {
+                    // Swipe left - next photo
+                    const nextIndex = (currentPhotoIndex + 1) % photos.length;
+                    changePhoto(nextIndex);
+                } else {
+                    // Swipe right - previous photo
+                    const prevIndex = (currentPhotoIndex - 1 + photos.length) % photos.length;
+                    changePhoto(prevIndex);
+                }
+
+                // Restart auto-rotation after 5 seconds
+                setTimeout(() => {
+                    if (window.innerWidth <= 768) {
+                        startRotation();
+                    }
+                }, 5000);
             }
         }
     }
@@ -156,6 +206,51 @@ document.addEventListener('DOMContentLoaded', () => {
         const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
         const scrolled = (winScroll / height) * 100;
         document.getElementById("progressBar").style.width = scrolled + "%";
+
+        // Back to Top Button visibility
+        const backToTopBtn = document.getElementById('backToTop');
+        if (backToTopBtn) {
+            if (winScroll > 300) {
+                backToTopBtn.classList.add('visible');
+            } else {
+                backToTopBtn.classList.remove('visible');
+            }
+        }
+    });
+
+    // Back to Top Button functionality
+    const backToTopBtn = document.getElementById('backToTop');
+    if (backToTopBtn) {
+        backToTopBtn.addEventListener('click', () => {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+    }
+
+    // Scroll-triggered animations using Intersection Observer
+    const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('revealed');
+            }
+        });
+    }, observerOptions);
+
+    // Observe all scroll-reveal elements
+    document.querySelectorAll('.scroll-reveal').forEach(el => {
+        observer.observe(el);
+    });
+
+    // Observe all bento cards
+    document.querySelectorAll('.bento-card').forEach(el => {
+        observer.observe(el);
     });
 
     // Fix Bento Grid Layout

@@ -133,7 +133,7 @@
         </header>
 
         <main id="main-content">
-            <div class="bio-short">
+            <div class="bio-short scroll-reveal">
                 <p>I build the future of trusted media at the intersection of <strong
                         class="text-light font-normal glitch-text"
                         data-text="journalism, technology and community">journalism, technology and community</strong>.
@@ -144,11 +144,11 @@
                     to public trust.</p>
             </div>
 
-            <div class="text-center">
+            <div class="text-center scroll-reveal">
                 <button class="read-more-btn magnetic-btn btn-glass" aria-expanded="false" aria-controls="bioModal">Full Bio</button>
             </div>
 
-            <section class="section" aria-labelledby="recent-content-heading">
+            <section class="section scroll-reveal" aria-labelledby="recent-content-heading">
                 <h3 id="recent-content-heading" class="text-light text-3xl font-medium mb-24 text-center">Recent writing and other links</h3>
                 <div class="bento-grid" role="list">
                     <!-- Featured Item (Large) -->
@@ -269,7 +269,7 @@
                 </div>
             </div>
 
-            <section class="section contact-section" aria-labelledby="contact-heading">
+            <section class="section contact-section scroll-reveal" aria-labelledby="contact-heading">
                 <h3 id="contact-heading" class="text-light text-3xl font-medium mb-24 text-center">Get In Touch</h3>
 
                 <div class="max-w-700 mx-auto mb-32 text-center">
@@ -307,6 +307,12 @@
     <div class="progress-container">
         <div class="progress-bar" id="progressBar"></div>
     </div>
+
+    <button id="backToTop" class="back-to-top btn-glass" aria-label="Scroll back to top">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="18 15 12 9 6 15"></polyline>
+        </svg>
+    </button>
 
     <script src="js/script.js"></script>
 </body>
