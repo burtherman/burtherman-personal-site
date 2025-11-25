@@ -983,6 +983,7 @@ button:focus:not(:focus-visible),
 .bento-card.revealed {
     opacity: 1;
     transform: translateY(0);
+    transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
 
 /* Stagger animation delay for cards */
@@ -996,6 +997,11 @@ button:focus:not(:focus-visible),
 .bento-card:nth-child(8) { transition-delay: 0.45s; }
 .bento-card:nth-child(9) { transition-delay: 0.5s; }
 .bento-card:nth-child(10) { transition-delay: 0.55s; }
+
+/* Remove delay after revealed */
+.bento-card.revealed:nth-child(n) {
+    transition-delay: 0s;
+}
 
 /* Reduced Motion Support */
 @media (prefers-reduced-motion: reduce) {
