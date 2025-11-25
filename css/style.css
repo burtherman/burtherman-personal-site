@@ -10,7 +10,8 @@
     --bg-dark: #0a0a0a;
     --bg-darker: #000000;
     --text-light: #f5f5f5;
-    --text-muted: #737373;
+    --text-muted: #a3a3a3;
+    /* Improved from #737373 for better contrast (WCAG AA compliant) */
     --border: #262626;
     --gradient-primary: linear-gradient(135deg, #22d3ee 0%, #818cf8 50%, #c084fc 100%);
     --gradient-glow: linear-gradient(135deg, rgba(34, 211, 238, 0.4) 0%, rgba(129, 140, 248, 0.4) 50%, rgba(192, 132, 252, 0.4) 100%);
@@ -45,6 +46,28 @@ body {
     color: var(--text-light);
     background: var(--bg-dark);
     min-height: 100vh;
+}
+
+/* Skip to Content Link */
+.skip-to-content {
+    position: absolute;
+    top: -100px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--accent);
+    color: var(--bg-dark);
+    padding: 12px 24px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 500;
+    z-index: 9999;
+    transition: top 0.3s ease;
+}
+
+.skip-to-content:focus {
+    top: 20px;
+    outline: 3px solid var(--text-light);
+    outline-offset: 4px;
 }
 
 .container {
@@ -256,7 +279,6 @@ header.scrolled h1 {
 }
 
 .tagline {
-    font-size: 1.5rem;
     color: var(--text-muted);
     font-weight: 500;
     font-family: var(--font-mono);
@@ -479,6 +501,44 @@ header.scrolled .tagline::before {
     z-index: 1001;
 }
 
+/* Back to Top Button */
+.back-to-top {
+    position: fixed;
+    bottom: 32px;
+    right: 32px;
+    width: 48px;
+    height: 48px;
+    padding: 12px;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1001;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease;
+    transform: translateY(20px);
+}
+
+.back-to-top.visible {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.back-to-top:hover {
+    transform: translateY(-4px);
+}
+
+.back-to-top svg {
+    color: var(--text-light);
+    transition: color 0.3s ease;
+}
+
+.back-to-top:hover svg {
+    color: var(--accent);
+}
+
 header.scrolled~* .floating-contact-btn,
 body.scrolled .floating-contact-btn {
     top: 16px;
@@ -514,8 +574,8 @@ footer {
     top: 0;
     left: 0;
     right: 0;
-    background: var(--bg-dark);
-    border-bottom: 1px solid var(--border);
+    background: rgba(10, 10, 10, 0.95);
+    border-bottom: 1px solid transparent;
     padding: 12px 16px;
     z-index: 1002;
     align-items: center;
@@ -523,12 +583,15 @@ footer {
     backdrop-filter: blur(10px);
     opacity: 0;
     transform: translateY(-100%);
-    transition: opacity 0.3s ease, transform 0.3s ease;
+    transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+                transform 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+                border-color 0.3s ease;
 }
 
 .mobile-header-bar.visible {
     opacity: 1;
     transform: translateY(0);
+    border-bottom-color: var(--border);
 }
 
 .mobile-header-bar .mobile-name {
@@ -574,6 +637,9 @@ footer {
 
     .photo-gallery {
         gap: 0;
+        cursor: pointer;
+        touch-action: pan-y;
+        -webkit-tap-highlight-color: transparent;
     }
 
     .photo-gallery img {
@@ -582,6 +648,7 @@ footer {
         opacity: 0;
         position: absolute;
         transition: opacity 0.5s ease;
+        pointer-events: none;
     }
 
     .photo-gallery img.active {
@@ -609,6 +676,29 @@ footer {
 
     .mobile-header-bar {
         display: flex;
+    }
+
+    .back-to-top {
+        bottom: 20px;
+        right: 20px;
+        width: 44px;
+        height: 44px;
+    }
+
+    /* Reduce animations on mobile for better performance */
+    .bento-card:nth-child(n+6) {
+        transition-delay: 0.3s;
+    }
+
+    /* Better tap targets for mobile */
+    .btn-glass {
+        min-height: 44px;
+        min-width: 44px;
+    }
+
+    /* Improve scrolling performance */
+    body {
+        -webkit-overflow-scrolling: touch;
     }
 }
 
@@ -837,4 +927,104 @@ footer {
 .bento-card:hover .card-date {
     opacity: 1;
     color: var(--accent);
+}
+
+/* Enhanced Focus Indicators */
+a:focus,
+button:focus,
+.bento-card:focus {
+    outline: 3px solid var(--accent);
+    outline-offset: 4px;
+}
+
+a:focus-visible,
+button:focus-visible,
+.bento-card:focus-visible {
+    outline: 3px solid var(--accent);
+    outline-offset: 4px;
+}
+
+/* Remove default outline for mouse users only */
+a:focus:not(:focus-visible),
+button:focus:not(:focus-visible),
+.bento-card:focus:not(:focus-visible) {
+    outline: none;
+}
+
+.btn-glass:focus,
+.btn-glass:focus-visible {
+    outline: 3px solid var(--accent);
+    outline-offset: 4px;
+    box-shadow: 0 0 0 6px rgba(34, 211, 238, 0.2);
+}
+
+.magnetic-btn:focus {
+    transform: none !important;
+}
+
+/* Scroll-Triggered Animations */
+.scroll-reveal {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.scroll-reveal.revealed {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.bento-card {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.bento-card.revealed {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Stagger animation delay for cards */
+.bento-card:nth-child(1) { transition-delay: 0.1s; }
+.bento-card:nth-child(2) { transition-delay: 0.15s; }
+.bento-card:nth-child(3) { transition-delay: 0.2s; }
+.bento-card:nth-child(4) { transition-delay: 0.25s; }
+.bento-card:nth-child(5) { transition-delay: 0.3s; }
+.bento-card:nth-child(6) { transition-delay: 0.35s; }
+.bento-card:nth-child(7) { transition-delay: 0.4s; }
+.bento-card:nth-child(8) { transition-delay: 0.45s; }
+.bento-card:nth-child(9) { transition-delay: 0.5s; }
+.bento-card:nth-child(10) { transition-delay: 0.55s; }
+
+/* Reduced Motion Support */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+
+    .glitch-text::before,
+    .glitch-text::after {
+        display: none !important;
+    }
+
+    .photo-gallery img {
+        transition: none !important;
+    }
+
+    .magnetic-btn {
+        transform: none !important;
+    }
+
+    .scroll-reveal,
+    .bento-card {
+        opacity: 1 !important;
+        transform: none !important;
+        transition: none !important;
+    }
 }

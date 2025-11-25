@@ -5,12 +5,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Content-Security-Policy"
-        content="default-src 'self'; script-src 'self' https://www.googletagmanager.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: https:; connect-src https://www.google-analytics.com;">
+        content="default-src 'self'; script-src 'self' https://www.googletagmanager.com 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://burtherman.com; connect-src 'self' https://www.google-analytics.com https://region1.google-analytics.com;">
+    <link rel="dns-prefetch" href="https://www.google-analytics.com">
+    <link rel="dns-prefetch" href="https://www.googletagmanager.com">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap"
         rel="stylesheet">
+    <style>
+        /* Fallback fonts to prevent FOIT (Flash of Invisible Text) */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        }
+    </style>
     <title>Burt Herman - Media Innovation & Technology</title>
     <meta name="description"
         content="Burt Herman builds the future of trusted media at the intersection of journalism, technology and community.">
@@ -21,8 +29,8 @@
     <link rel="canonical" href="https://burtherman.com/">
 
     <!-- Favicon -->
-    <link rel="icon" type="image/jpeg" href="images/profile.jpg">
-    <link rel="apple-touch-icon" href="images/profile.jpg">
+    <link rel="icon" type="image/jpeg" href="images/profile-1.jpg">
+    <link rel="apple-touch-icon" href="images/profile-1.jpg">
     <link rel="preload" as="image" href="images/profile-1.jpg">
 
     <!-- Open Graph / Facebook -->
@@ -98,22 +106,24 @@
 </head>
 
 <body>
+    <a href="#main-content" class="skip-to-content">Skip to main content</a>
+
     <a href="mailto:burtherman@gmail.com?subject=Contact%20from%20burtherman.com&body=%0D%0A%0D%0A%0D%0A---%0D%0ASent%20via%20burtherman.com"
-        class="floating-contact-btn magnetic-btn btn-glass">Contact</a>
+        class="floating-contact-btn magnetic-btn btn-glass" aria-label="Send email to Burt Herman">Contact</a>
 
     <div class="mobile-header-bar">
         <h2 class="mobile-name">Burt Herman</h2>
         <a href="mailto:burtherman@gmail.com?subject=Contact%20from%20burtherman.com&body=%0D%0A%0D%0A%0D%0A---%0D%0ASent%20via%20burtherman.com"
-            class="mobile-contact-btn magnetic-btn btn-glass">Contact</a>
+            class="mobile-contact-btn magnetic-btn btn-glass" aria-label="Send email to Burt Herman">Contact</a>
     </div>
 
     <div class="container">
-        <header>
+        <header role="banner">
             <div class="header-content">
-                <div class="photo-gallery">
-                    <img src="images/profile-1.jpg" alt="Burt Herman" class="active" width="240" height="240">
-                    <img src="images/profile-2.jpg" alt="Burt Herman" width="240" height="240">
-                    <img src="images/profile-3.jpg" alt="Burt Herman" width="240" height="240">
+                <div class="photo-gallery" aria-label="Profile photo gallery">
+                    <img src="images/profile-1.jpg" alt="Burt Herman profile photo" class="active" width="240" height="240" loading="eager">
+                    <img src="images/profile-2.jpg" alt="Burt Herman profile photo" width="240" height="240" loading="lazy">
+                    <img src="images/profile-3.jpg" alt="Burt Herman profile photo" width="240" height="240" loading="lazy">
                 </div>
                 <div class="name-header">
                     <h1 class="glitch-text" data-text="Burt Herman">Burt Herman</h1>
@@ -122,8 +132,8 @@
             </div>
         </header>
 
-        <main>
-            <div class="bio-short">
+        <main id="main-content">
+            <div class="bio-short scroll-reveal">
                 <p>I build the future of trusted media at the intersection of <strong
                         class="text-light font-normal glitch-text"
                         data-text="journalism, technology and community">journalism, technology and community</strong>.
@@ -134,16 +144,16 @@
                     to public trust.</p>
             </div>
 
-            <div class="text-center">
-                <button class="read-more-btn magnetic-btn btn-glass">Full Bio</button>
+            <div class="text-center scroll-reveal">
+                <button class="read-more-btn magnetic-btn btn-glass" aria-expanded="false" aria-controls="bioModal">Full Bio</button>
             </div>
 
-            <div class="section">
-                <h3 class="text-light text-3xl font-medium mb-24 text-center">Recent writing and other links</h3>
-                <div class="bento-grid">
+            <section class="section scroll-reveal" aria-labelledby="recent-content-heading">
+                <h3 id="recent-content-heading" class="text-light text-3xl font-medium mb-24 text-center">Recent writing and other links</h3>
+                <div class="bento-grid" role="list">
                     <!-- Featured Item (Large) -->
                     <a href="https://www.youtube.com/watch?v=o32zU2VXdMc" target="_blank" rel="noopener noreferrer"
-                        class="bento-card span-2-col span-2-row">
+                        class="bento-card span-2-col span-2-row" role="listitem" aria-label="YouTube video: AI Real Talk - How publishers can survive the AI age">
                         <div class="card-content">
                             <span class="card-source">YouTube</span>
                             <h4 class="card-title">AI Real Talk: How publishers can survive the AI age</h4>
@@ -259,8 +269,8 @@
                 </div>
             </div>
 
-            <div class="section contact-section">
-                <h3 class="text-light text-3xl font-medium mb-24 text-center">Get In Touch</h3>
+            <section class="section contact-section scroll-reveal" aria-labelledby="contact-heading">
+                <h3 id="contact-heading" class="text-light text-3xl font-medium mb-24 text-center">Get In Touch</h3>
 
                 <div class="max-w-700 mx-auto mb-32 text-center">
                     <p class="text-lg text-muted font-normal leading-relaxed">Available for <strong
@@ -273,23 +283,23 @@
 
                 <div class="contact-links">
                     <a href="mailto:burtherman@gmail.com?subject=Contact%20from%20burtherman.com&body=%0D%0A%0D%0A%0D%0A---%0D%0ASent%20via%20burtherman.com"
-                        class="contact-link btn-glass">
+                        class="contact-link btn-glass" aria-label="Send email to Burt Herman">
                         📧 Email
                     </a>
                     <a href="https://linkedin.com/in/burtherman" class="contact-link btn-glass" target="_blank"
-                        rel="noopener noreferrer">
+                        rel="noopener noreferrer" aria-label="Connect with Burt Herman on LinkedIn (opens in new tab)">
                         💼 LinkedIn
                     </a>
                 </div>
 
                 <div class="social-links">
                     <a href="https://hackshackers.com" class="hh-logo-link btn-glass" target="_blank"
-                        rel="noopener noreferrer">Hacks/Hackers</a>
+                        rel="noopener noreferrer" aria-label="Visit Hacks/Hackers website (opens in new tab)">Hacks/Hackers</a>
                 </div>
-            </div>
+            </section>
         </main>
 
-        <footer>
+        <footer role="contentinfo">
             <p>&copy; <span id="copyright-year"></span> Burt Herman</p>
         </footer>
     </div>
@@ -297,6 +307,12 @@
     <div class="progress-container">
         <div class="progress-bar" id="progressBar"></div>
     </div>
+
+    <button id="backToTop" class="back-to-top btn-glass" aria-label="Scroll back to top">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="18 15 12 9 6 15"></polyline>
+        </svg>
+    </button>
 
     <script src="js/script.js"></script>
 </body>
