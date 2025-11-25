@@ -13,6 +13,10 @@ document.addEventListener('DOMContentLoaded', () => {
     function openModal() {
         if (modal) {
             modal.style.display = 'block';
+            // Update aria-expanded state
+            if (openBtn) {
+                openBtn.setAttribute('aria-expanded', 'true');
+            }
             // Focus management for accessibility
             const closeButton = modal.querySelector('.close-btn');
             if (closeButton) {
@@ -25,6 +29,10 @@ document.addEventListener('DOMContentLoaded', () => {
     function closeModal() {
         if (modal) {
             modal.style.display = 'none';
+            // Update aria-expanded state
+            if (openBtn) {
+                openBtn.setAttribute('aria-expanded', 'false');
+            }
             document.body.style.overflow = ''; // Restore background scrolling
             if (openBtn) {
                 openBtn.focus(); // Return focus to the trigger button
@@ -192,10 +200,21 @@ document.addEventListener('DOMContentLoaded', () => {
         setTimeout(fixBentoGrid, 100);
     });
 
-    // Magnetic Button Effect
+    // Magnetic Button Effect (only for mouse users, not keyboard)
     const magneticBtns = document.querySelectorAll('.magnetic-btn');
     magneticBtns.forEach(btn => {
+        let isUsingMouse = false;
+
+        btn.addEventListener('mouseenter', () => {
+            isUsingMouse = true;
+        });
+
         btn.addEventListener('mousemove', (e) => {
+            if (!isUsingMouse) return;
+
+            // Don't apply magnetic effect if element has focus (keyboard user)
+            if (document.activeElement === btn) return;
+
             const rect = btn.getBoundingClientRect();
             const x = e.clientX - rect.left - rect.width / 2;
             const y = e.clientY - rect.top - rect.height / 2;
@@ -206,6 +225,16 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         btn.addEventListener('mouseleave', () => {
+            isUsingMouse = false;
+            btn.style.transform = 'translate(0, 0)';
+        });
+
+        // Disable magnetic effect when focused via keyboard
+        btn.addEventListener('focus', () => {
+            btn.style.transform = 'translate(0, 0)';
+        });
+
+        btn.addEventListener('blur', () => {
             btn.style.transform = 'translate(0, 0)';
         });
     });
