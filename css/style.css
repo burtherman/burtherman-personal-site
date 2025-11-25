@@ -256,7 +256,6 @@ header.scrolled h1 {
 }
 
 .tagline {
-    font-size: 1.5rem;
     color: var(--text-muted);
     font-weight: 500;
     font-family: var(--font-mono);
@@ -837,4 +836,25 @@ footer {
 .bento-card:hover .card-date {
     opacity: 1;
     color: var(--accent);
+}
+
+/* Reduced Motion Support */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+
+    .glitch-text::before,
+    .glitch-text::after {
+        display: none !important;
+    }
+
+    .photo-gallery img {
+        transition: none !important;
+    }
 }
