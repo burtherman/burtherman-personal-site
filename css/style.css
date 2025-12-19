@@ -808,6 +808,7 @@ footer {
     gap: 16px;
     max-width: 100%;
     margin: 0 auto;
+    grid-auto-flow: dense;
 }
 
 @media (min-width: 600px) {
