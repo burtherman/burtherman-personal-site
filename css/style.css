@@ -584,8 +584,8 @@ footer {
     opacity: 0;
     transform: translateY(-100%);
     transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1),
-                transform 0.4s cubic-bezier(0.4, 0, 0.2, 1),
-                border-color 0.3s ease;
+        transform 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+        border-color 0.3s ease;
 }
 
 .mobile-header-bar.visible {
@@ -988,16 +988,45 @@ button:focus:not(:focus-visible),
 }
 
 /* Stagger animation delay for cards */
-.bento-card:nth-child(1) { transition-delay: 0.1s; }
-.bento-card:nth-child(2) { transition-delay: 0.15s; }
-.bento-card:nth-child(3) { transition-delay: 0.2s; }
-.bento-card:nth-child(4) { transition-delay: 0.25s; }
-.bento-card:nth-child(5) { transition-delay: 0.3s; }
-.bento-card:nth-child(6) { transition-delay: 0.35s; }
-.bento-card:nth-child(7) { transition-delay: 0.4s; }
-.bento-card:nth-child(8) { transition-delay: 0.45s; }
-.bento-card:nth-child(9) { transition-delay: 0.5s; }
-.bento-card:nth-child(10) { transition-delay: 0.55s; }
+.bento-card:nth-child(1) {
+    transition-delay: 0.1s;
+}
+
+.bento-card:nth-child(2) {
+    transition-delay: 0.15s;
+}
+
+.bento-card:nth-child(3) {
+    transition-delay: 0.2s;
+}
+
+.bento-card:nth-child(4) {
+    transition-delay: 0.25s;
+}
+
+.bento-card:nth-child(5) {
+    transition-delay: 0.3s;
+}
+
+.bento-card:nth-child(6) {
+    transition-delay: 0.35s;
+}
+
+.bento-card:nth-child(7) {
+    transition-delay: 0.4s;
+}
+
+.bento-card:nth-child(8) {
+    transition-delay: 0.45s;
+}
+
+.bento-card:nth-child(9) {
+    transition-delay: 0.5s;
+}
+
+.bento-card:nth-child(10) {
+    transition-delay: 0.55s;
+}
 
 /* Remove delay after revealed */
 .bento-card.revealed:nth-child(n) {
@@ -1006,6 +1035,7 @@ button:focus:not(:focus-visible),
 
 /* Reduced Motion Support */
 @media (prefers-reduced-motion: reduce) {
+
     *,
     *::before,
     *::after {
@@ -1034,4 +1064,58 @@ button:focus:not(:focus-visible),
         transform: none !important;
         transition: none !important;
     }
+}
+
+/* Space Invaders Easter Egg */
+.retro-mode {
+    font-family: 'Courier New', Courier, monospace !important;
+}
+
+.retro-mode * {
+    border-radius: 0 !important;
+    filter: contrast(1.2) brightness(1.1) grayscale(1) sepia(1) hue-rotate(50deg) saturate(3);
+    image-rendering: pixelated;
+    /* Standard */
+}
+
+/* Specific fix for images to ensure they look pixelated */
+.retro-mode img {
+    image-rendering: -moz-crisp-edges;
+    image-rendering: pixelated;
+}
+
+.retro-mode canvas#invaders-canvas {
+    /* Allow filter to apply to canvas too for cohesive look */
+    /* filter: none; */
+    pointer-events: auto;
+}
+
+/* Alien Trigger Button */
+.invader-trigger {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    width: 40px;
+    height: 40px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    opacity: 0.3;
+    transition: opacity 0.3s;
+    z-index: 10000;
+    padding: 0;
+}
+
+.invader-trigger:hover {
+    opacity: 1;
+}
+
+.invader-trigger svg {
+    width: 100%;
+    height: 100%;
+    fill: var(--text-muted);
+}
+
+.invader-trigger:hover svg {
+    fill: var(--accent);
 }
