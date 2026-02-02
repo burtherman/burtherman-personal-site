@@ -1,11 +1,15 @@
 /**
  * Space Invaders Easter Egg
- * 
- * Instructions:
- * 1. Click the alien button to start.
- * 2. Use Left/Right Arrow keys to move.
- * 3. Spacebar to shoot.
- * 4. Refresh to reset.
+ *
+ * Desktop Controls:
+ * - Left/Right Arrow keys to move
+ * - Spacebar to shoot
+ * - ESC or Q to quit
+ *
+ * Mobile/Tablet Controls:
+ * - Drag finger to move ship
+ * - Tap to shoot
+ * - Tap on game over screen to quit
  */
 
 class SpaceInvadersGame {
@@ -40,32 +44,96 @@ class SpaceInvadersGame {
             alien2: null
         };
 
+        // Touch state
+        this.touch = {
+            active: false,
+            x: 0,
+            lastTap: 0
+        };
+
+        // Detect touch capability
+        this.isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+
+        // Bound event handlers (for proper cleanup)
+        this.boundHandlers = {
+            keydown: this.handleKeyDown.bind(this),
+            keyup: this.handleKeyUp.bind(this),
+            resize: this.handleResize.bind(this),
+            touchstart: this.handleTouchStart.bind(this),
+            touchmove: this.handleTouchMove.bind(this),
+            touchend: this.handleTouchEnd.bind(this)
+        };
+
         this.loadSprites();
-        this.initListeners();
     }
 
-    initListeners() {
-        // Trigger button logic will be handled outside, or we bind it here if passed
-        window.addEventListener('keydown', (e) => {
-            if (!this.active) return;
-            if (e.code === 'ArrowLeft' || e.code === 'ArrowRight' || e.code === 'Space') {
-                this.keys[e.code] = true;
-                e.preventDefault(); // Prevent scrolling
-            } else if (e.key === 'Escape' || e.key.toLowerCase() === 'q') {
-                this.stop();
-            }
-        });
+    addEventListeners() {
+        window.addEventListener('keydown', this.boundHandlers.keydown);
+        window.addEventListener('keyup', this.boundHandlers.keyup);
+        window.addEventListener('resize', this.boundHandlers.resize);
+        window.addEventListener('touchstart', this.boundHandlers.touchstart, { passive: false });
+        window.addEventListener('touchmove', this.boundHandlers.touchmove, { passive: false });
+        window.addEventListener('touchend', this.boundHandlers.touchend);
+    }
 
-        window.addEventListener('keyup', (e) => {
-            if (!this.active) return;
-            if (this.keys.hasOwnProperty(e.code)) {
-                this.keys[e.code] = false;
-            }
-        });
+    removeEventListeners() {
+        window.removeEventListener('keydown', this.boundHandlers.keydown);
+        window.removeEventListener('keyup', this.boundHandlers.keyup);
+        window.removeEventListener('resize', this.boundHandlers.resize);
+        window.removeEventListener('touchstart', this.boundHandlers.touchstart);
+        window.removeEventListener('touchmove', this.boundHandlers.touchmove);
+        window.removeEventListener('touchend', this.boundHandlers.touchend);
+    }
 
-        window.addEventListener('resize', () => {
-            if (this.active) this.resizeCanvas();
-        });
+    handleKeyDown(e) {
+        if (!this.active) return;
+        if (e.code === 'ArrowLeft' || e.code === 'ArrowRight' || e.code === 'Space') {
+            this.keys[e.code] = true;
+            e.preventDefault();
+        } else if (e.key === 'Escape' || e.key.toLowerCase() === 'q') {
+            this.stop();
+        }
+    }
+
+    handleKeyUp(e) {
+        if (!this.active) return;
+        if (Object.prototype.hasOwnProperty.call(this.keys, e.code)) {
+            this.keys[e.code] = false;
+        }
+    }
+
+    handleResize() {
+        if (this.active) this.resizeCanvas();
+    }
+
+    handleTouchStart(e) {
+        if (!this.active) return;
+        e.preventDefault();
+
+        if (this.gameOver) {
+            this.stop();
+            return;
+        }
+
+        this.touch.active = true;
+        this.touch.x = e.touches[0].clientX;
+
+        const now = Date.now();
+        if (now - this.touch.lastTap > 150) {
+            this.fireBullet();
+            this.touch.lastTap = now;
+        }
+    }
+
+    handleTouchMove(e) {
+        if (!this.active || !this.touch.active) return;
+        e.preventDefault();
+        this.touch.x = e.touches[0].clientX;
+    }
+
+    handleTouchEnd() {
+        if (!this.active) return;
+        this.touch.active = false;
     }
 
     loadSprites() {
@@ -82,6 +150,9 @@ class SpaceInvadersGame {
         this.active = true;
         this.gameOver = false;
 
+        // Add event listeners
+        this.addEventListeners();
+
         // 1. Setup Canvas
         this.canvas = document.createElement('canvas');
         this.canvas.id = 'invaders-canvas';
@@ -91,11 +162,10 @@ class SpaceInvadersGame {
         this.canvas.style.width = '100vw';
         this.canvas.style.height = '100vh';
         this.canvas.style.zIndex = '99999';
-        this.canvas.style.pointerEvents = 'none'; // Let clicks pass through if we want, but likely we want to capture keys
+        this.canvas.style.pointerEvents = 'none';
         document.body.appendChild(this.canvas);
 
         this.ctx = this.canvas.getContext('2d');
-        // Disable smoothing for retro feel
         this.ctx.imageSmoothingEnabled = false;
 
         this.resizeCanvas();
@@ -114,8 +184,21 @@ class SpaceInvadersGame {
 
         this.bullets = [];
         this.enemies = [];
-        this.generateEnemies();
-        this.scanDomTargets();
+        this.particles = [];
+        this.domTargets = [];
+        this.gameTime = 0;
+
+        // Wait for image to load before generating enemies (or use fallback)
+        const img = this.sprites.profile;
+        if (img.complete && img.naturalWidth > 0) {
+            this.generateEnemies();
+        } else {
+            img.onload = () => this.generateEnemies();
+            img.onerror = () => this.generateEnemies(); // Generate with fallback
+        }
+
+        // Scan DOM targets after a brief delay to ensure scroll has completed
+        setTimeout(() => this.scanDomTargets(), 100);
 
         // 4. Start Loop
         this.lastTime = performance.now();
@@ -124,16 +207,33 @@ class SpaceInvadersGame {
 
     stop() {
         this.active = false;
+
+        // Remove event listeners to prevent memory leaks
+        this.removeEventListeners();
+
+        // Reset key states
+        this.keys.ArrowLeft = false;
+        this.keys.ArrowRight = false;
+        this.keys.Space = false;
+        this.touch.active = false;
+
         if (this.canvas) this.canvas.remove();
+        this.canvas = null;
+        this.ctx = null;
+        this.scanlinePattern = null; // Reset pattern for next game
         document.body.classList.remove('retro-mode');
+
         // Restore trigger button
         const trigger = document.getElementById('startInvaders');
         if (trigger) trigger.style.display = 'block';
 
         // Restore DOM elements
         this.domTargets.forEach(t => {
-            t.element.style.visibility = 'visible';
+            if (t.element) {
+                t.element.style.visibility = 'visible';
+            }
         });
+        this.domTargets = [];
     }
 
     resizeCanvas() {
@@ -157,14 +257,15 @@ class SpaceInvadersGame {
         const startX = (this.width - gridWidth) / 2;
         const startY = 80;
 
-        // Ensure image is loaded (if not, we might need a fallback or wait, 
-        // but for now assume it caches quickly or draws black until loaded)
-
-        // Calculate source image slice size
+        // Calculate source image slice size (use fallback if image not loaded)
         const img = this.sprites.profile;
-        // We assume square-ish image for simplicity or crop it
-        const srcW = img.width / cols;
-        const srcH = img.height / rows;
+        const imgWidth = img.naturalWidth || img.width || 300;
+        const imgHeight = img.naturalHeight || img.height || 300;
+        const srcW = imgWidth / cols;
+        const srcH = imgHeight / rows;
+
+        // Clear existing enemies before generating new ones
+        this.enemies = [];
 
         for (let r = 0; r < rows; r++) {
             for (let c = 0; c < cols; c++) {
@@ -175,7 +276,6 @@ class SpaceInvadersGame {
                     height: enemyHeight,
                     type: 'profile_part',
                     alive: true,
-                    // Store source coordinates for drawing
                     srcX: c * srcW,
                     srcY: r * srcH,
                     srcW: srcW,
@@ -186,14 +286,24 @@ class SpaceInvadersGame {
     }
 
     scanDomTargets() {
-        // Find visible elements to shoot
-        const selector = 'h1, h2, h3, p, img, a, button, .bento-card';
+        // Clear existing targets
+        this.domTargets = [];
+
+        // Find visible elements to shoot (exclude game UI elements)
+        const selector = 'h1, h2, h3, p, img:not([src*="data:"]), a, button:not(#startInvaders):not(#backToTop), .bento-card';
         const elements = document.querySelectorAll(selector);
 
         elements.forEach(el => {
+            // Skip elements that are part of the game or hidden
+            if (el.closest('#invaders-canvas') || el.closest('.invader-trigger')) {
+                return;
+            }
+
             const rect = el.getBoundingClientRect();
-            // Check if visible roughly
-            if (rect.width > 0 && rect.height > 0 && rect.top >= 0 && rect.bottom <= this.height) {
+            // Check if visible and within viewport
+            if (rect.width > 10 && rect.height > 10 &&
+                rect.top >= 0 && rect.bottom <= this.height &&
+                rect.left >= 0 && rect.right <= this.width) {
                 this.domTargets.push({
                     element: el,
                     rect: rect,
@@ -204,9 +314,23 @@ class SpaceInvadersGame {
     }
 
     update(dt) {
-        // Player Movement
+        // Track game time for UI hints
+        this.gameTime += dt;
+
+        // Player Movement - Keyboard
         if (this.keys.ArrowLeft) this.player.x -= this.player.speed * dt;
         if (this.keys.ArrowRight) this.player.x += this.player.speed * dt;
+
+        // Player Movement - Touch (ship follows finger x position)
+        if (this.touch.active) {
+            const targetX = this.touch.x - this.player.width / 2;
+            const diff = targetX - this.player.x;
+            const moveSpeed = this.player.speed * 1.5 * dt;
+
+            if (Math.abs(diff) > 5) {
+                this.player.x += Math.sign(diff) * Math.min(Math.abs(diff), moveSpeed);
+            }
+        }
 
         // Clamp Player
         this.player.x = Math.max(0, Math.min(this.width - this.player.width, this.player.x));
@@ -217,11 +341,12 @@ class SpaceInvadersGame {
             this.fireBullet();
         }
 
-        // Bullets
-        this.bullets.forEach((b, i) => {
+        // Bullets - update positions
+        this.bullets.forEach(b => {
             b.y -= b.speed * dt;
-            if (b.y < 0) this.bullets.splice(i, 1);
         });
+        // Remove off-screen bullets
+        this.bullets = this.bullets.filter(b => b.y >= 0);
 
         // Collision Detection
         this.checkCollisions();
@@ -248,13 +373,14 @@ class SpaceInvadersGame {
             });
         }
 
-        // Particles
-        this.particles.forEach((p, i) => {
+        // Particles - update positions
+        this.particles.forEach(p => {
             p.life -= dt;
             p.x += p.vx * dt;
             p.y += p.vy * dt;
-            if (p.life <= 0) this.particles.splice(i, 1);
         });
+        // Remove dead particles
+        this.particles = this.particles.filter(p => p.life > 0);
 
         // Game Over Check: Player Collision
         if (!this.gameOver) {
@@ -409,11 +535,18 @@ class SpaceInvadersGame {
             this.ctx.globalAlpha = 1.0;
         });
 
-        // Scanlines Overlay (Optional visual flair)
-        this.ctx.fillStyle = "rgba(0, 20, 0, 0.1)";
-        for (let i = 0; i < this.height; i += 4) {
-            this.ctx.fillRect(0, i, this.width, 1);
+        // Scanlines Overlay (using cached pattern for performance)
+        if (!this.scanlinePattern) {
+            const patternCanvas = document.createElement('canvas');
+            patternCanvas.width = 1;
+            patternCanvas.height = 4;
+            const pCtx = patternCanvas.getContext('2d');
+            pCtx.fillStyle = 'rgba(0, 20, 0, 0.1)';
+            pCtx.fillRect(0, 0, 1, 1);
+            this.scanlinePattern = this.ctx.createPattern(patternCanvas, 'repeat');
         }
+        this.ctx.fillStyle = this.scanlinePattern;
+        this.ctx.fillRect(0, 0, this.width, this.height);
 
         // Draw Game Over Screen
         if (this.gameOver) {
@@ -431,7 +564,18 @@ class SpaceInvadersGame {
 
             this.ctx.fillStyle = '#aaaaaa';
             this.ctx.font = '18px "Courier New", monospace';
-            this.ctx.fillText("Press 'ESC' or 'Q' to return", this.width / 2, this.height / 2 + 60);
+            const exitText = this.isTouchDevice ? "Tap anywhere to return" : "Press 'ESC' or 'Q' to return";
+            this.ctx.fillText(exitText, this.width / 2, this.height / 2 + 60);
+        }
+
+        // Show touch instructions briefly at game start (first 3 seconds)
+        if (this.isTouchDevice && !this.gameOver && this.gameTime < 3) {
+            this.ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+            this.ctx.fillRect(0, this.height - 80, this.width, 80);
+            this.ctx.fillStyle = '#22d3ee';
+            this.ctx.font = '16px "Courier New", monospace';
+            this.ctx.textAlign = 'center';
+            this.ctx.fillText("DRAG to move • TAP to shoot", this.width / 2, this.height - 45);
         }
     }
 
