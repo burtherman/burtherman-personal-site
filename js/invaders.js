@@ -391,8 +391,8 @@ class SpaceInvadersGame {
                 }
             });
 
-            // Win Condition: All enemies dead
-            if (this.enemies.every(e => !e.alive)) {
+            // Win Condition: All enemies dead (must have enemies first)
+            if (this.enemies.length > 0 && this.enemies.every(e => !e.alive)) {
                 this.triggerGameOver(true); // Win
             }
         }
