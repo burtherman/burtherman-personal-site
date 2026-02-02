@@ -1,11 +1,15 @@
 /**
  * Space Invaders Easter Egg
- * 
- * Instructions:
- * 1. Click the alien button to start.
- * 2. Use Left/Right Arrow keys to move.
- * 3. Spacebar to shoot.
- * 4. Refresh to reset.
+ *
+ * Desktop Controls:
+ * - Left/Right Arrow keys to move
+ * - Spacebar to shoot
+ * - ESC or Q to quit
+ *
+ * Mobile/Tablet Controls:
+ * - Drag finger to move ship
+ * - Tap to shoot
+ * - Tap on game over screen to quit
  */
 
 class SpaceInvadersGame {
@@ -40,6 +44,16 @@ class SpaceInvadersGame {
             alien2: null
         };
 
+        // Touch state
+        this.touch = {
+            active: false,
+            x: 0,
+            lastTap: 0
+        };
+
+        // Detect touch capability
+        this.isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+
         this.loadSprites();
         this.initListeners();
     }
@@ -66,6 +80,43 @@ class SpaceInvadersGame {
         window.addEventListener('resize', () => {
             if (this.active) this.resizeCanvas();
         });
+
+        // Touch controls for mobile/tablet
+        window.addEventListener('touchstart', (e) => {
+            if (!this.active) return;
+            e.preventDefault();
+
+            // Tap to exit on game over
+            if (this.gameOver) {
+                this.stop();
+                return;
+            }
+
+            this.touch.active = true;
+            this.handleTouch(e.touches[0]);
+
+            // Tap to shoot (with cooldown)
+            const now = Date.now();
+            if (now - this.touch.lastTap > 150) {
+                this.fireBullet();
+                this.touch.lastTap = now;
+            }
+        }, { passive: false });
+
+        window.addEventListener('touchmove', (e) => {
+            if (!this.active || !this.touch.active) return;
+            e.preventDefault();
+            this.handleTouch(e.touches[0]);
+        }, { passive: false });
+
+        window.addEventListener('touchend', (e) => {
+            if (!this.active) return;
+            this.touch.active = false;
+        });
+    }
+
+    handleTouch(touch) {
+        this.touch.x = touch.clientX;
     }
 
     loadSprites() {
@@ -114,6 +165,8 @@ class SpaceInvadersGame {
 
         this.bullets = [];
         this.enemies = [];
+        this.particles = [];
+        this.gameTime = 0;
         this.generateEnemies();
         this.scanDomTargets();
 
@@ -204,9 +257,23 @@ class SpaceInvadersGame {
     }
 
     update(dt) {
-        // Player Movement
+        // Track game time for UI hints
+        this.gameTime += dt;
+
+        // Player Movement - Keyboard
         if (this.keys.ArrowLeft) this.player.x -= this.player.speed * dt;
         if (this.keys.ArrowRight) this.player.x += this.player.speed * dt;
+
+        // Player Movement - Touch (ship follows finger x position)
+        if (this.touch.active) {
+            const targetX = this.touch.x - this.player.width / 2;
+            const diff = targetX - this.player.x;
+            const moveSpeed = this.player.speed * 1.5 * dt;
+
+            if (Math.abs(diff) > 5) {
+                this.player.x += Math.sign(diff) * Math.min(Math.abs(diff), moveSpeed);
+            }
+        }
 
         // Clamp Player
         this.player.x = Math.max(0, Math.min(this.width - this.player.width, this.player.x));
@@ -217,11 +284,12 @@ class SpaceInvadersGame {
             this.fireBullet();
         }
 
-        // Bullets
-        this.bullets.forEach((b, i) => {
+        // Bullets - update positions
+        this.bullets.forEach(b => {
             b.y -= b.speed * dt;
-            if (b.y < 0) this.bullets.splice(i, 1);
         });
+        // Remove off-screen bullets
+        this.bullets = this.bullets.filter(b => b.y >= 0);
 
         // Collision Detection
         this.checkCollisions();
@@ -248,13 +316,14 @@ class SpaceInvadersGame {
             });
         }
 
-        // Particles
-        this.particles.forEach((p, i) => {
+        // Particles - update positions
+        this.particles.forEach(p => {
             p.life -= dt;
             p.x += p.vx * dt;
             p.y += p.vy * dt;
-            if (p.life <= 0) this.particles.splice(i, 1);
         });
+        // Remove dead particles
+        this.particles = this.particles.filter(p => p.life > 0);
 
         // Game Over Check: Player Collision
         if (!this.gameOver) {
@@ -431,7 +500,18 @@ class SpaceInvadersGame {
 
             this.ctx.fillStyle = '#aaaaaa';
             this.ctx.font = '18px "Courier New", monospace';
-            this.ctx.fillText("Press 'ESC' or 'Q' to return", this.width / 2, this.height / 2 + 60);
+            const exitText = this.isTouchDevice ? "Tap anywhere to return" : "Press 'ESC' or 'Q' to return";
+            this.ctx.fillText(exitText, this.width / 2, this.height / 2 + 60);
+        }
+
+        // Show touch instructions briefly at game start (first 3 seconds)
+        if (this.isTouchDevice && !this.gameOver && this.gameTime < 3) {
+            this.ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+            this.ctx.fillRect(0, this.height - 80, this.width, 80);
+            this.ctx.fillStyle = '#22d3ee';
+            this.ctx.font = '16px "Courier New", monospace';
+            this.ctx.textAlign = 'center';
+            this.ctx.fillText("DRAG to move • TAP to shoot", this.width / 2, this.height - 45);
         }
     }
 
