@@ -314,12 +314,13 @@ class SpaceInvadersGame {
     }
 
     generateEnemies() {
-        // Grid configuration
-        const rows = 6;
-        const cols = 6;
-        const enemyWidth = 50;
-        const enemyHeight = 50;
-        const padding = 10;
+        // Adapt grid to screen size - grid should take at most 60% of width
+        const maxGridWidth = this.width * 0.6;
+        const cols = this.width < 500 ? 4 : 6;
+        const rows = this.width < 500 ? 5 : 6;
+        const padding = this.width < 500 ? 6 : 10;
+        const enemyWidth = Math.floor(Math.min(50, (maxGridWidth - (cols - 1) * padding) / cols));
+        const enemyHeight = enemyWidth;
 
         const gridWidth = (cols * enemyWidth) + ((cols - 1) * padding);
         const startX = (this.width - gridWidth) / 2;
