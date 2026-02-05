@@ -267,8 +267,9 @@ class SpaceInvadersGame {
             img.onerror = () => this.generateEnemies();
         }
 
-        // Init audio (but don't start rhythm yet)
+        // Init audio and play ready arpeggio
         this.initAudio();
+        this.playReadySound();
 
         // Start render loop (ready phase draws its own screen)
         this.lastTime = performance.now();
@@ -1026,6 +1027,36 @@ class SpaceInvadersGame {
             // Audio not supported
             this.audioCtx = null;
         }
+    }
+
+    playReadySound() {
+        if (!this.audioCtx) return;
+
+        // Ascending arpeggio - C major through two octaves
+        const notes = [262, 330, 392, 523, 659, 784, 1047];
+        const noteLength = 0.12;
+        const gap = 0.02;
+        const now = this.audioCtx.currentTime;
+
+        notes.forEach((freq, i) => {
+            const osc = this.audioCtx.createOscillator();
+            const gain = this.audioCtx.createGain();
+
+            osc.connect(gain);
+            gain.connect(this.audioCtx.destination);
+
+            osc.type = 'square';
+            osc.frequency.setValueAtTime(freq, now);
+
+            const start = now + i * (noteLength + gap);
+            gain.gain.setValueAtTime(0, start);
+            gain.gain.linearRampToValueAtTime(0.15, start + 0.01);
+            gain.gain.setValueAtTime(0.15, start + noteLength - 0.03);
+            gain.gain.linearRampToValueAtTime(0, start + noteLength);
+
+            osc.start(start);
+            osc.stop(start + noteLength);
+        });
     }
 
     playShootSound() {
