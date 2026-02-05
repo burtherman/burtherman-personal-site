@@ -23,12 +23,19 @@ class SpaceInvadersGame {
         // Game State
         this.player = null;
         this.bullets = [];
+        this.enemyBullets = []; // Bullets fired by enemies
+        this.lastEnemyShot = 0; // Time tracking for enemy fire rate
         this.particles = []; // Explosions
         this.enemies = []; // Classic aliens
         this.domTargets = []; // Website elements to destroy
         this.score = 0;
+        this.level = 1;
+        this.levelStartTime = 0; // For showing level announcement
         this.enemyDirection = 1; // 1 for right, -1 for left
-        this.enemySpeed = 100; // Pixels per second
+        this.baseEnemySpeed = 100; // Base pixels per second
+        this.baseFireRate = 1.0; // Base seconds between enemy shots
+        this.enemySpeed = 100;
+        this.enemyFireRate = 1.0;
         this.enemyDropDistance = 30;
         this.lastTime = 0;
         this.keys = {
@@ -53,6 +60,19 @@ class SpaceInvadersGame {
 
         // Detect touch capability
         this.isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+
+        // High score state
+        this.highScores = this.loadHighScores();
+        this.enteringName = false;
+        this.playerName = ['A', 'A', 'A'];
+        this.nameIndex = 0; // Which character is being edited (0-2)
+        this.scoreSaved = false;
+
+        // Audio
+        this.audioCtx = null;
+        this.rhythmInterval = null;
+        this.rhythmNote = 0; // Alternates between 0 and 1
+        this.baseRhythmSpeed = 500; // ms between notes at level 1
 
         // Bound event handlers (for proper cleanup)
         this.boundHandlers = {
@@ -87,11 +107,26 @@ class SpaceInvadersGame {
 
     handleKeyDown(e) {
         if (!this.active) return;
+
+        // Handle name entry when game is over
+        if (this.enteringName) {
+            if (this.handleNameEntry(e.key)) {
+                e.preventDefault();
+                return;
+            }
+        }
+
         if (e.code === 'ArrowLeft' || e.code === 'ArrowRight' || e.code === 'Space') {
             this.keys[e.code] = true;
             e.preventDefault();
         } else if (e.key === 'Escape' || e.key.toLowerCase() === 'q') {
-            this.stop();
+            if (this.enteringName) {
+                // Skip name entry
+                this.enteringName = false;
+                this.scoreSaved = true;
+            } else {
+                this.stop();
+            }
         }
     }
 
@@ -111,7 +146,10 @@ class SpaceInvadersGame {
         e.preventDefault();
 
         if (this.gameOver) {
-            this.stop();
+            // Don't exit during name entry - wait until they're done
+            if (!this.enteringName) {
+                this.stop();
+            }
             return;
         }
 
@@ -150,6 +188,10 @@ class SpaceInvadersGame {
         this.active = true;
         this.gameOver = false;
 
+        // Hide the trigger button during gameplay
+        const trigger = document.getElementById('startInvaders');
+        if (trigger) trigger.style.display = 'none';
+
         // Add event listeners
         this.addEventListeners();
 
@@ -183,10 +225,21 @@ class SpaceInvadersGame {
         };
 
         this.bullets = [];
+        this.enemyBullets = [];
+        this.lastEnemyShot = 0;
         this.enemies = [];
         this.particles = [];
         this.domTargets = [];
         this.gameTime = 0;
+        this.score = 0;
+        this.level = 1;
+        this.levelStartTime = 0;
+        this.enteringName = false;
+        this.scoreSaved = false;
+        this.highScores = this.loadHighScores(); // Refresh high scores
+
+        // Set difficulty for level 1
+        this.applyLevelDifficulty();
 
         // Wait for image to load before generating enemies (or use fallback)
         const img = this.sprites.profile;
@@ -200,13 +253,20 @@ class SpaceInvadersGame {
         // Scan DOM targets after a brief delay to ensure scroll has completed
         setTimeout(() => this.scanDomTargets(), 100);
 
-        // 4. Start Loop
+        // 4. Initialize Audio and start rhythm
+        this.initAudio();
+        this.startRhythm();
+
+        // 5. Start Loop
         this.lastTime = performance.now();
         requestAnimationFrame((t) => this.loop(t));
     }
 
     stop() {
         this.active = false;
+
+        // Stop audio
+        this.stopAudio();
 
         // Remove event listeners to prevent memory leaks
         this.removeEventListeners();
@@ -225,7 +285,15 @@ class SpaceInvadersGame {
 
         // Restore trigger button
         const trigger = document.getElementById('startInvaders');
-        if (trigger) trigger.style.display = 'block';
+        if (trigger) {
+            trigger.style.display = '';
+            trigger.style.visibility = '';
+            trigger.style.opacity = '';
+            // Re-trigger animation by removing and re-adding the class
+            trigger.classList.remove('invader-trigger');
+            void trigger.offsetWidth; // Force reflow
+            trigger.classList.add('invader-trigger');
+        }
 
         // Restore DOM elements
         this.domTargets.forEach(t => {
@@ -373,6 +441,43 @@ class SpaceInvadersGame {
             });
         }
 
+        // Enemy Shooting (rate varies by level)
+        this.lastEnemyShot += dt;
+        if (this.lastEnemyShot >= this.enemyFireRate && !this.gameOver) {
+            const aliveEnemies = this.enemies.filter(e => e.alive);
+            if (aliveEnemies.length > 0) {
+                const shooter = aliveEnemies[Math.floor(Math.random() * aliveEnemies.length)];
+                this.enemyBullets.push({
+                    x: shooter.x + shooter.width / 2,
+                    y: shooter.y + shooter.height,
+                    width: 4,
+                    height: 12,
+                    speed: 300
+                });
+                this.lastEnemyShot = 0;
+            }
+        }
+
+        // Update enemy bullets
+        this.enemyBullets.forEach(b => {
+            b.y += b.speed * dt;
+        });
+        // Remove off-screen enemy bullets
+        this.enemyBullets = this.enemyBullets.filter(b => b.y < this.height);
+
+        // Check enemy bullets hitting player
+        if (!this.gameOver) {
+            for (let i = this.enemyBullets.length - 1; i >= 0; i--) {
+                const b = this.enemyBullets[i];
+                if (this.rectIntersect(b, this.player)) {
+                    this.enemyBullets.splice(i, 1);
+                    this.createExplosion(this.player.x + this.player.width / 2, this.player.y, '#22d3ee', 50);
+                    this.triggerGameOver();
+                    break;
+                }
+            }
+        }
+
         // Particles - update positions
         this.particles.forEach(p => {
             p.life -= dt;
@@ -387,21 +492,57 @@ class SpaceInvadersGame {
             this.enemies.forEach(e => {
                 if (e.alive && this.rectIntersect(e, this.player)) {
                     this.createExplosion(this.player.x, this.player.y, '#22d3ee', 50);
-                    this.triggerGameOver(false); // Loss
+                    this.triggerGameOver();
                 }
             });
 
-            // Win Condition: All enemies dead (must have enemies first)
+            // Win Condition: All enemies dead - advance to next level
             if (this.enemies.length > 0 && this.enemies.every(e => !e.alive)) {
-                this.triggerGameOver(true); // Win
+                this.startNextLevel();
             }
         }
     }
 
-    triggerGameOver(win) {
+    applyLevelDifficulty() {
+        // Increase speed by 20% per level, fire rate decreases (faster shooting)
+        this.enemySpeed = this.baseEnemySpeed * (1 + (this.level - 1) * 0.2);
+        this.enemyFireRate = Math.max(0.2, this.baseFireRate - (this.level - 1) * 0.15);
+        this.enemyDirection = 1; // Reset direction
+    }
+
+    startNextLevel() {
+        this.level++;
+        this.levelStartTime = this.gameTime;
+
+        // Clear bullets
+        this.bullets = [];
+        this.enemyBullets = [];
+        this.lastEnemyShot = 0;
+
+        // Apply new difficulty
+        this.applyLevelDifficulty();
+
+        // Regenerate enemies
+        this.generateEnemies();
+
+        // Bonus points for completing a level
+        this.score += 500 * (this.level - 1);
+    }
+
+    triggerGameOver() {
         this.gameOver = true;
-        this.win = win;
-        // Stop player?
+        this.stopRhythm();
+        this.playGameOverSound();
+
+        // Check if this is a high score
+        if (this.score > 0 && this.isHighScore(this.score)) {
+            this.enteringName = true;
+            this.playerName = ['A', 'A', 'A'];
+            this.nameIndex = 0;
+            this.scoreSaved = false;
+        } else {
+            this.scoreSaved = true; // No name entry needed
+        }
     }
 
     fireBullet() {
@@ -414,7 +555,7 @@ class SpaceInvadersGame {
             speed: 600
         });
 
-        // Pew sound? (Optional)
+        this.playShootSound();
     }
 
     checkCollisions() {
@@ -428,7 +569,9 @@ class SpaceInvadersGame {
                 if (e.alive && this.rectIntersect(b, e)) {
                     e.alive = false;
                     hit = true;
+                    this.score += 100;
                     this.createExplosion(e.x + e.width / 2, e.y + e.height / 2, '#00ff00');
+                    this.playExplosionSound();
                     break;
                 }
             }
@@ -445,6 +588,7 @@ class SpaceInvadersGame {
                         t.alive = false;
                         t.element.style.visibility = 'hidden'; // Hide from DOM
                         hit = true;
+                        this.score += 50;
                         this.createExplosion(
                             t.rect.left + t.rect.width / 2,
                             t.rect.top + t.rect.height / 2,
@@ -500,8 +644,28 @@ class SpaceInvadersGame {
     draw() {
         this.ctx.clearRect(0, 0, this.width, this.height);
 
+        // Draw Score (bitmap style)
+        this.ctx.save();
+        this.ctx.font = 'bold 32px "Courier New", monospace';
+        this.ctx.textAlign = 'left';
+        this.ctx.textBaseline = 'top';
+        // Shadow for depth
+        this.ctx.fillStyle = '#005500';
+        this.ctx.fillText(`SCORE ${String(this.score).padStart(6, '0')}`, 22, 22);
+        // Main text
+        this.ctx.fillStyle = '#00ff00';
+        this.ctx.fillText(`SCORE ${String(this.score).padStart(6, '0')}`, 20, 20);
+
+        // Draw Level (top right)
+        this.ctx.textAlign = 'right';
+        this.ctx.fillStyle = '#005555';
+        this.ctx.fillText(`LEVEL ${this.level}`, this.width - 18, 22);
+        this.ctx.fillStyle = '#22d3ee';
+        this.ctx.fillText(`LEVEL ${this.level}`, this.width - 20, 20);
+        this.ctx.restore();
+
         // Draw Player
-        if (!this.gameOver || this.win) {
+        if (!this.gameOver) {
             this.ctx.fillStyle = '#00ff00';
             this.drawSprite(this.player.x, this.player.y, 40, 24, 'player');
         }
@@ -521,9 +685,15 @@ class SpaceInvadersGame {
             }
         });
 
-        // Draw Bullets
-        this.ctx.fillStyle = '#ff0000';
+        // Draw Player Bullets
+        this.ctx.fillStyle = '#00ff00';
         this.bullets.forEach(b => {
+            this.ctx.fillRect(b.x, b.y, b.width, b.height);
+        });
+
+        // Draw Enemy Bullets
+        this.ctx.fillStyle = '#ff0000';
+        this.enemyBullets.forEach(b => {
             this.ctx.fillRect(b.x, b.y, b.width, b.height);
         });
 
@@ -548,34 +718,130 @@ class SpaceInvadersGame {
         this.ctx.fillStyle = this.scanlinePattern;
         this.ctx.fillRect(0, 0, this.width, this.height);
 
+        // Draw Level Announcement (shows for 2 seconds when level starts)
+        const timeSinceLevelStart = this.gameTime - this.levelStartTime;
+        if (this.level > 1 && timeSinceLevelStart < 2) {
+            const alpha = timeSinceLevelStart > 1.5 ? 1 - (timeSinceLevelStart - 1.5) * 2 : 1;
+
+            this.ctx.globalAlpha = alpha;
+            this.ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+            this.ctx.fillRect(this.width / 2 - 150, this.height / 2 - 50, 300, 100);
+
+            this.ctx.fillStyle = '#ffff00';
+            this.ctx.font = 'bold 48px "Courier New", monospace';
+            this.ctx.textAlign = 'center';
+            this.ctx.textBaseline = 'middle';
+            this.ctx.fillText(`LEVEL ${this.level}`, this.width / 2, this.height / 2);
+            this.ctx.globalAlpha = 1;
+        }
+
         // Draw Game Over Screen
         if (this.gameOver) {
             this.ctx.fillStyle = 'rgba(0, 0, 0, 0.85)';
             this.ctx.fillRect(0, 0, this.width, this.height);
 
-            this.ctx.fillStyle = this.win ? '#00ff00' : '#ff0000';
-            this.ctx.font = 'bold 48px "Courier New", monospace';
             this.ctx.textAlign = 'center';
             this.ctx.textBaseline = 'middle';
 
-            // User requested "Game Over" for both win and loss
-            const title = "GAME OVER";
-            this.ctx.fillText(title, this.width / 2, this.height / 2 - 40);
+            // Game Over title
+            this.ctx.fillStyle = '#ff0000';
+            this.ctx.font = 'bold 48px "Courier New", monospace';
+            this.ctx.fillText("GAME OVER", this.width / 2, this.height / 2 - 140);
 
-            this.ctx.fillStyle = '#aaaaaa';
-            this.ctx.font = '18px "Courier New", monospace';
-            const exitText = this.isTouchDevice ? "Tap anywhere to return" : "Press 'ESC' or 'Q' to return";
-            this.ctx.fillText(exitText, this.width / 2, this.height / 2 + 60);
+            // Final Score and Level
+            this.ctx.fillStyle = '#ffffff';
+            this.ctx.font = 'bold 32px "Courier New", monospace';
+            this.ctx.fillText(`SCORE: ${this.score}`, this.width / 2, this.height / 2 - 85);
+            this.ctx.fillStyle = '#22d3ee';
+            this.ctx.font = '24px "Courier New", monospace';
+            this.ctx.fillText(`LEVEL ${this.level}`, this.width / 2, this.height / 2 - 50);
+
+            if (this.enteringName) {
+                // Name entry UI
+                this.ctx.fillStyle = '#ffff00';
+                this.ctx.font = '20px "Courier New", monospace';
+                this.ctx.fillText("NEW HIGH SCORE!", this.width / 2, this.height / 2 - 30);
+
+                this.ctx.fillStyle = '#aaaaaa';
+                this.ctx.font = '16px "Courier New", monospace';
+                this.ctx.fillText("ENTER YOUR NAME", this.width / 2, this.height / 2);
+
+                // Draw the 3 letters
+                this.ctx.font = 'bold 36px "Courier New", monospace';
+                const letterSpacing = 50;
+                const startX = this.width / 2 - letterSpacing;
+
+                for (let i = 0; i < 3; i++) {
+                    const x = startX + i * letterSpacing;
+                    const y = this.height / 2 + 50;
+
+                    // Highlight current letter
+                    if (i === this.nameIndex) {
+                        this.ctx.fillStyle = '#00ff00';
+                        // Draw arrows
+                        this.ctx.font = '18px "Courier New", monospace';
+                        this.ctx.fillText('▲', x, y - 30);
+                        this.ctx.fillText('▼', x, y + 35);
+                        this.ctx.font = 'bold 36px "Courier New", monospace';
+                    } else {
+                        this.ctx.fillStyle = '#ffffff';
+                    }
+                    this.ctx.fillText(this.playerName[i], x, y);
+                }
+
+                this.ctx.fillStyle = '#aaaaaa';
+                this.ctx.font = '14px "Courier New", monospace';
+                this.ctx.fillText("← → to select • ↑ ↓ to change • ENTER to submit", this.width / 2, this.height / 2 + 100);
+            } else {
+                // Show high scores
+                this.ctx.fillStyle = '#ffff00';
+                this.ctx.font = 'bold 28px "Courier New", monospace';
+                this.ctx.fillText("HIGH SCORES", this.width / 2, this.height / 2 - 20);
+
+                this.ctx.font = 'bold 24px "Courier New", monospace';
+                const scores = this.highScores.length > 0 ? this.highScores : [{ name: '---', score: 0 }];
+
+                scores.slice(0, 5).forEach((entry, i) => {
+                    const y = this.height / 2 + 25 + i * 36;
+                    const isCurrentScore = this.scoreSaved && entry.score === this.score;
+                    this.ctx.fillStyle = isCurrentScore ? '#00ff00' : '#ffffff';
+                    this.ctx.fillText(`${i + 1}. ${entry.name}  ${String(entry.score).padStart(6, '0')}`, this.width / 2, y);
+                });
+
+                // Exit instructions
+                this.ctx.fillStyle = '#aaaaaa';
+                this.ctx.font = '18px "Courier New", monospace';
+                const exitText = this.isTouchDevice ? "Tap anywhere to return" : "Press 'ESC' or 'Q' to return";
+                this.ctx.fillText(exitText, this.width / 2, this.height / 2 + 220);
+            }
         }
 
-        // Show touch instructions briefly at game start (first 3 seconds)
-        if (this.isTouchDevice && !this.gameOver && this.gameTime < 3) {
-            this.ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
-            this.ctx.fillRect(0, this.height - 80, this.width, 80);
-            this.ctx.fillStyle = '#22d3ee';
-            this.ctx.font = '16px "Courier New", monospace';
+        // Show instructions briefly at game start (first 4 seconds)
+        if (!this.gameOver && this.gameTime < 4) {
+            // Fade out during the last second
+            const alpha = this.gameTime > 3 ? 1 - (this.gameTime - 3) : 1;
+
+            // Semi-transparent backdrop centered on screen
+            const boxWidth = 400;
+            const boxHeight = 60;
+            const boxX = (this.width - boxWidth) / 2;
+            const boxY = (this.height - boxHeight) / 2;
+
+            this.ctx.fillStyle = `rgba(0, 0, 0, ${0.7 * alpha})`;
+            this.ctx.fillRect(boxX, boxY, boxWidth, boxHeight);
+
+            this.ctx.globalAlpha = alpha;
+            this.ctx.fillStyle = '#ffffff';
+            this.ctx.font = 'bold 18px "Courier New", monospace';
             this.ctx.textAlign = 'center';
-            this.ctx.fillText("DRAG to move • TAP to shoot", this.width / 2, this.height - 45);
+            this.ctx.textBaseline = 'middle';
+
+            if (this.isTouchDevice) {
+                this.ctx.fillText("DRAG to move • TAP to shoot", this.width / 2, this.height / 2);
+            } else {
+                this.ctx.fillText("← → to move • SPACE to shoot • ESC to quit", this.width / 2, this.height / 2);
+            }
+            this.ctx.globalAlpha = 1;
         }
     }
 
@@ -591,6 +857,205 @@ class SpaceInvadersGame {
             this.ctx.lineTo(x + w / 2, y + h - 5);
             this.ctx.lineTo(x, y + h);
             this.ctx.fill();
+        }
+    }
+
+    // High Score Methods
+    loadHighScores() {
+        try {
+            const stored = localStorage.getItem('spaceInvadersHighScores');
+            return stored ? JSON.parse(stored) : [];
+        } catch (e) {
+            return [];
+        }
+    }
+
+    saveHighScores() {
+        try {
+            localStorage.setItem('spaceInvadersHighScores', JSON.stringify(this.highScores));
+        } catch (e) {
+            // Storage might be full or disabled
+        }
+    }
+
+    isHighScore(score) {
+        if (this.highScores.length < 5) return true;
+        return score > this.highScores[this.highScores.length - 1].score;
+    }
+
+    addHighScore(name, score) {
+        this.highScores.push({ name, score });
+        this.highScores.sort((a, b) => b.score - a.score);
+        this.highScores = this.highScores.slice(0, 5); // Keep top 5
+        this.saveHighScores();
+    }
+
+    handleNameEntry(key) {
+        if (!this.enteringName) return false;
+
+        // Character set: A-Z plus space
+        const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ ';
+
+        if (key === 'ArrowUp') {
+            // Cycle character up
+            let char = this.playerName[this.nameIndex];
+            let idx = chars.indexOf(char);
+            idx = (idx + 1) % chars.length;
+            this.playerName[this.nameIndex] = chars[idx];
+            return true;
+        } else if (key === 'ArrowDown') {
+            // Cycle character down
+            let char = this.playerName[this.nameIndex];
+            let idx = chars.indexOf(char);
+            idx = (idx - 1 + chars.length) % chars.length;
+            this.playerName[this.nameIndex] = chars[idx];
+            return true;
+        } else if (key === 'ArrowRight') {
+            this.nameIndex = Math.min(2, this.nameIndex + 1);
+            return true;
+        } else if (key === 'ArrowLeft') {
+            this.nameIndex = Math.max(0, this.nameIndex - 1);
+            return true;
+        } else if (key === 'Enter') {
+            // Submit name
+            this.addHighScore(this.playerName.join(''), this.score);
+            this.enteringName = false;
+            this.scoreSaved = true;
+            return true;
+        }
+        return false;
+    }
+
+    // Audio Methods
+    initAudio() {
+        if (this.audioCtx) return;
+        try {
+            this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        } catch (e) {
+            // Audio not supported
+            this.audioCtx = null;
+        }
+    }
+
+    playShootSound() {
+        if (!this.audioCtx) return;
+
+        const osc = this.audioCtx.createOscillator();
+        const gain = this.audioCtx.createGain();
+
+        osc.connect(gain);
+        gain.connect(this.audioCtx.destination);
+
+        osc.type = 'square';
+        osc.frequency.setValueAtTime(880, this.audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(110, this.audioCtx.currentTime + 0.1);
+
+        gain.gain.setValueAtTime(0.15, this.audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, this.audioCtx.currentTime + 0.1);
+
+        osc.start(this.audioCtx.currentTime);
+        osc.stop(this.audioCtx.currentTime + 0.1);
+    }
+
+    playExplosionSound() {
+        if (!this.audioCtx) return;
+
+        const osc = this.audioCtx.createOscillator();
+        const gain = this.audioCtx.createGain();
+
+        osc.connect(gain);
+        gain.connect(this.audioCtx.destination);
+
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(150, this.audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(30, this.audioCtx.currentTime + 0.2);
+
+        gain.gain.setValueAtTime(0.2, this.audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, this.audioCtx.currentTime + 0.2);
+
+        osc.start(this.audioCtx.currentTime);
+        osc.stop(this.audioCtx.currentTime + 0.2);
+    }
+
+    playGameOverSound() {
+        if (!this.audioCtx) return;
+
+        const osc = this.audioCtx.createOscillator();
+        const gain = this.audioCtx.createGain();
+
+        osc.connect(gain);
+        gain.connect(this.audioCtx.destination);
+
+        osc.type = 'square';
+        // Long dramatic descent from high to very low
+        osc.frequency.setValueAtTime(1200, this.audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(40, this.audioCtx.currentTime + 1.5);
+
+        gain.gain.setValueAtTime(0.2, this.audioCtx.currentTime);
+        gain.gain.setValueAtTime(0.2, this.audioCtx.currentTime + 1.2);
+        gain.gain.exponentialRampToValueAtTime(0.01, this.audioCtx.currentTime + 1.5);
+
+        osc.start(this.audioCtx.currentTime);
+        osc.stop(this.audioCtx.currentTime + 1.5);
+    }
+
+    playRhythmNote() {
+        if (!this.audioCtx || this.gameOver) return;
+
+        const osc = this.audioCtx.createOscillator();
+        const gain = this.audioCtx.createGain();
+
+        osc.connect(gain);
+        gain.connect(this.audioCtx.destination);
+
+        osc.type = 'square';
+        // Alternate between two notes a half step apart (e.g., E and F)
+        const baseFreq = 82.41; // E2
+        const freq = this.rhythmNote === 0 ? baseFreq : baseFreq * Math.pow(2, 1/12); // Half step up
+        osc.frequency.setValueAtTime(freq, this.audioCtx.currentTime);
+
+        gain.gain.setValueAtTime(0.1, this.audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, this.audioCtx.currentTime + 0.08);
+
+        osc.start(this.audioCtx.currentTime);
+        osc.stop(this.audioCtx.currentTime + 0.08);
+
+        this.rhythmNote = 1 - this.rhythmNote; // Toggle between 0 and 1
+    }
+
+    startRhythm() {
+        this.stopRhythm(); // Clear any existing rhythm
+
+        const updateRhythm = () => {
+            if (!this.active) return;
+
+            this.playRhythmNote();
+
+            // Speed up based on level and remaining enemies
+            const aliveCount = this.enemies.filter(e => e.alive).length;
+            const totalEnemies = this.enemies.length || 1;
+            const enemyFactor = 1 - (aliveCount / totalEnemies) * 0.5; // Speeds up as enemies die
+            const levelFactor = 1 - (this.level - 1) * 0.1; // Speeds up with level
+            const speed = Math.max(100, this.baseRhythmSpeed * levelFactor * enemyFactor);
+
+            this.rhythmInterval = setTimeout(updateRhythm, speed);
+        };
+
+        updateRhythm();
+    }
+
+    stopRhythm() {
+        if (this.rhythmInterval) {
+            clearTimeout(this.rhythmInterval);
+            this.rhythmInterval = null;
+        }
+    }
+
+    stopAudio() {
+        this.stopRhythm();
+        if (this.audioCtx) {
+            this.audioCtx.close().catch(() => {});
+            this.audioCtx = null;
         }
     }
 }

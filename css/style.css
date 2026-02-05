@@ -1091,6 +1091,26 @@ button:focus:not(:focus-visible),
 }
 
 /* Alien Trigger Button */
+@keyframes invader-breathe {
+    0%, 100% {
+        transform: scale(1);
+        opacity: 0.5;
+    }
+    50% {
+        transform: scale(1.15);
+        opacity: 0.8;
+    }
+}
+
+@keyframes invader-color-pulse {
+    0%, 100% {
+        fill: var(--text-muted);
+    }
+    50% {
+        fill: var(--accent);
+    }
+}
+
 .invader-trigger {
     position: fixed;
     bottom: 20px;
@@ -1100,22 +1120,24 @@ button:focus:not(:focus-visible),
     background: transparent;
     border: none;
     cursor: pointer;
-    opacity: 0.3;
-    transition: opacity 0.3s;
     z-index: 10000;
     padding: 0;
+    animation: invader-breathe 2s ease-in-out infinite;
 }
 
 .invader-trigger:hover {
+    animation: none;
     opacity: 1;
+    transform: scale(1.2);
 }
 
 .invader-trigger svg {
     width: 100%;
     height: 100%;
-    fill: var(--text-muted);
+    animation: invader-color-pulse 2s ease-in-out infinite;
 }
 
 .invader-trigger:hover svg {
+    animation: none;
     fill: var(--accent);
 }
