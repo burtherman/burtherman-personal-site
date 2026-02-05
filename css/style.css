@@ -1078,6 +1078,12 @@ button:focus:not(:focus-visible),
     /* Standard */
 }
 
+/* Exclude invader trigger from retro filter - it's hidden during gameplay anyway */
+.retro-mode .invader-trigger,
+.retro-mode .invader-trigger * {
+    filter: none !important;
+}
+
 /* Specific fix for images to ensure they look pixelated */
 .retro-mode img {
     image-rendering: -moz-crisp-edges;

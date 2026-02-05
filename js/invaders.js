@@ -320,13 +320,19 @@ class SpaceInvadersGame {
         // Restore trigger button
         const trigger = document.getElementById('startInvaders');
         if (trigger) {
-            trigger.style.display = '';
-            trigger.style.visibility = '';
-            trigger.style.opacity = '';
-            // Re-trigger animation by removing and re-adding the class
+            // Clear all inline styles that might interfere
+            trigger.style.cssText = '';
+            // Also reset the SVG inside
+            const svg = trigger.querySelector('svg');
+            if (svg) {
+                svg.style.cssText = '';
+            }
+            // Re-trigger animation - Safari needs a more aggressive reset
             trigger.classList.remove('invader-trigger');
-            void trigger.offsetWidth; // Force reflow
-            trigger.classList.add('invader-trigger');
+            // Use requestAnimationFrame for more reliable reflow in Safari
+            requestAnimationFrame(() => {
+                trigger.classList.add('invader-trigger');
+            });
         }
 
         // Restore DOM elements
