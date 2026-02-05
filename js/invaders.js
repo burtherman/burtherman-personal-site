@@ -154,22 +154,32 @@ class SpaceInvadersGame {
         if (!this.active) return;
         e.preventDefault();
 
+        const tx = e.touches[0].clientX;
+        const ty = e.touches[0].clientY;
+
         // Skip ready screen on tap
         if (this.readyPhase) {
             this.beginGameplay();
             return;
         }
 
+        // Quit button (top-right corner, below level display) - during gameplay
+        if (tx > this.width - 55 && ty > 45 && ty < 95 && !this.gameOver) {
+            this.stop();
+            return;
+        }
+
         if (this.gameOver) {
-            // Don't exit during name entry - wait until they're done
-            if (!this.enteringName) {
+            if (this.enteringName) {
+                this.handleNameTouch(tx, ty);
+            } else {
                 this.stop();
             }
             return;
         }
 
         this.touch.active = true;
-        this.touch.x = e.touches[0].clientX;
+        this.touch.x = tx;
 
         const now = Date.now();
         if (now - this.touch.lastTap > 150) {
@@ -756,6 +766,22 @@ class SpaceInvadersGame {
         this.ctx.fillText(`LEVEL ${this.level}`, this.width - 20, 20);
         this.ctx.restore();
 
+        // Draw quit button (X) for touch devices - below level display
+        if (this.isTouchDevice && !this.gameOver) {
+            this.ctx.save();
+            this.ctx.fillStyle = 'rgba(255, 0, 0, 0.25)';
+            this.ctx.fillRect(this.width - 52, 48, 44, 44);
+            this.ctx.strokeStyle = 'rgba(255, 100, 100, 0.5)';
+            this.ctx.lineWidth = 1;
+            this.ctx.strokeRect(this.width - 52, 48, 44, 44);
+            this.ctx.fillStyle = 'rgba(255, 100, 100, 0.8)';
+            this.ctx.font = 'bold 26px "Courier New", monospace';
+            this.ctx.textAlign = 'center';
+            this.ctx.textBaseline = 'middle';
+            this.ctx.fillText('X', this.width - 30, 70);
+            this.ctx.restore();
+        }
+
         // Draw Player
         if (!this.gameOver) {
             this.ctx.fillStyle = '#00ff00';
@@ -867,23 +893,39 @@ class SpaceInvadersGame {
                     const x = startX + i * letterSpacing;
                     const y = this.height / 2 + 50;
 
-                    // Highlight current letter
+                    // On touch: show arrows on all letters; on desktop: only current
+                    const showArrows = this.isTouchDevice || i === this.nameIndex;
+
                     if (i === this.nameIndex) {
                         this.ctx.fillStyle = '#00ff00';
-                        // Draw arrows
-                        this.ctx.font = '18px "Courier New", monospace';
-                        this.ctx.fillText('▲', x, y - 30);
-                        this.ctx.fillText('▼', x, y + 35);
-                        this.ctx.font = 'bold 36px "Courier New", monospace';
                     } else {
                         this.ctx.fillStyle = '#ffffff';
                     }
+
+                    if (showArrows) {
+                        this.ctx.font = '18px "Courier New", monospace';
+                        this.ctx.fillText('\u25B2', x, y - 30);
+                        this.ctx.fillText('\u25BC', x, y + 35);
+                    }
+
+                    this.ctx.font = 'bold 36px "Courier New", monospace';
                     this.ctx.fillText(this.playerName[i], x, y);
                 }
 
-                this.ctx.fillStyle = '#aaaaaa';
-                this.ctx.font = '14px "Courier New", monospace';
-                this.ctx.fillText("← → to select • ↑ ↓ to change • ENTER to submit", this.width / 2, this.height / 2 + 100);
+                if (this.isTouchDevice) {
+                    // Draw SUBMIT button for touch
+                    const submitY = this.height / 2 + 110;
+                    this.ctx.fillStyle = '#00ff00';
+                    this.ctx.strokeStyle = '#00ff00';
+                    this.ctx.lineWidth = 2;
+                    this.ctx.strokeRect(this.width / 2 - 70, submitY - 18, 140, 36);
+                    this.ctx.font = 'bold 20px "Courier New", monospace';
+                    this.ctx.fillText("SUBMIT", this.width / 2, submitY);
+                } else {
+                    this.ctx.fillStyle = '#aaaaaa';
+                    this.ctx.font = '14px "Courier New", monospace';
+                    this.ctx.fillText("\u2190 \u2192 to select \u2022 \u2191 \u2193 to change \u2022 ENTER to submit", this.width / 2, this.height / 2 + 100);
+                }
             } else {
                 // Show high scores
                 this.ctx.fillStyle = '#ffff00';
@@ -1016,6 +1058,51 @@ class SpaceInvadersGame {
             return true;
         }
         return false;
+    }
+
+    handleNameTouch(tx, ty) {
+        if (!this.enteringName) return;
+
+        const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ ';
+        const letterSpacing = 50;
+        const startX = this.width / 2 - letterSpacing;
+        const letterY = this.height / 2 + 50;
+
+        // Check if tap is on a letter column (select it)
+        for (let i = 0; i < 3; i++) {
+            const x = startX + i * letterSpacing;
+            if (Math.abs(tx - x) < 30) {
+                // Tap on up arrow region (above letter)
+                if (ty > letterY - 50 && ty < letterY - 10) {
+                    this.nameIndex = i;
+                    let idx = chars.indexOf(this.playerName[i]);
+                    idx = (idx + 1) % chars.length;
+                    this.playerName[i] = chars[idx];
+                    return;
+                }
+                // Tap on down arrow region (below letter)
+                if (ty > letterY + 15 && ty < letterY + 55) {
+                    this.nameIndex = i;
+                    let idx = chars.indexOf(this.playerName[i]);
+                    idx = (idx - 1 + chars.length) % chars.length;
+                    this.playerName[i] = chars[idx];
+                    return;
+                }
+                // Tap on the letter itself - select this position
+                if (ty >= letterY - 10 && ty <= letterY + 15) {
+                    this.nameIndex = i;
+                    return;
+                }
+            }
+        }
+
+        // Check submit button tap
+        const submitY = this.height / 2 + 110;
+        if (ty > submitY - 20 && ty < submitY + 20 && Math.abs(tx - this.width / 2) < 80) {
+            this.addHighScore(this.playerName.join(''), this.score);
+            this.enteringName = false;
+            this.scoreSaved = true;
+        }
     }
 
     // Audio Methods
