@@ -31,6 +31,8 @@ class SpaceInvadersGame {
         this.score = 0;
         this.level = 1;
         this.levelStartTime = 0; // For showing level announcement
+        this.readyPhase = false;
+        this.readyTime = 0;
         this.enemyDirection = 1; // 1 for right, -1 for left
         this.baseEnemySpeed = 100; // Base pixels per second
         this.baseFireRate = 1.0; // Base seconds between enemy shots
@@ -108,6 +110,13 @@ class SpaceInvadersGame {
     handleKeyDown(e) {
         if (!this.active) return;
 
+        // Skip ready screen on any key
+        if (this.readyPhase) {
+            this.beginGameplay();
+            e.preventDefault();
+            return;
+        }
+
         // Handle name entry when game is over
         if (this.enteringName) {
             if (this.handleNameEntry(e.key)) {
@@ -144,6 +153,12 @@ class SpaceInvadersGame {
     handleTouchStart(e) {
         if (!this.active) return;
         e.preventDefault();
+
+        // Skip ready screen on tap
+        if (this.readyPhase) {
+            this.beginGameplay();
+            return;
+        }
 
         if (this.gameOver) {
             // Don't exit during name entry - wait until they're done
@@ -187,6 +202,8 @@ class SpaceInvadersGame {
         if (this.active) return;
         this.active = true;
         this.gameOver = false;
+        this.readyPhase = true;
+        this.readyTime = 0;
 
         // Hide the trigger button during gameplay
         const trigger = document.getElementById('startInvaders');
@@ -241,25 +258,31 @@ class SpaceInvadersGame {
         // Set difficulty for level 1
         this.applyLevelDifficulty();
 
-        // Wait for image to load before generating enemies (or use fallback)
+        // Preload enemies during ready phase
         const img = this.sprites.profile;
         if (img.complete && img.naturalWidth > 0) {
             this.generateEnemies();
         } else {
             img.onload = () => this.generateEnemies();
-            img.onerror = () => this.generateEnemies(); // Generate with fallback
+            img.onerror = () => this.generateEnemies();
         }
 
-        // Scan DOM targets after a brief delay to ensure scroll has completed
-        setTimeout(() => this.scanDomTargets(), 100);
-
-        // 4. Initialize Audio and start rhythm
+        // Init audio (but don't start rhythm yet)
         this.initAudio();
-        this.startRhythm();
 
-        // 5. Start Loop
+        // Start render loop (ready phase draws its own screen)
         this.lastTime = performance.now();
         requestAnimationFrame((t) => this.loop(t));
+    }
+
+    beginGameplay() {
+        this.readyPhase = false;
+
+        // Scan DOM targets
+        this.scanDomTargets();
+
+        // Start rhythm
+        this.startRhythm();
     }
 
     stop() {
@@ -383,6 +406,12 @@ class SpaceInvadersGame {
     }
 
     update(dt) {
+        // Ready phase - just track time, skip all game logic
+        if (this.readyPhase) {
+            this.readyTime += dt;
+            return;
+        }
+
         // Track game time for UI hints
         this.gameTime += dt;
 
@@ -644,6 +673,67 @@ class SpaceInvadersGame {
 
     draw() {
         this.ctx.clearRect(0, 0, this.width, this.height);
+
+        // Draw Ready Phase Screen
+        if (this.readyPhase) {
+            // Dim the page
+            this.ctx.fillStyle = 'rgba(0, 0, 0, 0.85)';
+            this.ctx.fillRect(0, 0, this.width, this.height);
+
+            this.ctx.textAlign = 'center';
+            this.ctx.textBaseline = 'middle';
+
+            // "READY PLAYER ONE" with pulsing glow
+            const pulse = Math.sin(this.readyTime * 3) * 0.2 + 0.8;
+            const titleSize = this.width < 500 ? 30 : 52;
+
+            this.ctx.globalAlpha = pulse;
+
+            // Shadow/glow
+            this.ctx.fillStyle = '#005500';
+            this.ctx.font = `bold ${titleSize}px "Courier New", monospace`;
+            this.ctx.fillText("READY PLAYER ONE", this.width / 2 + 2, this.height / 2 - 48);
+
+            // Main text
+            this.ctx.fillStyle = '#00ff00';
+            this.ctx.fillText("READY PLAYER ONE", this.width / 2, this.height / 2 - 50);
+
+            this.ctx.globalAlpha = 1;
+
+            // Control instructions
+            const instrSize = this.width < 500 ? 14 : 20;
+            this.ctx.fillStyle = '#ffffff';
+            this.ctx.font = `${instrSize}px "Courier New", monospace`;
+            if (this.isTouchDevice) {
+                this.ctx.fillText("DRAG to move \u2022 TAP to shoot", this.width / 2, this.height / 2 + 15);
+            } else {
+                this.ctx.fillText("\u2190 \u2192 to move \u2022 SPACE to shoot \u2022 ESC to quit", this.width / 2, this.height / 2 + 15);
+            }
+
+            // Blinking "press to start" prompt
+            const blink = Math.sin(this.readyTime * 4) > 0;
+            if (blink) {
+                this.ctx.fillStyle = '#aaaaaa';
+                this.ctx.font = `${this.width < 500 ? 13 : 18}px "Courier New", monospace`;
+                const startText = this.isTouchDevice ? "TAP TO START" : "PRESS ANY KEY TO START";
+                this.ctx.fillText(startText, this.width / 2, this.height / 2 + 65);
+            }
+
+            // Scanlines on top of ready screen
+            if (!this.scanlinePattern) {
+                const patternCanvas = document.createElement('canvas');
+                patternCanvas.width = 1;
+                patternCanvas.height = 4;
+                const pCtx = patternCanvas.getContext('2d');
+                pCtx.fillStyle = 'rgba(0, 20, 0, 0.1)';
+                pCtx.fillRect(0, 0, 1, 1);
+                this.scanlinePattern = this.ctx.createPattern(patternCanvas, 'repeat');
+            }
+            this.ctx.fillStyle = this.scanlinePattern;
+            this.ctx.fillRect(0, 0, this.width, this.height);
+
+            return; // Don't draw game elements during ready phase
+        }
 
         // Draw Score (bitmap style)
         this.ctx.save();
