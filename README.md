@@ -1,6 +1,6 @@
 # Burt Herman - Personal Website
 
-Personal website for Burt Herman, showcasing work at the intersection of journalism, technology, and media innovation.
+Personal website for Burt Herman, showcasing work at the intersection of journalism, technology and media innovation.
 
 ## About
 
@@ -9,6 +9,7 @@ This site features:
 - Writing portfolio and media appearances
 - Speaking engagement information
 - Contact information
+- A fun Easter egg
 
 ## Live Site
 
@@ -35,4 +36,4 @@ Built with clean, modern HTML/CSS:
 
 ---
 
-© 2025 Burt Herman
+© 2026 Burt Herman
