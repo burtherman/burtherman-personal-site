@@ -7,7 +7,7 @@
  * - ESC or Q to quit
  *
  * Mobile/Tablet Controls:
- * - Drag finger to move ship
+ * - Drag finger to move bow
  * - Tap to shoot
  * - Tap on game over screen to quit
  */
@@ -809,10 +809,37 @@ class SpaceInvadersGame {
             }
         });
 
-        // Draw Player Bullets
-        this.ctx.fillStyle = '#00ff00';
+        // Draw Player Arrows
         this.bullets.forEach(b => {
-            this.ctx.fillRect(b.x, b.y, b.width, b.height);
+            const ax = b.x + b.width / 2;
+            const ay = b.y;
+            const aLen = b.height + 6;
+
+            // Arrow shaft
+            this.ctx.strokeStyle = '#b45309';
+            this.ctx.lineWidth = 1.5;
+            this.ctx.beginPath();
+            this.ctx.moveTo(ax, ay);
+            this.ctx.lineTo(ax, ay + aLen);
+            this.ctx.stroke();
+
+            // Arrowhead
+            this.ctx.fillStyle = '#c0c0c0';
+            this.ctx.beginPath();
+            this.ctx.moveTo(ax, ay - 3);
+            this.ctx.lineTo(ax - 3, ay + 4);
+            this.ctx.lineTo(ax + 3, ay + 4);
+            this.ctx.closePath();
+            this.ctx.fill();
+
+            // Fletching
+            this.ctx.strokeStyle = '#22d3ee';
+            this.ctx.lineWidth = 1;
+            this.ctx.beginPath();
+            this.ctx.moveTo(ax - 3, ay + aLen - 1);
+            this.ctx.lineTo(ax, ay + aLen - 4);
+            this.ctx.lineTo(ax + 3, ay + aLen - 1);
+            this.ctx.stroke();
         });
 
         // Draw Enemy Bullets
@@ -988,15 +1015,37 @@ class SpaceInvadersGame {
     drawSprite(x, y, w, h, type) {
         // Proceedural pixel art can go here
 
-        // Simple ship shape
+        // Bow shape (player)
         if (type === 'player') {
-            this.ctx.fillStyle = '#22d3ee';
+            const cx = x + w / 2;
+            const cy = y + h / 2;
+            const bowW = w * 0.9;
+            const bowH = h * 0.95;
+
+            // Bow limbs (curved arc opening upward)
+            this.ctx.strokeStyle = '#22d3ee';
+            this.ctx.lineWidth = 2.5;
+            this.ctx.lineCap = 'round';
             this.ctx.beginPath();
-            this.ctx.moveTo(x + w / 2, y);
-            this.ctx.lineTo(x + w, y + h);
-            this.ctx.lineTo(x + w / 2, y + h - 5);
-            this.ctx.lineTo(x, y + h);
-            this.ctx.fill();
+            this.ctx.moveTo(cx - bowW / 2, cy + bowH * 0.35);
+            this.ctx.quadraticCurveTo(cx - bowW * 0.55, cy - bowH * 0.3,
+                                       cx, cy - bowH * 0.48);
+            this.ctx.quadraticCurveTo(cx + bowW * 0.55, cy - bowH * 0.3,
+                                       cx + bowW / 2, cy + bowH * 0.35);
+            this.ctx.stroke();
+
+            // Bowstring
+            this.ctx.strokeStyle = 'rgba(34,211,238,0.5)';
+            this.ctx.lineWidth = 1;
+            this.ctx.beginPath();
+            this.ctx.moveTo(cx - bowW / 2, cy + bowH * 0.35);
+            this.ctx.lineTo(cx, cy + bowH * 0.1);
+            this.ctx.lineTo(cx + bowW / 2, cy + bowH * 0.35);
+            this.ctx.stroke();
+
+            // Grip (small wrap at center of bow)
+            this.ctx.fillStyle = '#b45309';
+            this.ctx.fillRect(cx - 2, cy - bowH * 0.08, 4, bowH * 0.16);
         }
     }
 
