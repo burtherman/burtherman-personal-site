@@ -170,6 +170,10 @@ header.scrolled .photo-gallery img.active {
     font-family: var(--font-mono);
 }
 
+.gallery-dots {
+    display: none;
+}
+
 header.scrolled .name-header {
     gap: 12px;
     align-items: center;
@@ -303,11 +307,6 @@ header.scrolled .tagline::before {
     margin-right: 8px;
 }
 
-.location {
-    color: var(--text-muted);
-    font-size: 0.95rem;
-    margin-bottom: 20px;
-}
 
 .bio-short {
     font-size: 1.25rem;
@@ -336,13 +335,12 @@ header.scrolled .tagline::before {
 }
 
 .btn-glass:hover,
-.btn-glass:focus {
+.btn-glass:focus-visible {
     transform: translateY(-2px);
     background: rgba(255, 255, 255, 0.05);
     border-color: rgba(255, 255, 255, 0.1);
     box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.3);
     color: var(--accent);
-    outline: none;
 }
 
 .read-more-btn {
@@ -370,12 +368,12 @@ header.scrolled .tagline::before {
     margin: 5% auto;
     padding: 48px;
     border: 1px solid var(--border);
+    border-radius: 16px;
     width: 90%;
     max-width: 800px;
     max-height: 80vh;
     overflow-y: auto;
     position: relative;
-    /* For absolute positioning of close button */
 }
 
 .close-btn {
@@ -420,24 +418,6 @@ header.scrolled .tagline::before {
     animation: fadeIn 0.8s ease-out 0.4s both;
 }
 
-.speaking-note {
-    background: transparent;
-    padding: 32px;
-    border: 1px solid var(--border);
-    margin-bottom: 48px;
-    text-align: center;
-}
-
-.speaking-note p {
-    font-size: 1.05rem;
-    color: var(--text-muted);
-    font-weight: 300;
-}
-
-.speaking-note strong {
-    color: var(--text-light);
-    font-weight: 400;
-}
 
 .contact-section {
     text-align: center;
@@ -467,17 +447,6 @@ header.scrolled .tagline::before {
     align-items: center;
 }
 
-.social-link {
-    color: var(--text-muted);
-    text-decoration: none;
-    font-size: 0.95rem;
-    transition: color 0.3s ease;
-    font-weight: 300;
-}
-
-.social-link:hover {
-    color: var(--accent);
-}
 
 .hh-logo-link {
     display: inline-flex;
@@ -487,7 +456,7 @@ header.scrolled .tagline::before {
     color: var(--text-muted);
     /* Override default color */
     font-size: 0.95rem;
-    font-family: monospace;
+    font-family: var(--font-mono);
     letter-spacing: 0.05em;
 }
 
@@ -643,8 +612,8 @@ footer {
     }
 
     .photo-gallery img {
-        width: 240px;
-        height: 240px;
+        width: 280px;
+        height: 280px;
         opacity: 0;
         position: absolute;
         transition: opacity 0.5s ease;
@@ -654,6 +623,28 @@ footer {
     .photo-gallery img.active {
         opacity: 1;
         position: relative;
+    }
+
+    .gallery-dots {
+        display: flex;
+        gap: 8px;
+        justify-content: center;
+        margin-top: 12px;
+    }
+
+    .gallery-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.2);
+        border: none;
+        padding: 0;
+        cursor: pointer;
+        transition: background 0.3s ease;
+    }
+
+    .gallery-dot.active {
+        background: var(--accent);
     }
 
     .bio-short {
@@ -696,10 +687,14 @@ footer {
         min-width: 44px;
     }
 
-    /* Improve scrolling performance */
-    body {
-        -webkit-overflow-scrolling: touch;
+    .invader-trigger {
+        bottom: 20px;
+        left: auto;
+        right: 76px;
+        width: 32px;
+        height: 32px;
     }
+
 }
 
 /* Utility Classes to Replace Inline Styles */
@@ -835,8 +830,6 @@ footer {
     justify-content: space-between;
     position: relative;
     overflow: hidden;
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
 }
 
 .bento-card::before {
@@ -922,11 +915,9 @@ footer {
     font-size: 0.8rem;
     font-family: var(--font-mono);
     margin-top: auto;
-    opacity: 0.6;
 }
 
 .bento-card.revealed:hover .card-date {
-    opacity: 1;
     color: var(--accent);
 }
 

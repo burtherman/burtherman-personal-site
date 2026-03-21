@@ -93,11 +93,32 @@ document.addEventListener('DOMContentLoaded', () => {
     let touchStartX = 0;
     let touchEndX = 0;
 
+    const galleryDots = document.querySelectorAll('.gallery-dot');
+
     function changePhoto(newIndex) {
         photos[currentPhotoIndex].classList.remove('active');
+        if (galleryDots[currentPhotoIndex]) galleryDots[currentPhotoIndex].classList.remove('active');
         currentPhotoIndex = newIndex;
         photos[currentPhotoIndex].classList.add('active');
+        if (galleryDots[currentPhotoIndex]) galleryDots[currentPhotoIndex].classList.add('active');
     }
+
+    // Allow dot clicks to navigate photos
+    galleryDots.forEach(dot => {
+        dot.addEventListener('click', () => {
+            const index = parseInt(dot.dataset.index, 10);
+            if (index !== currentPhotoIndex) {
+                if (rotationInterval) {
+                    clearInterval(rotationInterval);
+                    rotationInterval = null;
+                }
+                changePhoto(index);
+                setTimeout(() => {
+                    if (window.innerWidth <= 768) startRotation();
+                }, 5000);
+            }
+        });
+    });
 
     function startRotation() {
         if (window.innerWidth <= 768 && photos.length > 1) {
