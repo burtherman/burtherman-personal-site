@@ -19,7 +19,7 @@ Visit the live site at: [burtherman.com](https://burtherman.com)
 
 Built with clean, modern HTML/CSS:
 - Responsive design for all devices
-- Dark theme with cyan accents
+- Dark editorial theme with masthead-red accent
 - Smooth animations and interactions
 - SEO optimized with structured data
 - Google Analytics integration
