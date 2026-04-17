@@ -205,7 +205,7 @@ class SpaceInvadersGame {
         // but pixel drawing is better for the vibe.
         // Load the profile photo for the mosaic enemies
         this.sprites.profile = new Image();
-        this.sprites.profile.src = 'images/profile-1.jpg';
+        this.sprites.profile.src = 'images/profile-2.jpg';
     }
 
     start() {
@@ -399,7 +399,7 @@ class SpaceInvadersGame {
         this.domTargets = [];
 
         // Find visible elements to shoot (exclude game UI elements)
-        const selector = 'h1, h2, h3, p, img:not([src*="data:"]), a, button:not(#startInvaders):not(#backToTop), .bento-card';
+        const selector = 'h1, h2, h3, p, img:not([src*="data:"]), a, button:not(#startInvaders), .writing-featured, .writing-item';
         const elements = document.querySelectorAll(selector);
 
         elements.forEach(el => {

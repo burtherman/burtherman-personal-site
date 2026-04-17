@@ -5,20 +5,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Content-Security-Policy"
-        content="default-src 'self'; script-src 'self' https://www.googletagmanager.com 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://burtherman.com; connect-src 'self' https://www.google-analytics.com https://region1.google-analytics.com;">
+        content="default-src 'self'; script-src 'self' https://www.googletagmanager.com 'unsafe-inline'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: https://burtherman.com; connect-src 'self' https://www.google-analytics.com https://region1.google-analytics.com;">
     <link rel="dns-prefetch" href="https://www.google-analytics.com">
     <link rel="dns-prefetch" href="https://www.googletagmanager.com">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap"
-        rel="stylesheet">
-    <style>
-        /* Fallback fonts to prevent FOIT (Flash of Invisible Text) */
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-        }
-    </style>
+    <link rel="preload" href="fonts/iAWriterQuattroV.ttf" as="font" type="font/ttf" crossorigin>
+    <link rel="preload" href="fonts/iAWriterMonoV.ttf" as="font" type="font/ttf" crossorigin>
     <title>Burt Herman - Media Innovation & Technology</title>
     <meta name="description"
         content="Burt Herman builds the future of trusted media at the intersection of journalism, technology and community.">
@@ -29,9 +20,9 @@
     <link rel="canonical" href="https://burtherman.com/">
 
     <!-- Favicon -->
-    <link rel="icon" type="image/jpeg" href="images/profile-1.jpg">
-    <link rel="apple-touch-icon" href="images/profile-1.jpg">
-    <link rel="preload" as="image" href="images/profile-1.jpg">
+    <link rel="icon" type="image/jpeg" href="images/profile-2.jpg">
+    <link rel="apple-touch-icon" href="images/profile-2.jpg">
+    <link rel="preload" as="image" href="images/profile-2.jpg">
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
@@ -39,7 +30,7 @@
     <meta property="og:title" content="Burt Herman - Media Innovation & Technology">
     <meta property="og:description"
         content="Building the future of trusted media at the intersection of journalism, technology and community. Co-founder of Hacks/Hackers.">
-    <meta property="og:image" content="https://burtherman.com/images/profile-1.jpg">
+    <meta property="og:image" content="https://burtherman.com/images/profile-2.jpg">
     <meta property="og:image:width" content="320">
     <meta property="og:image:height" content="320">
     <meta property="og:site_name" content="Burt Herman">
@@ -50,7 +41,7 @@
     <meta property="twitter:title" content="Burt Herman - Media Innovation & Technology">
     <meta property="twitter:description"
         content="Building the future of trusted media at the intersection of journalism, technology and community. Co-founder of Hacks/Hackers.">
-    <meta property="twitter:image" content="https://burtherman.com/images/profile-1.jpg">
+    <meta property="twitter:image" content="https://burtherman.com/images/profile-2.jpg">
 
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-2WK2XFD3ZD"></script>
@@ -68,8 +59,8 @@
         "@type": "Person",
         "name": "Burt Herman",
         "url": "https://burtherman.com",
-        "image": "https://burtherman.com/images/profile-1.jpg",
-        "jobTitle": "Media Innovation & Technology Expert",
+        "image": "https://burtherman.com/images/profile-2.jpg",
+        "jobTitle": "Co-founder, Hacks/Hackers",
         "description": "Building the future of trusted media at the intersection of journalism, technology and community. Co-founder of Hacks/Hackers.",
         "address": {
             "@type": "PostalAddress",
@@ -109,42 +100,33 @@
     <a href="#main-content" class="skip-to-content">Skip to main content</a>
 
     <a href="mailto:burtherman@gmail.com?subject=Contact%20from%20burtherman.com&body=%0D%0A%0D%0A%0D%0A---%0D%0ASent%20via%20burtherman.com"
-        class="floating-contact-btn magnetic-btn btn-glass" aria-label="Send email to Burt Herman">Contact</a>
+        class="floating-contact-btn btn-glass" aria-label="Send email to Burt Herman">Contact</a>
 
     <div class="mobile-header-bar">
         <h2 class="mobile-name">Burt Herman</h2>
         <a href="mailto:burtherman@gmail.com?subject=Contact%20from%20burtherman.com&body=%0D%0A%0D%0A%0D%0A---%0D%0ASent%20via%20burtherman.com"
-            class="mobile-contact-btn magnetic-btn btn-glass" aria-label="Send email to Burt Herman">Contact</a>
+            class="mobile-contact-btn btn-glass" aria-label="Send email to Burt Herman">Contact</a>
     </div>
 
     <div class="container">
         <header role="banner">
             <div class="header-content">
-                <div class="photo-gallery" aria-label="Profile photo gallery">
-                    <img src="images/profile-1.jpg" alt="Burt Herman profile photo" class="active" width="240"
+                <div class="photo-gallery">
+                    <img src="images/profile-2.jpg" alt="Burt Herman" width="240"
                         height="240" loading="eager">
-                    <img src="images/profile-2.jpg" alt="Burt Herman profile photo" width="240" height="240"
-                        loading="lazy">
-                    <img src="images/profile-3.jpg" alt="Burt Herman profile photo" width="240" height="240"
-                        loading="lazy">
-                </div>
-                <div class="gallery-dots" aria-label="Photo gallery navigation">
-                    <button class="gallery-dot active" aria-label="Photo 1" data-index="0"></button>
-                    <button class="gallery-dot" aria-label="Photo 2" data-index="1"></button>
-                    <button class="gallery-dot" aria-label="Photo 3" data-index="2"></button>
                 </div>
                 <div class="name-header">
                     <h1 class="glitch-text" data-text="Burt Herman">Burt Herman</h1>
-                    <p class="tagline">Media Innovation / Technology</p>
+                    <p class="tagline">Co-founder, <a href="https://hackshackers.com" target="_blank"
+                            rel="noopener noreferrer" class="tagline-link">Hacks/Hackers</a> · Brooklyn, NY</p>
                 </div>
             </div>
         </header>
 
         <main id="main-content">
-            <div class="bio-short scroll-reveal">
+            <div class="bio-short">
                 <p>I build the future of trusted media at the intersection of <strong
-                        class="text-light font-normal glitch-text"
-                        data-text="journalism, technology and community">journalism, technology and community</strong>.
+                        class="text-light font-normal">journalism, technology and community</strong>.
                     Co-founder of <a href="https://hackshackers.com" target="_blank" rel="noopener noreferrer"
                         class="text-accent no-decoration"><strong class="font-normal">Hacks/Hackers</strong></a>,
                     pioneering conversations around <strong class="text-light font-normal">AI's transformative
@@ -152,114 +134,100 @@
                     to public trust.</p>
             </div>
 
-            <div class="text-center scroll-reveal">
-                <button class="read-more-btn magnetic-btn btn-glass" aria-expanded="false" aria-controls="bioModal">Full
+            <div class="text-center">
+                <button class="read-more-btn btn-glass" aria-expanded="false" aria-controls="bioModal">Full
                     Bio</button>
             </div>
 
-            <section class="section scroll-reveal" aria-labelledby="recent-content-heading">
-                <h2 id="recent-content-heading" class="text-light text-3xl font-medium mb-24 text-center">Recent writing
-                    and other links</h2>
-                <div class="bento-grid" role="list">
-                    <!-- Featured Item (Large) -->
-                    <a href="https://www.niemanlab.org/2025/12/forget-google-zero-we-need-to-talk-about-people-zero/"
-                        target="_blank" rel="noopener noreferrer" class="bento-card span-2-col span-2-row" role="listitem">
-                        <div class="card-content">
-                            <span class="card-source">Nieman Lab</span>
-                            <h4 class="card-title">Forget Google Zero, we need to talk about People Zero</h4>
-                            <p class="card-desc">Why the real threat to publishers isn't losing search traffic — it's
-                                losing human connection.</p>
-                            <span class="card-date">Dec 2025</span>
-                        </div>
-                    </a>
+            <section class="section writing" aria-labelledby="recent-content-heading">
+                <h2 id="recent-content-heading" class="writing-heading">Recent writing</h2>
 
-                    <!-- Standard Items -->
-                    <a href="https://www.hackshackers.com/ai-journalism-and-society-at-this-moment-in-history/"
-                        target="_blank" rel="noopener noreferrer" class="bento-card" role="listitem">
-                        <div class="card-content">
-                            <span class="card-source">Hacks/Hackers</span>
-                            <h4 class="card-title">AI, journalism and society at this moment in history</h4>
-                            <span class="card-date">May 2025</span>
-                        </div>
-                    </a>
+                <a href="https://www.niemanlab.org/2025/12/forget-google-zero-we-need-to-talk-about-people-zero/"
+                    target="_blank" rel="noopener noreferrer" class="writing-featured">
+                    <div class="writing-featured-meta">
+                        <span class="source">Nieman Lab</span>
+                        <span class="sep" aria-hidden="true">·</span>
+                        <time>December 2025</time>
+                    </div>
+                    <h3 class="writing-featured-title">Forget Google Zero, we need to talk about People Zero</h3>
+                    <p class="writing-featured-dek">Why the real threat to publishers isn't losing search traffic —
+                        it's losing human connection.</p>
+                    <span class="writing-cta" aria-hidden="true">Read on Nieman Lab →</span>
+                </a>
 
-                    <a href="https://www.hackshackers.com/when-politicians-flood-the-zone-a-template-for-brainstorming-ai-solutions-to-information-overload/"
-                        target="_blank" rel="noopener noreferrer" class="bento-card" role="listitem">
-                        <div class="card-content">
-                            <span class="card-source">Hacks/Hackers</span>
-                            <h4 class="card-title">When politicians flood the zone: AI solutions</h4>
-                            <span class="card-date">Mar 2025</span>
-                        </div>
-                    </a>
-
-                    <a href="https://www.youtube.com/watch?v=o32zU2VXdMc" target="_blank" rel="noopener noreferrer"
-                        class="bento-card span-2-col" role="listitem"
-                        aria-label="YouTube video: AI Real Talk - How publishers can survive the AI age">
-                        <div class="card-content">
-                            <span class="card-source">YouTube</span>
-                            <h4 class="card-title">AI Real Talk: How publishers can survive the AI age</h4>
-                            <p class="card-desc">A chat with Cloudflare VP of Product Will Allen about the future of
-                                publishing.</p>
-                            <span class="card-date">Oct 2025</span>
-                        </div>
-                    </a>
-
-                    <a href="https://www.youtube.com/watch?v=1-g9IUSwPJM&t=5s" target="_blank" rel="noopener noreferrer"
-                        class="bento-card" role="listitem">
-                        <div class="card-content">
-                            <span class="card-source">YouTube</span>
-                            <h4 class="card-title">AI Real Talk: To Sue or Not to Sue</h4>
-                            <span class="card-date">Sep 2024</span>
-                        </div>
-                    </a>
-
-                    <a href="https://www.niemanlab.org/2024/12/the-year-we-stop-talking-about-ai/" target="_blank"
-                        rel="noopener noreferrer" class="bento-card" role="listitem">
-                        <div class="card-content">
-                            <span class="card-source">Nieman Lab</span>
-                            <h4 class="card-title">The year we stop talking about AI</h4>
-                            <p class="card-desc">Predictions for journalism and technology in the coming year.</p>
-                            <span class="card-date">Dec 2024</span>
-                        </div>
-                    </a>
-
-                    <!-- Tall Item -->
-                    <a href="https://www.youtube.com/watch?v=cws6haS3g3Y&t=20s" target="_blank"
-                        rel="noopener noreferrer" class="bento-card" role="listitem">
-                        <div class="card-content">
-                            <span class="card-source">YouTube</span>
-                            <h4 class="card-title">AI Real Talk: RIP Web</h4>
-                            <span class="card-date">Aug 2024</span>
-                        </div>
-                    </a>
-
-                    <a href="https://www.hackshackers.com/how-apple-signals-the-decline-of-apps-and-the-web-itself/"
-                        target="_blank" rel="noopener noreferrer" class="bento-card" role="listitem">
-                        <div class="card-content">
-                            <span class="card-source">Hacks/Hackers</span>
-                            <h4 class="card-title">How Apple AI signals the decline of apps and the web itself</h4>
-                            <span class="card-date">Jun 2024</span>
-                        </div>
-                    </a>
-
-                    <a href="https://www.niemanlab.org/2023/12/more-open-source-ai/" target="_blank"
-                        rel="noopener noreferrer" class="bento-card" role="listitem">
-                        <div class="card-content">
-                            <span class="card-source">Nieman Lab</span>
-                            <h4 class="card-title">More open source AI</h4>
-                            <span class="card-date">Dec 2023</span>
-                        </div>
-                    </a>
-
-                    <a href="https://www.niemanlab.org/2022/12/the-year-ai-truly-arrives-and-with-it-the-reckoning/"
-                        target="_blank" rel="noopener noreferrer" class="bento-card" role="listitem">
-                        <div class="card-content">
-                            <span class="card-source">Nieman Lab</span>
-                            <h4 class="card-title">The year AI truly arrives and with it the reckoning</h4>
-                            <span class="card-date">Dec 2022</span>
-                        </div>
-                    </a>
-                </div>
+                <ol class="writing-list" aria-label="Archive of writing and talks">
+                    <li class="writing-item">
+                        <a href="https://www.youtube.com/watch?v=o32zU2VXdMc" target="_blank" rel="noopener noreferrer">
+                            <time class="writing-date">Oct 2025</time>
+                            <span class="writing-title">AI Real Talk: How publishers can survive the AI age</span>
+                            <span class="writing-source">YouTube</span>
+                        </a>
+                    </li>
+                    <li class="writing-item">
+                        <a href="https://www.hackshackers.com/ai-journalism-and-society-at-this-moment-in-history/"
+                            target="_blank" rel="noopener noreferrer">
+                            <time class="writing-date">May 2025</time>
+                            <span class="writing-title">AI, journalism and society at this moment in history</span>
+                            <span class="writing-source">Hacks/Hackers</span>
+                        </a>
+                    </li>
+                    <li class="writing-item">
+                        <a href="https://www.hackshackers.com/when-politicians-flood-the-zone-a-template-for-brainstorming-ai-solutions-to-information-overload/"
+                            target="_blank" rel="noopener noreferrer">
+                            <time class="writing-date">Mar 2025</time>
+                            <span class="writing-title">When politicians flood the zone: AI solutions</span>
+                            <span class="writing-source">Hacks/Hackers</span>
+                        </a>
+                    </li>
+                    <li class="writing-item">
+                        <a href="https://www.niemanlab.org/2024/12/the-year-we-stop-talking-about-ai/" target="_blank"
+                            rel="noopener noreferrer">
+                            <time class="writing-date">Dec 2024</time>
+                            <span class="writing-title">The year we stop talking about AI</span>
+                            <span class="writing-source">Nieman Lab</span>
+                        </a>
+                    </li>
+                    <li class="writing-item">
+                        <a href="https://www.youtube.com/watch?v=1-g9IUSwPJM&t=5s" target="_blank"
+                            rel="noopener noreferrer">
+                            <time class="writing-date">Sep 2024</time>
+                            <span class="writing-title">AI Real Talk: To Sue or Not to Sue</span>
+                            <span class="writing-source">YouTube</span>
+                        </a>
+                    </li>
+                    <li class="writing-item">
+                        <a href="https://www.youtube.com/watch?v=cws6haS3g3Y&t=20s" target="_blank"
+                            rel="noopener noreferrer">
+                            <time class="writing-date">Aug 2024</time>
+                            <span class="writing-title">AI Real Talk: RIP Web</span>
+                            <span class="writing-source">YouTube</span>
+                        </a>
+                    </li>
+                    <li class="writing-item">
+                        <a href="https://www.hackshackers.com/how-apple-signals-the-decline-of-apps-and-the-web-itself/"
+                            target="_blank" rel="noopener noreferrer">
+                            <time class="writing-date">Jun 2024</time>
+                            <span class="writing-title">How Apple AI signals the decline of apps and the web itself</span>
+                            <span class="writing-source">Hacks/Hackers</span>
+                        </a>
+                    </li>
+                    <li class="writing-item">
+                        <a href="https://www.niemanlab.org/2023/12/more-open-source-ai/" target="_blank"
+                            rel="noopener noreferrer">
+                            <time class="writing-date">Dec 2023</time>
+                            <span class="writing-title">More open source AI</span>
+                            <span class="writing-source">Nieman Lab</span>
+                        </a>
+                    </li>
+                    <li class="writing-item">
+                        <a href="https://www.niemanlab.org/2022/12/the-year-ai-truly-arrives-and-with-it-the-reckoning/"
+                            target="_blank" rel="noopener noreferrer">
+                            <time class="writing-date">Dec 2022</time>
+                            <span class="writing-title">The year AI truly arrives and with it the reckoning</span>
+                            <span class="writing-source">Nieman Lab</span>
+                        </a>
+                    </li>
+                </ol>
             </section>
     </div>
 
@@ -292,26 +260,34 @@
         </div>
     </div>
 
-    <section class="section contact-section scroll-reveal" aria-labelledby="contact-heading">
-        <h2 id="contact-heading" class="text-light text-3xl font-medium mb-24 text-center">Get In Touch</h2>
+    <section class="section contact-section" aria-labelledby="contact-heading">
+        <h2 id="contact-heading" class="text-light text-3xl font-medium mb-24 text-center">Work with me</h2>
 
         <div class="max-w-700 mx-auto mb-32 text-center">
             <p class="text-lg text-muted font-normal leading-relaxed">Available for <strong
-                    class="text-light font-normal">consulting</strong>, <strong class="text-light font-normal">speaking
-                    engagements</strong> and <strong class="text-light font-normal">workshops</strong> on media
-                innovation, artificial
-                intelligence in journalism, audience engagement, product development and the future of trusted
-                information.</p>
+                    class="text-light font-normal">consulting</strong>, <strong class="text-light font-normal">speaking</strong>,
+                and <strong class="text-light font-normal">workshops</strong> on AI, journalism, and the future of
+                trusted media.</p>
         </div>
 
         <div class="contact-links">
             <a href="mailto:burtherman@gmail.com?subject=Contact%20from%20burtherman.com&body=%0D%0A%0D%0A%0D%0A---%0D%0ASent%20via%20burtherman.com"
                 class="contact-link btn-glass" aria-label="Send email to Burt Herman">
-                <span aria-hidden="true">📧</span> Email
+                <svg class="contact-icon" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"
+                    aria-hidden="true">
+                    <rect x="3" y="5" width="18" height="14" rx="2"></rect>
+                    <path d="m3 7 9 6 9-6"></path>
+                </svg>
+                Email
             </a>
             <a href="https://linkedin.com/in/burtherman" class="contact-link btn-glass" target="_blank"
                 rel="noopener noreferrer" aria-label="Connect with Burt Herman on LinkedIn (opens in new tab)">
-                <span aria-hidden="true">💼</span> LinkedIn
+                <svg class="contact-icon" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"
+                    aria-hidden="true">
+                    <path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.86 0-2.14 1.45-2.14 2.95v5.66H9.34V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.45v6.29zM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.72v20.56C0 23.23.79 24 1.77 24h20.45C23.2 24 24 23.23 24 22.28V1.72C24 .77 23.2 0 22.22 0z"></path>
+                </svg>
+                LinkedIn
             </a>
         </div>
 
@@ -323,22 +299,12 @@
     </main>
 
     <footer role="contentinfo">
-        <p>&copy; <span id="copyright-year"></span> Burt Herman</p>
+        <p>&copy; <span id="copyright-year"></span> Burt Herman &middot; Brooklyn, NY</p>
     </footer>
     </div>
 
-    <div class="progress-container">
-        <div class="progress-bar" id="progressBar"></div>
-    </div>
-
-    <button id="backToTop" class="back-to-top btn-glass" aria-label="Scroll back to top">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-            stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="18 15 12 9 6 15"></polyline>
-        </svg>
-    </button>
-
-    <button id="startInvaders" class="invader-trigger" aria-label="Start Space Invaders">
+    <button id="startInvaders" class="invader-trigger" title="Play Space Invaders"
+        aria-label="Play Space Invaders (hidden easter egg)">
         <svg viewBox="0 0 11 8">
             <!-- Classic Space Invaders Crab Alien (pixel-perfect) -->
             <rect x="2" y="0" width="1" height="1"/>

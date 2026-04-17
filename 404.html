@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data:;">
+    <link rel="preload" href="/fonts/iAWriterQuattroV.ttf" as="font" type="font/ttf" crossorigin>
+    <link rel="preload" href="/fonts/iAWriterMonoV.ttf" as="font" type="font/ttf" crossorigin>
+    <title>Not found — Burt Herman</title>
+    <meta name="description" content="This page doesn't exist.">
+    <meta name="robots" content="noindex">
+
+    <link rel="icon" type="image/jpeg" href="/images/profile-2.jpg">
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        .notfound {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 40px 24px;
+            gap: 18px;
+        }
+
+        .notfound-code {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: var(--accent);
+            margin: 0;
+        }
+
+        .notfound-title {
+            font-size: 3rem;
+            font-weight: 500;
+            letter-spacing: -0.025em;
+            line-height: 1.05;
+            color: var(--text-light);
+            margin: 0;
+        }
+
+        .notfound-dek {
+            font-size: 1.0625rem;
+            line-height: 1.55;
+            color: var(--text-muted);
+            max-width: 40ch;
+            margin: 0;
+        }
+
+        .notfound-home {
+            font-family: var(--font-mono);
+            font-size: 0.8125rem;
+            letter-spacing: 0.02em;
+            color: var(--accent);
+            text-decoration: none;
+            margin-top: 12px;
+            opacity: 0.85;
+            transition: opacity 0.2s ease;
+        }
+
+        .notfound-home:hover,
+        .notfound-home:focus-visible {
+            opacity: 1;
+        }
+
+        @media (max-width: 600px) {
+            .notfound-title {
+                font-size: 2.25rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <main class="notfound">
+        <p class="notfound-code">404 · Not found</p>
+        <h1 class="notfound-title">This page doesn't exist.</h1>
+        <p class="notfound-dek">The link may be broken, or the page may have moved. Everything else on the site is
+            still here.</p>
+        <a href="/" class="notfound-home">← Back to burtherman.com</a>
+    </main>
+</body>
+
+</html>
