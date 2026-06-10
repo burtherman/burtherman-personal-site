@@ -1,3 +1,10 @@
+// Google Analytics bootstrap — lives here (not inline) so the CSP can
+// exclude 'unsafe-inline' from script-src
+window.dataLayer = window.dataLayer || [];
+function gtag() { dataLayer.push(arguments); }
+gtag('js', new Date());
+gtag('config', 'G-2WK2XFD3ZD');
+
 // Set copyright year
 document.addEventListener('DOMContentLoaded', () => {
     const yearElement = document.getElementById('copyright-year');
@@ -5,77 +12,33 @@ document.addEventListener('DOMContentLoaded', () => {
         yearElement.textContent = new Date().getFullYear();
     }
 
-    // Modal functionality
+    // Bio modal — native <dialog> handles focus trapping, ESC, and inerting
+    // the background; we only manage aria-expanded and page scroll
     const modal = document.getElementById('bioModal');
     const openBtn = document.querySelector('.read-more-btn');
-    const closeBtn = document.querySelector('.close-btn');
+    const closeBtn = modal ? modal.querySelector('.close-btn') : null;
 
-    function openModal() {
-        if (modal) {
-            modal.style.display = 'block';
-            if (openBtn) {
-                openBtn.setAttribute('aria-expanded', 'true');
-            }
-            const closeButton = modal.querySelector('.close-btn');
-            if (closeButton) {
-                closeButton.focus();
-            }
+    if (modal && openBtn) {
+        openBtn.addEventListener('click', () => {
+            modal.showModal();
+            openBtn.setAttribute('aria-expanded', 'true');
             document.body.style.overflow = 'hidden';
-        }
-    }
+        });
 
-    function closeModal() {
-        if (modal) {
-            modal.style.display = 'none';
-            if (openBtn) {
-                openBtn.setAttribute('aria-expanded', 'false');
-            }
+        modal.addEventListener('close', () => {
+            openBtn.setAttribute('aria-expanded', 'false');
             document.body.style.overflow = '';
-            if (openBtn) {
-                openBtn.focus();
-            }
+            openBtn.focus();
+        });
+
+        if (closeBtn) {
+            closeBtn.addEventListener('click', () => modal.close());
         }
-    }
 
-    if (openBtn) {
-        openBtn.addEventListener('click', openModal);
-    }
-
-    if (closeBtn) {
-        closeBtn.addEventListener('click', closeModal);
-    }
-
-    window.addEventListener('click', function (event) {
-        if (event.target == modal) {
-            closeModal();
-        }
-    });
-
-    document.addEventListener('keydown', function (event) {
-        if (event.key === 'Escape' && modal && modal.style.display === 'block') {
-            closeModal();
-        }
-    });
-
-    // Trap focus inside modal when open
-    if (modal) {
-        modal.addEventListener('keydown', function (e) {
-            if (e.key === 'Tab') {
-                const focusableContent = modal.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
-                const firstFocusableElement = focusableContent[0];
-                const lastFocusableElement = focusableContent[focusableContent.length - 1];
-
-                if (e.shiftKey) {
-                    if (document.activeElement === firstFocusableElement) {
-                        lastFocusableElement.focus();
-                        e.preventDefault();
-                    }
-                } else {
-                    if (document.activeElement === lastFocusableElement) {
-                        firstFocusableElement.focus();
-                        e.preventDefault();
-                    }
-                }
+        // Click on the backdrop (the dialog itself, outside .modal-content) closes
+        modal.addEventListener('click', (event) => {
+            if (event.target === modal) {
+                modal.close();
             }
         });
     }
@@ -85,10 +48,10 @@ document.addEventListener('DOMContentLoaded', () => {
     let ticking = false;
 
     function updateMobileHeader() {
-        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        const scrollTop = window.scrollY || document.documentElement.scrollTop;
         const isMobile = window.innerWidth <= 768;
-        if (isMobile && mobileHeaderBar) {
-            if (scrollTop > 100) {
+        if (mobileHeaderBar) {
+            if (isMobile && scrollTop > 100) {
                 mobileHeaderBar.classList.add('visible');
             } else {
                 mobileHeaderBar.classList.remove('visible');
@@ -97,11 +60,23 @@ document.addEventListener('DOMContentLoaded', () => {
         ticking = false;
     }
 
-    window.addEventListener('scroll', function () {
+    function requestMobileHeaderUpdate() {
         if (!ticking) {
             window.requestAnimationFrame(updateMobileHeader);
             ticking = true;
         }
-    });
+    }
 
+    window.addEventListener('scroll', requestMobileHeaderUpdate);
+    window.addEventListener('resize', requestMobileHeaderUpdate);
+
+    // Space Invaders easter egg trigger
+    const invaderTrigger = document.getElementById('startInvaders');
+    if (invaderTrigger) {
+        invaderTrigger.addEventListener('click', () => {
+            // Scroll to top for better arena
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            setTimeout(() => window.spaceInvaders.start(), 500);
+        });
+    }
 });

@@ -40,6 +40,12 @@ class SpaceInvadersGame {
         this.enemyFireRate = 1.0;
         this.enemyDropDistance = 30;
         this.lastTime = 0;
+
+        // UFO mystery ship
+        this.ufo = null;
+        this.nextUfoIn = 0; // Seconds until next UFO spawn
+        this.ufoSound = null;
+        this.scorePopups = []; // Floating "+300" style bonus texts
         this.keys = {
             ArrowLeft: false,
             ArrowRight: false,
@@ -257,6 +263,8 @@ class SpaceInvadersGame {
         this.enemies = [];
         this.particles = [];
         this.domTargets = [];
+        this.ufo = null;
+        this.scorePopups = [];
         this.gameTime = 0;
         this.score = 0;
         this.level = 1;
@@ -292,6 +300,9 @@ class SpaceInvadersGame {
         // Scan DOM targets
         this.scanDomTargets();
 
+        // Schedule the first UFO
+        this.nextUfoIn = this.randomUfoDelay();
+
         // Start rhythm
         this.startRhythm();
     }
@@ -300,7 +311,9 @@ class SpaceInvadersGame {
         this.active = false;
 
         // Stop audio
+        this.stopUfoSound();
         this.stopAudio();
+        this.ufo = null;
 
         // Remove event listeners to prevent memory leaks
         this.removeEventListeners();
@@ -525,6 +538,32 @@ class SpaceInvadersGame {
             }
         }
 
+        // UFO mystery ship - spawn, move, despawn
+        if (!this.gameOver) {
+            if (this.ufo) {
+                this.ufo.x += this.ufo.speed * this.ufo.dir * dt;
+                if ((this.ufo.dir === 1 && this.ufo.x > this.width + this.ufo.width) ||
+                    (this.ufo.dir === -1 && this.ufo.x < -this.ufo.width * 2)) {
+                    // Escaped off-screen
+                    this.ufo = null;
+                    this.stopUfoSound();
+                    this.nextUfoIn = this.randomUfoDelay();
+                }
+            } else {
+                this.nextUfoIn -= dt;
+                if (this.nextUfoIn <= 0) {
+                    this.spawnUfo();
+                }
+            }
+        }
+
+        // Score popups - float up and fade
+        this.scorePopups.forEach(p => {
+            p.life -= dt;
+            p.y -= 35 * dt;
+        });
+        this.scorePopups = this.scorePopups.filter(p => p.life > 0);
+
         // Particles - update positions
         this.particles.forEach(p => {
             p.life -= dt;
@@ -561,10 +600,13 @@ class SpaceInvadersGame {
         this.level++;
         this.levelStartTime = this.gameTime;
 
-        // Clear bullets
+        // Clear bullets and any UFO in flight
         this.bullets = [];
         this.enemyBullets = [];
         this.lastEnemyShot = 0;
+        this.ufo = null;
+        this.stopUfoSound();
+        this.nextUfoIn = this.randomUfoDelay();
 
         // Apply new difficulty
         this.applyLevelDifficulty();
@@ -578,6 +620,8 @@ class SpaceInvadersGame {
 
     triggerGameOver() {
         this.gameOver = true;
+        this.ufo = null;
+        this.stopUfoSound();
         this.stopRhythm();
         this.playGameOverSound();
 
@@ -605,7 +649,53 @@ class SpaceInvadersGame {
         this.playShootSound();
     }
 
+    randomUfoDelay() {
+        // 12-20 seconds between mystery ships
+        return 12 + Math.random() * 8;
+    }
+
+    spawnUfo() {
+        const dir = Math.random() < 0.5 ? 1 : -1;
+        const width = 48;
+        this.ufo = {
+            x: dir === 1 ? -width : this.width,
+            y: 54,
+            width: width,
+            height: 21,
+            speed: 140 + (this.level - 1) * 15,
+            dir: dir
+        };
+        this.startUfoSound();
+    }
+
     checkCollisions() {
+        // Bullets vs UFO
+        if (this.ufo) {
+            for (let i = this.bullets.length - 1; i >= 0; i--) {
+                if (this.rectIntersect(this.bullets[i], this.ufo)) {
+                    this.bullets.splice(i, 1);
+                    const bonuses = [50, 100, 150, 300];
+                    const bonus = bonuses[Math.floor(Math.random() * bonuses.length)];
+                    this.score += bonus;
+                    this.scorePopups.push({
+                        x: this.ufo.x + this.ufo.width / 2,
+                        y: this.ufo.y,
+                        text: `+${bonus}`,
+                        life: 1.2
+                    });
+                    this.createExplosion(
+                        this.ufo.x + this.ufo.width / 2,
+                        this.ufo.y + this.ufo.height / 2,
+                        '#d94f48', 40);
+                    this.playExplosionSound();
+                    this.ufo = null;
+                    this.stopUfoSound();
+                    this.nextUfoIn = this.randomUfoDelay();
+                    break;
+                }
+            }
+        }
+
         // Bullets vs Enemies
         for (let i = this.bullets.length - 1; i >= 0; i--) {
             const b = this.bullets[i];
@@ -809,6 +899,11 @@ class SpaceInvadersGame {
             }
         });
 
+        // Draw UFO mystery ship (pixel saucer in the masthead red)
+        if (this.ufo) {
+            this.drawUfo(this.ufo);
+        }
+
         // Draw Player Arrows
         this.bullets.forEach(b => {
             const ax = b.x + b.width / 2;
@@ -853,6 +948,17 @@ class SpaceInvadersGame {
             this.ctx.globalAlpha = p.life * 2;
             this.ctx.fillStyle = p.color;
             this.ctx.fillRect(p.x, p.y, p.size, p.size);
+            this.ctx.globalAlpha = 1.0;
+        });
+
+        // Draw Score Popups (floating bonus points)
+        this.scorePopups.forEach(p => {
+            this.ctx.globalAlpha = Math.min(1, p.life);
+            this.ctx.fillStyle = '#ffff00';
+            this.ctx.font = 'bold 20px "Courier New", monospace';
+            this.ctx.textAlign = 'center';
+            this.ctx.textBaseline = 'middle';
+            this.ctx.fillText(p.text, p.x, p.y);
             this.ctx.globalAlpha = 1.0;
         });
 
@@ -1009,6 +1115,28 @@ class SpaceInvadersGame {
                 this.ctx.fillText("← → to move • SPACE to shoot • ESC to quit", this.width / 2, this.height / 2);
             }
             this.ctx.globalAlpha = 1;
+        }
+    }
+
+    drawUfo(ufo) {
+        // Classic mystery-ship sprite, 16x7 pixel grid
+        const pattern = [
+            '0000011111100000',
+            '0001111111111000',
+            '0011111111111100',
+            '0110011001100110',
+            '1111111111111111',
+            '0011100110011100',
+            '0001000000001000'
+        ];
+        const px = ufo.width / 16;
+        this.ctx.fillStyle = '#d94f48';
+        for (let r = 0; r < pattern.length; r++) {
+            for (let c = 0; c < 16; c++) {
+                if (pattern[r][c] === '1') {
+                    this.ctx.fillRect(ufo.x + c * px, ufo.y + r * px, px + 0.5, px + 0.5);
+                }
+            }
         }
     }
 
@@ -1263,6 +1391,43 @@ class SpaceInvadersGame {
         osc.stop(this.audioCtx.currentTime + 1.5);
     }
 
+    startUfoSound() {
+        if (!this.audioCtx || this.ufoSound) return;
+
+        // Classic warbling siren: an LFO wobbling the oscillator pitch
+        const osc = this.audioCtx.createOscillator();
+        const gain = this.audioCtx.createGain();
+        const lfo = this.audioCtx.createOscillator();
+        const lfoGain = this.audioCtx.createGain();
+
+        osc.type = 'triangle';
+        osc.frequency.value = 340;
+        lfo.type = 'sine';
+        lfo.frequency.value = 9;
+        lfoGain.gain.value = 70;
+
+        lfo.connect(lfoGain);
+        lfoGain.connect(osc.frequency);
+        osc.connect(gain);
+        gain.connect(this.audioCtx.destination);
+        gain.gain.value = 0.045;
+
+        osc.start();
+        lfo.start();
+        this.ufoSound = { osc, lfo, gain };
+    }
+
+    stopUfoSound() {
+        if (!this.ufoSound) return;
+        try {
+            this.ufoSound.osc.stop();
+            this.ufoSound.lfo.stop();
+        } catch (e) {
+            // Already stopped or context closed
+        }
+        this.ufoSound = null;
+    }
+
     playRhythmNote() {
         if (!this.audioCtx || this.gameOver) return;
 
@@ -1317,6 +1482,7 @@ class SpaceInvadersGame {
 
     stopAudio() {
         this.stopRhythm();
+        this.stopUfoSound();
         if (this.audioCtx) {
             this.audioCtx.close().catch(() => {});
             this.audioCtx = null;
