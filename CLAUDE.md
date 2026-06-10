@@ -8,7 +8,7 @@ Personal website for Burt Herman — static single-page site at burtherman.com, 
 
 - **HTML/CSS/JS**: Vanilla, no frameworks, no build step
 - **Hosting**: GitHub Pages from the `main` branch
-- **Fonts**: Self-hosted iA Writer Quattro + iA Writer Mono (variable TTF, SIL OFL licensed — `fonts/LICENSE.md` must travel with the files)
+- **Fonts**: Self-hosted iA Writer Quattro + iA Writer Mono (variable WOFF2 with TTF fallback, SIL OFL licensed — `fonts/LICENSE.md` must travel with the files). Regenerate with `fonttools ttLib.woff2 compress <file>.ttf` if the TTFs ever change.
 - **Analytics**: Google Analytics (gtag.js, `G-2WK2XFD3ZD`)
 
 ## File Structure
@@ -19,10 +19,10 @@ Personal website for Burt Herman — static single-page site at burtherman.com, 
 ├── 404.html            # Custom not-found page (GitHub Pages serves for any unmatched URL)
 ├── css/style.css       # All styles
 ├── js/
-│   ├── script.js       # Modal + mobile-header-bar + copyright year
+│   ├── script.js       # GA bootstrap + <dialog> modal + mobile-header-bar + copyright year + invaders trigger
 │   └── invaders.js     # Space Invaders easter egg (self-contained)
-├── fonts/              # iA Writer Quattro/Mono variable TTF + SIL OFL license
-├── images/             # Profile photos (profile-2.jpg is the active hero)
+├── fonts/              # iA Writer Quattro/Mono variable WOFF2 + TTF fallback + SIL OFL license
+├── images/             # Profile photos (profile-2.jpg is the active hero) + favicon.svg (pixel alien) + og-card.png (1200×630 social card)
 ├── CNAME               # Custom domain config — do not delete
 ├── .gitignore
 ├── README.md           # Public repo readme
@@ -54,11 +54,14 @@ Tokens in `:root` at the top of `css/style.css`:
 
 ## Easter Egg: Space Invaders
 
-Bottom-left alien button (`#startInvaders` with `title="Play Space Invaders"`). Game is self-contained in `js/invaders.js`.
+Bottom-left alien button (`#startInvaders` with `title="Play Space Invaders"`) or the Konami code (↑↑↓↓←→←→BA, handled in `js/script.js`). Game is self-contained in `js/invaders.js`.
 - **Desktop**: arrow keys to move, space to shoot, ESC/Q to quit
 - **Mobile**: drag to move, tap to shoot
 - Enemies are a pixelated mosaic of `images/profile-2.jpg`
-- Can also shoot DOM elements (selector: `h1, h2, h3, p, img, a, button:not(#startInvaders), .writing-featured, .writing-item`)
+- Can also shoot DOM elements (selector: `h1, h2, h3, p, img, a, button:not(#startInvaders), .writing-featured, .writing-item`); wiping every element off the page awards a one-time `SITE DESTROYED +1000` bonus
+- A UFO mystery ship (masthead-red pixel saucer, warbling siren) crosses the top every 12–20s; shooting it awards a random 50/100/150/300 bonus shown as a floating score popup
+- 3 lives with 1.5s of blinking invulnerability after a hit; reserve bows drawn bottom-left. An invader physically reaching the player is still instant game over
+- 4 destructible bunkers (3 on screens <500px) erode pixel-by-pixel from shots on both sides; descending invaders grind them away; rebuilt each level
 
 ## Development Commands
 
@@ -71,7 +74,7 @@ python3 -m http.server 8765
 # fonts/LICENSE.md (SIL OFL 1.1 for iA Writer)
 ```
 
-Responsive breakpoints: **600px** (writing archive goes single-column), **768px** (mobile layout engages). No 900px breakpoint since the bento grid was removed.
+Responsive breakpoint: **768px** (mobile layout engages; writing archive goes single-column). The only 600px breakpoint lives in `404.html`'s inline styles. No 900px breakpoint since the bento grid was removed.
 
 ## Common Tasks
 
@@ -80,7 +83,7 @@ Responsive breakpoints: **600px** (writing archive goes single-column), **768px*
 ```html
 <li class="writing-item">
     <a href="URL" target="_blank" rel="noopener noreferrer">
-        <time class="writing-date">Mon YYYY</time>
+        <time class="writing-date" datetime="YYYY-MM">Mon YYYY</time>
         <span class="writing-title">Title of the piece</span>
         <span class="writing-source">Source name</span>
     </a>
@@ -89,9 +92,9 @@ Responsive breakpoints: **600px** (writing archive goes single-column), **768px*
 
 **Promoting a new featured piece**: Swap the `.writing-featured` anchor's `href`, source (`.source`), date (`<time>`), title (`.writing-featured-title`), dek (`.writing-featured-dek`), and CTA label. Demote the old featured piece to the first `<li>` in the archive list.
 
-**Updating bio**: short bio around line 133 in `index.html`; full bio in the modal below.
+**Updating bio**: short bio around line 120 in `index.html`; full bio in the modal below. The modal is a native `<dialog>` (`#bioModal`) opened with `showModal()` in `js/script.js` — focus trapping, ESC, and background inerting come free from the browser; don't re-add manual focus-trap code.
 
-**Changing profile photo**: update references in `index.html` (hero `<img>`, favicon, apple-touch-icon, preload, `og:image`, `twitter:image`, JSON-LD `image`), `404.html` (favicon), and `js/invaders.js` (game sprite). All seven paths must agree.
+**Changing profile photo**: update references in `index.html` (hero `<img>`, JPEG fallback favicon, apple-touch-icon, preload, `og:image`, `twitter:image`, JSON-LD `image`), `404.html` (JPEG fallback favicon), and `js/invaders.js` (game sprite). All paths must agree. The primary favicon (`images/favicon.svg`, the pixel alien) doesn't change with the photo.
 
 **Modifying the game**: `js/invaders.js` is self-contained. Event listeners are cleaned up on `stop()`.
 
@@ -110,6 +113,10 @@ These are the lessons from the April 2026 redesign — re-introducing them would
 
 Maintain consistency across `<title>`, meta description, Open Graph, Twitter card, and JSON-LD when updating bio or role. Current tagline (`Co-founder, Hacks/Hackers · Brooklyn, NY`) is mirrored in the `jobTitle` field of the Person schema.
 
+The social card (`og:image`/`twitter:image`) is `images/og-card.png`, a 1200×630 dark editorial card rendered with the site fonts and palette (name, tagline, domain, pixel alien). If the name/tagline changes, regenerate it — PIL script pattern: render text with `fonts/iAWriterQuattroV.ttf`/`iAWriterMonoV.ttf` on `--bg-dark` with the `--accent` kicker rule. JSON-LD `image` stays the profile photo (it describes the person, not the page).
+
 ## CSP
 
 Content-Security-Policy is declared via `<meta>` in each HTML file. Self-hosted fonts mean `font-src 'self'` — no third-party font origins. If re-adding a Google Font (not recommended), the CSP must be updated in both `index.html` and `404.html`.
+
+`script-src` carries no `'unsafe-inline'`: **inline `<script>` blocks and `onclick=`-style attributes are blocked** — all JS must live in external files (the GA bootstrap is in `js/script.js`). `index.html`'s `style-src` also has no `'unsafe-inline'`, so no `style=""` attributes there either (JS styling via CSSOM, e.g. `el.style.x = …`, is fine and is what `invaders.js` uses). The JSON-LD block is a data block, not a script, so CSP doesn't apply to it. Cache-busting: bump the `?v=` query on `style.css`, `script.js`, and `invaders.js` together when shipping changes.

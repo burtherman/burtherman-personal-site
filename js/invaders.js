@@ -40,6 +40,18 @@ class SpaceInvadersGame {
         this.enemyFireRate = 1.0;
         this.enemyDropDistance = 30;
         this.lastTime = 0;
+
+        // UFO mystery ship
+        this.ufo = null;
+        this.nextUfoIn = 0; // Seconds until next UFO spawn
+        this.ufoSound = null;
+        this.scorePopups = []; // Floating "+300" style bonus texts
+
+        // Lives and destructible bunkers
+        this.lives = 3;
+        this.invulnTime = 0; // Post-hit invulnerability, seconds remaining
+        this.bunkers = [];
+        this.pageClearedAwarded = false; // One-time bonus for shooting every DOM element
         this.keys = {
             ArrowLeft: false,
             ArrowRight: false,
@@ -257,6 +269,12 @@ class SpaceInvadersGame {
         this.enemies = [];
         this.particles = [];
         this.domTargets = [];
+        this.ufo = null;
+        this.scorePopups = [];
+        this.lives = 3;
+        this.invulnTime = 0;
+        this.bunkers = [];
+        this.pageClearedAwarded = false;
         this.gameTime = 0;
         this.score = 0;
         this.level = 1;
@@ -292,6 +310,12 @@ class SpaceInvadersGame {
         // Scan DOM targets
         this.scanDomTargets();
 
+        // Build defensive bunkers
+        this.generateBunkers();
+
+        // Schedule the first UFO
+        this.nextUfoIn = this.randomUfoDelay();
+
         // Start rhythm
         this.startRhythm();
     }
@@ -300,7 +324,9 @@ class SpaceInvadersGame {
         this.active = false;
 
         // Stop audio
+        this.stopUfoSound();
         this.stopAudio();
+        this.ufo = null;
 
         // Remove event listeners to prevent memory leaks
         this.removeEventListeners();
@@ -392,6 +418,67 @@ class SpaceInvadersGame {
                 });
             }
         }
+    }
+
+    generateBunkers() {
+        this.bunkers = [];
+        const count = this.width < 500 ? 3 : 4;
+        const pixel = 5;
+        // Classic bunker silhouette with the arch notch underneath
+        const pattern = [
+            '0011111111111100',
+            '0111111111111110',
+            '1111111111111111',
+            '1111111111111111',
+            '1111111111111111',
+            '1111111111111111',
+            '1111100000011111',
+            '1111000000001111',
+            '1110000000000111'
+        ];
+        const bunkerWidth = pattern[0].length * pixel;
+        const slot = this.width / (count + 1);
+
+        for (let i = 0; i < count; i++) {
+            this.bunkers.push({
+                x: slot * (i + 1) - bunkerWidth / 2,
+                y: this.height - 170,
+                pixel: pixel,
+                cols: pattern[0].length,
+                rows: pattern.length,
+                grid: pattern.map(row => row.split('').map(ch => ch === '1'))
+            });
+        }
+    }
+
+    // Erode a ragged blast crater around the hit point
+    damageBunker(bunker, hitX, hitY) {
+        const c0 = Math.floor((hitX - bunker.x) / bunker.pixel);
+        const r0 = Math.floor((hitY - bunker.y) / bunker.pixel);
+        for (let r = r0 - 2; r <= r0 + 2; r++) {
+            for (let c = c0 - 2; c <= c0 + 2; c++) {
+                if (r < 0 || r >= bunker.rows || c < 0 || c >= bunker.cols) continue;
+                const dist = Math.abs(r - r0) + Math.abs(c - c0);
+                if (dist <= 1 || (dist === 2 && Math.random() < 0.7) || (dist > 2 && Math.random() < 0.25)) {
+                    bunker.grid[r][c] = false;
+                }
+            }
+        }
+    }
+
+    // Returns true if the point sits on a still-solid bunker cell (and erodes it)
+    bunkerAbsorbs(x, y) {
+        for (const bunker of this.bunkers) {
+            if (x < bunker.x || x > bunker.x + bunker.cols * bunker.pixel ||
+                y < bunker.y || y > bunker.y + bunker.rows * bunker.pixel) continue;
+            const c = Math.floor((x - bunker.x) / bunker.pixel);
+            const r = Math.floor((y - bunker.y) / bunker.pixel);
+            if (bunker.grid[r] && bunker.grid[r][c]) {
+                this.damageBunker(bunker, x, y);
+                return true;
+            }
+        }
+        return false;
     }
 
     scanDomTargets() {
@@ -488,6 +575,30 @@ class SpaceInvadersGame {
             });
         }
 
+        // Descending enemies grind away any bunker pixels they touch
+        this.enemies.forEach(e => {
+            if (!e.alive) return;
+            this.bunkers.forEach(bunker => {
+                const bbox = {
+                    x: bunker.x, y: bunker.y,
+                    width: bunker.cols * bunker.pixel,
+                    height: bunker.rows * bunker.pixel
+                };
+                if (!this.rectIntersect(e, bbox)) return;
+                for (let r = 0; r < bunker.rows; r++) {
+                    for (let c = 0; c < bunker.cols; c++) {
+                        if (!bunker.grid[r][c]) continue;
+                        const px = bunker.x + c * bunker.pixel;
+                        const py = bunker.y + r * bunker.pixel;
+                        if (px + bunker.pixel > e.x && px < e.x + e.width &&
+                            py + bunker.pixel > e.y && py < e.y + e.height) {
+                            bunker.grid[r][c] = false;
+                        }
+                    }
+                }
+            });
+        });
+
         // Enemy Shooting (rate varies by level)
         this.lastEnemyShot += dt;
         if (this.lastEnemyShot >= this.enemyFireRate && !this.gameOver) {
@@ -512,18 +623,59 @@ class SpaceInvadersGame {
         // Remove off-screen enemy bullets
         this.enemyBullets = this.enemyBullets.filter(b => b.y < this.height);
 
-        // Check enemy bullets hitting player
-        if (!this.gameOver) {
+        // Enemy bullets vs bunkers
+        for (let i = this.enemyBullets.length - 1; i >= 0; i--) {
+            const b = this.enemyBullets[i];
+            if (this.bunkerAbsorbs(b.x + b.width / 2, b.y + b.height)) {
+                this.enemyBullets.splice(i, 1);
+            }
+        }
+
+        // Check enemy bullets hitting player (costs a life, not the game)
+        if (!this.gameOver && this.invulnTime <= 0) {
             for (let i = this.enemyBullets.length - 1; i >= 0; i--) {
                 const b = this.enemyBullets[i];
                 if (this.rectIntersect(b, this.player)) {
                     this.enemyBullets.splice(i, 1);
                     this.createExplosion(this.player.x + this.player.width / 2, this.player.y, '#22d3ee', 50);
-                    this.triggerGameOver();
+                    this.playExplosionSound();
+                    this.lives--;
+                    if (this.lives <= 0) {
+                        this.triggerGameOver();
+                    } else {
+                        this.invulnTime = 1.5;
+                    }
                     break;
                 }
             }
         }
+        this.invulnTime = Math.max(0, this.invulnTime - dt);
+
+        // UFO mystery ship - spawn, move, despawn
+        if (!this.gameOver) {
+            if (this.ufo) {
+                this.ufo.x += this.ufo.speed * this.ufo.dir * dt;
+                if ((this.ufo.dir === 1 && this.ufo.x > this.width + this.ufo.width) ||
+                    (this.ufo.dir === -1 && this.ufo.x < -this.ufo.width * 2)) {
+                    // Escaped off-screen
+                    this.ufo = null;
+                    this.stopUfoSound();
+                    this.nextUfoIn = this.randomUfoDelay();
+                }
+            } else {
+                this.nextUfoIn -= dt;
+                if (this.nextUfoIn <= 0) {
+                    this.spawnUfo();
+                }
+            }
+        }
+
+        // Score popups - float up and fade
+        this.scorePopups.forEach(p => {
+            p.life -= dt;
+            p.y -= 35 * dt;
+        });
+        this.scorePopups = this.scorePopups.filter(p => p.life > 0);
 
         // Particles - update positions
         this.particles.forEach(p => {
@@ -561,16 +713,20 @@ class SpaceInvadersGame {
         this.level++;
         this.levelStartTime = this.gameTime;
 
-        // Clear bullets
+        // Clear bullets and any UFO in flight
         this.bullets = [];
         this.enemyBullets = [];
         this.lastEnemyShot = 0;
+        this.ufo = null;
+        this.stopUfoSound();
+        this.nextUfoIn = this.randomUfoDelay();
 
         // Apply new difficulty
         this.applyLevelDifficulty();
 
-        // Regenerate enemies
+        // Regenerate enemies and rebuild bunkers
         this.generateEnemies();
+        this.generateBunkers();
 
         // Bonus points for completing a level
         this.score += 500 * (this.level - 1);
@@ -578,6 +734,8 @@ class SpaceInvadersGame {
 
     triggerGameOver() {
         this.gameOver = true;
+        this.ufo = null;
+        this.stopUfoSound();
         this.stopRhythm();
         this.playGameOverSound();
 
@@ -605,7 +763,61 @@ class SpaceInvadersGame {
         this.playShootSound();
     }
 
+    randomUfoDelay() {
+        // 12-20 seconds between mystery ships
+        return 12 + Math.random() * 8;
+    }
+
+    spawnUfo() {
+        const dir = Math.random() < 0.5 ? 1 : -1;
+        const width = 48;
+        this.ufo = {
+            x: dir === 1 ? -width : this.width,
+            y: 54,
+            width: width,
+            height: 21,
+            speed: 140 + (this.level - 1) * 15,
+            dir: dir
+        };
+        this.startUfoSound();
+    }
+
     checkCollisions() {
+        // Player bullets vs bunkers (yes, you can shoot through your own cover)
+        for (let i = this.bullets.length - 1; i >= 0; i--) {
+            const b = this.bullets[i];
+            if (this.bunkerAbsorbs(b.x + b.width / 2, b.y)) {
+                this.bullets.splice(i, 1);
+            }
+        }
+
+        // Bullets vs UFO
+        if (this.ufo) {
+            for (let i = this.bullets.length - 1; i >= 0; i--) {
+                if (this.rectIntersect(this.bullets[i], this.ufo)) {
+                    this.bullets.splice(i, 1);
+                    const bonuses = [50, 100, 150, 300];
+                    const bonus = bonuses[Math.floor(Math.random() * bonuses.length)];
+                    this.score += bonus;
+                    this.scorePopups.push({
+                        x: this.ufo.x + this.ufo.width / 2,
+                        y: this.ufo.y,
+                        text: `+${bonus}`,
+                        life: 1.2
+                    });
+                    this.createExplosion(
+                        this.ufo.x + this.ufo.width / 2,
+                        this.ufo.y + this.ufo.height / 2,
+                        '#d94f48', 40);
+                    this.playExplosionSound();
+                    this.ufo = null;
+                    this.stopUfoSound();
+                    this.nextUfoIn = this.randomUfoDelay();
+                    break;
+                }
+            }
+        }
+
         // Bullets vs Enemies
         for (let i = this.bullets.length - 1; i >= 0; i--) {
             const b = this.bullets[i];
@@ -636,6 +848,18 @@ class SpaceInvadersGame {
                         t.element.style.visibility = 'hidden'; // Hide from DOM
                         hit = true;
                         this.score += 50;
+                        // One-time bonus for wiping every element off the page
+                        if (!this.pageClearedAwarded && this.domTargets.length >= 3 &&
+                            this.domTargets.every(target => !target.alive)) {
+                            this.pageClearedAwarded = true;
+                            this.score += 1000;
+                            this.scorePopups.push({
+                                x: this.width / 2,
+                                y: this.height / 2 - 100,
+                                text: 'SITE DESTROYED +1000',
+                                life: 2
+                            });
+                        }
                         this.createExplosion(
                             t.rect.left + t.rect.width / 2,
                             t.rect.top + t.rect.height / 2,
@@ -788,10 +1012,33 @@ class SpaceInvadersGame {
             this.ctx.restore();
         }
 
-        // Draw Player
-        if (!this.gameOver) {
+        // Draw Bunkers
+        this.ctx.fillStyle = '#00ff00';
+        this.bunkers.forEach(bunker => {
+            for (let r = 0; r < bunker.rows; r++) {
+                for (let c = 0; c < bunker.cols; c++) {
+                    if (bunker.grid[r][c]) {
+                        this.ctx.fillRect(
+                            bunker.x + c * bunker.pixel,
+                            bunker.y + r * bunker.pixel,
+                            bunker.pixel, bunker.pixel);
+                    }
+                }
+            }
+        });
+
+        // Draw Player (blinks while invulnerable after losing a life)
+        const blinking = this.invulnTime > 0 && Math.floor(this.invulnTime * 8) % 2 === 1;
+        if (!this.gameOver && !blinking) {
             this.ctx.fillStyle = '#00ff00';
             this.drawSprite(this.player.x, this.player.y, 40, 24, 'player');
+        }
+
+        // Draw Lives (reserve bows, bottom-left)
+        if (!this.gameOver) {
+            for (let i = 0; i < this.lives; i++) {
+                this.drawSprite(20 + i * 34, this.height - 34, 24, 14, 'player');
+            }
         }
 
         // Draw Enemies (Photo Mosaic)
@@ -808,6 +1055,11 @@ class SpaceInvadersGame {
                 }
             }
         });
+
+        // Draw UFO mystery ship (pixel saucer in the masthead red)
+        if (this.ufo) {
+            this.drawUfo(this.ufo);
+        }
 
         // Draw Player Arrows
         this.bullets.forEach(b => {
@@ -853,6 +1105,17 @@ class SpaceInvadersGame {
             this.ctx.globalAlpha = p.life * 2;
             this.ctx.fillStyle = p.color;
             this.ctx.fillRect(p.x, p.y, p.size, p.size);
+            this.ctx.globalAlpha = 1.0;
+        });
+
+        // Draw Score Popups (floating bonus points)
+        this.scorePopups.forEach(p => {
+            this.ctx.globalAlpha = Math.min(1, p.life);
+            this.ctx.fillStyle = '#ffff00';
+            this.ctx.font = 'bold 20px "Courier New", monospace';
+            this.ctx.textAlign = 'center';
+            this.ctx.textBaseline = 'middle';
+            this.ctx.fillText(p.text, p.x, p.y);
             this.ctx.globalAlpha = 1.0;
         });
 
@@ -1009,6 +1272,28 @@ class SpaceInvadersGame {
                 this.ctx.fillText("← → to move • SPACE to shoot • ESC to quit", this.width / 2, this.height / 2);
             }
             this.ctx.globalAlpha = 1;
+        }
+    }
+
+    drawUfo(ufo) {
+        // Classic mystery-ship sprite, 16x7 pixel grid
+        const pattern = [
+            '0000011111100000',
+            '0001111111111000',
+            '0011111111111100',
+            '0110011001100110',
+            '1111111111111111',
+            '0011100110011100',
+            '0001000000001000'
+        ];
+        const px = ufo.width / 16;
+        this.ctx.fillStyle = '#d94f48';
+        for (let r = 0; r < pattern.length; r++) {
+            for (let c = 0; c < 16; c++) {
+                if (pattern[r][c] === '1') {
+                    this.ctx.fillRect(ufo.x + c * px, ufo.y + r * px, px + 0.5, px + 0.5);
+                }
+            }
         }
     }
 
@@ -1263,6 +1548,43 @@ class SpaceInvadersGame {
         osc.stop(this.audioCtx.currentTime + 1.5);
     }
 
+    startUfoSound() {
+        if (!this.audioCtx || this.ufoSound) return;
+
+        // Classic warbling siren: an LFO wobbling the oscillator pitch
+        const osc = this.audioCtx.createOscillator();
+        const gain = this.audioCtx.createGain();
+        const lfo = this.audioCtx.createOscillator();
+        const lfoGain = this.audioCtx.createGain();
+
+        osc.type = 'triangle';
+        osc.frequency.value = 340;
+        lfo.type = 'sine';
+        lfo.frequency.value = 9;
+        lfoGain.gain.value = 70;
+
+        lfo.connect(lfoGain);
+        lfoGain.connect(osc.frequency);
+        osc.connect(gain);
+        gain.connect(this.audioCtx.destination);
+        gain.gain.value = 0.045;
+
+        osc.start();
+        lfo.start();
+        this.ufoSound = { osc, lfo, gain };
+    }
+
+    stopUfoSound() {
+        if (!this.ufoSound) return;
+        try {
+            this.ufoSound.osc.stop();
+            this.ufoSound.lfo.stop();
+        } catch (e) {
+            // Already stopped or context closed
+        }
+        this.ufoSound = null;
+    }
+
     playRhythmNote() {
         if (!this.audioCtx || this.gameOver) return;
 
@@ -1317,6 +1639,7 @@ class SpaceInvadersGame {
 
     stopAudio() {
         this.stopRhythm();
+        this.stopUfoSound();
         if (this.audioCtx) {
             this.audioCtx.close().catch(() => {});
             this.audioCtx = null;

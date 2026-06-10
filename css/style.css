@@ -6,7 +6,8 @@
 
 @font-face {
     font-family: 'iA Writer Quattro';
-    src: url('../fonts/iAWriterQuattroV.ttf') format('truetype-variations');
+    src: url('../fonts/iAWriterQuattroV.woff2') format('woff2'),
+        url('../fonts/iAWriterQuattroV.ttf') format('truetype-variations');
     font-weight: 100 900;
     font-style: normal;
     font-display: swap;
@@ -14,7 +15,8 @@
 
 @font-face {
     font-family: 'iA Writer Mono';
-    src: url('../fonts/iAWriterMonoV.ttf') format('truetype-variations');
+    src: url('../fonts/iAWriterMonoV.woff2') format('woff2'),
+        url('../fonts/iAWriterMonoV.ttf') format('truetype-variations');
     font-weight: 100 900;
     font-style: normal;
     font-display: swap;
@@ -31,6 +33,11 @@
 
     --font-sans: 'iA Writer Quattro', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
     --font-mono: 'iA Writer Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+::selection {
+    background: var(--accent);
+    color: var(--bg-dark);
 }
 
 body {
@@ -280,26 +287,30 @@ h1 {
     display: inline-block;
 }
 
+/* Bio modal — a native <dialog>; the inner .modal-content fills it, so
+   backdrop clicks are the only ones that land on the dialog itself */
 .modal {
-    display: none;
-    position: fixed;
-    z-index: 1000;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(8, 7, 10, 0.92);
+    background: transparent;
+    border: none;
+    padding: 0;
+    margin: auto;
+    width: 90%;
+    max-width: 800px;
+}
+
+.modal[open] {
     animation: fadeIn 0.3s ease-out;
+}
+
+.modal::backdrop {
+    background: rgba(8, 7, 10, 0.92);
 }
 
 .modal-content {
     background: var(--bg-darker);
-    margin: 5% auto;
     padding: 48px;
     border: 1px solid var(--border);
     border-radius: 12px;
-    width: 90%;
-    max-width: 800px;
     max-height: 80vh;
     overflow-y: auto;
     position: relative;
@@ -545,7 +556,6 @@ footer {
 
     .modal-content {
         padding: 32px 24px;
-        margin: 10% auto;
     }
 
     .contact-links {
@@ -700,8 +710,12 @@ footer {
     border-bottom: 1px solid var(--border);
     text-decoration: none;
     color: inherit;
-    transition: color 0.2s ease;
+    transition: color 0.2s ease, border-color 0.2s ease;
     margin-bottom: 48px;
+}
+
+.writing-featured:hover {
+    border-color: var(--accent);
 }
 
 .writing-featured-meta {
