@@ -71,12 +71,33 @@ document.addEventListener('DOMContentLoaded', () => {
     window.addEventListener('resize', requestMobileHeaderUpdate);
 
     // Space Invaders easter egg trigger
+    function launchInvaders() {
+        // Scroll to top for better arena
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        setTimeout(() => window.spaceInvaders.start(), 500);
+    }
+
     const invaderTrigger = document.getElementById('startInvaders');
     if (invaderTrigger) {
-        invaderTrigger.addEventListener('click', () => {
-            // Scroll to top for better arena
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-            setTimeout(() => window.spaceInvaders.start(), 500);
-        });
+        invaderTrigger.addEventListener('click', launchInvaders);
     }
+
+    // Konami code also launches the game
+    const konami = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown',
+        'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'];
+    let konamiPos = 0;
+
+    document.addEventListener('keydown', (event) => {
+        if (window.spaceInvaders && window.spaceInvaders.active) return;
+        const key = event.key.length === 1 ? event.key.toLowerCase() : event.key;
+        if (key === konami[konamiPos]) {
+            konamiPos++;
+            if (konamiPos === konami.length) {
+                konamiPos = 0;
+                launchInvaders();
+            }
+        } else {
+            konamiPos = key === konami[0] ? 1 : 0;
+        }
+    });
 });

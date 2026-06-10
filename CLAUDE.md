@@ -22,7 +22,7 @@ Personal website for Burt Herman — static single-page site at burtherman.com, 
 │   ├── script.js       # GA bootstrap + <dialog> modal + mobile-header-bar + copyright year + invaders trigger
 │   └── invaders.js     # Space Invaders easter egg (self-contained)
 ├── fonts/              # iA Writer Quattro/Mono variable WOFF2 + TTF fallback + SIL OFL license
-├── images/             # Profile photos (profile-2.jpg is the active hero) + favicon.svg (pixel alien)
+├── images/             # Profile photos (profile-2.jpg is the active hero) + favicon.svg (pixel alien) + og-card.png (1200×630 social card)
 ├── CNAME               # Custom domain config — do not delete
 ├── .gitignore
 ├── README.md           # Public repo readme
@@ -54,12 +54,14 @@ Tokens in `:root` at the top of `css/style.css`:
 
 ## Easter Egg: Space Invaders
 
-Bottom-left alien button (`#startInvaders` with `title="Play Space Invaders"`). Game is self-contained in `js/invaders.js`.
+Bottom-left alien button (`#startInvaders` with `title="Play Space Invaders"`) or the Konami code (↑↑↓↓←→←→BA, handled in `js/script.js`). Game is self-contained in `js/invaders.js`.
 - **Desktop**: arrow keys to move, space to shoot, ESC/Q to quit
 - **Mobile**: drag to move, tap to shoot
 - Enemies are a pixelated mosaic of `images/profile-2.jpg`
-- Can also shoot DOM elements (selector: `h1, h2, h3, p, img, a, button:not(#startInvaders), .writing-featured, .writing-item`)
+- Can also shoot DOM elements (selector: `h1, h2, h3, p, img, a, button:not(#startInvaders), .writing-featured, .writing-item`); wiping every element off the page awards a one-time `SITE DESTROYED +1000` bonus
 - A UFO mystery ship (masthead-red pixel saucer, warbling siren) crosses the top every 12–20s; shooting it awards a random 50/100/150/300 bonus shown as a floating score popup
+- 3 lives with 1.5s of blinking invulnerability after a hit; reserve bows drawn bottom-left. An invader physically reaching the player is still instant game over
+- 4 destructible bunkers (3 on screens <500px) erode pixel-by-pixel from shots on both sides; descending invaders grind them away; rebuilt each level
 
 ## Development Commands
 
@@ -110,6 +112,8 @@ These are the lessons from the April 2026 redesign — re-introducing them would
 ## SEO & Meta
 
 Maintain consistency across `<title>`, meta description, Open Graph, Twitter card, and JSON-LD when updating bio or role. Current tagline (`Co-founder, Hacks/Hackers · Brooklyn, NY`) is mirrored in the `jobTitle` field of the Person schema.
+
+The social card (`og:image`/`twitter:image`) is `images/og-card.png`, a 1200×630 dark editorial card rendered with the site fonts and palette (name, tagline, domain, pixel alien). If the name/tagline changes, regenerate it — PIL script pattern: render text with `fonts/iAWriterQuattroV.ttf`/`iAWriterMonoV.ttf` on `--bg-dark` with the `--accent` kicker rule. JSON-LD `image` stays the profile photo (it describes the person, not the page).
 
 ## CSP
 
