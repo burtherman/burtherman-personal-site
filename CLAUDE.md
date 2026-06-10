@@ -48,7 +48,7 @@ Tokens in `:root` at the top of `css/style.css`:
 ## Key Sections in `index.html`
 
 - **Hero**: single profile photo + H1 name + tagline (`Co-founder, Hacks/Hackers · Brooklyn, NY`) + short bio + Full Bio modal trigger
-- **Recent writing**: one featured piece (bordered block with kicker/title/dek/CTA) + archive list (`<ol class="writing-list">` with rows laid out as `date | title | source` via CSS grid)
+- **Recent writing**: up to two stacked featured pieces (bordered blocks with kicker/title/dek/CTA; adjacent blocks share one hairline via the `.writing-featured + .writing-featured` rule) + archive list (`<ol class="writing-list">` with rows laid out as `date | title | source` via CSS grid)
 - **Work with me**: contact CTA section with Email/LinkedIn SVG buttons + Hacks/Hackers link
 - **Footer**: copyright + location, mono small-caps
 
@@ -62,6 +62,7 @@ Bottom-left alien button (`#startInvaders` with `title="Play Space Invaders"`) o
 - A UFO mystery ship (masthead-red pixel saucer, warbling siren) crosses the top every 12–20s; shooting it awards a random 50/100/150/300 bonus shown as a floating score popup
 - 3 lives with 1.5s of blinking invulnerability after a hit; reserve bows drawn bottom-left. An invader physically reaching the player is still instant game over
 - 4 destructible bunkers (3 on screens <500px) erode pixel-by-pixel from shots on both sides; descending invaders grind them away; rebuilt each level
+- Page content overlapping the bottom gameplay strip (bunkers/ship/lives, bottom ~190px) is hidden via `clearArenaZone()` when play begins and restored on quit
 
 ## Development Commands
 
@@ -90,7 +91,7 @@ Responsive breakpoint: **768px** (mobile layout engages; writing archive goes si
 </li>
 ```
 
-**Promoting a new featured piece**: Swap the `.writing-featured` anchor's `href`, source (`.source`), date (`<time>`), title (`.writing-featured-title`), dek (`.writing-featured-dek`), and CTA label. Demote the old featured piece to the first `<li>` in the archive list.
+**Promoting a new featured piece**: There are up to two featured slots, newest first. Add or swap a `.writing-featured` anchor (`href`, source `.source`, date `<time>`, title `.writing-featured-title`, dek `.writing-featured-dek`, CTA label). When a piece rotates out of the featured slots, demote it to its chronological spot in the archive list.
 
 **Updating bio**: short bio around line 120 in `index.html`; full bio in the modal below. The modal is a native `<dialog>` (`#bioModal`) opened with `showModal()` in `js/script.js` — focus trapping, ESC, and background inerting come free from the browser; don't re-add manual focus-trap code.
 

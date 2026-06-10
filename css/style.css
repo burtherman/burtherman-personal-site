@@ -718,6 +718,13 @@ footer {
     border-color: var(--accent);
 }
 
+/* Stacked featured pieces share one hairline: the negative top margin
+   collapses against the previous block's bottom margin */
+.writing-featured + .writing-featured {
+    border-top: none;
+    margin-top: -48px;
+}
+
 .writing-featured-meta {
     display: flex;
     align-items: center;
