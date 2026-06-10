@@ -52,6 +52,7 @@ class SpaceInvadersGame {
         this.invulnTime = 0; // Post-hit invulnerability, seconds remaining
         this.bunkers = [];
         this.pageClearedAwarded = false; // One-time bonus for shooting every DOM element
+        this.clearedElements = []; // Page content hidden to keep the arena floor readable
         this.keys = {
             ArrowLeft: false,
             ArrowRight: false,
@@ -307,7 +308,8 @@ class SpaceInvadersGame {
     beginGameplay() {
         this.readyPhase = false;
 
-        // Scan DOM targets
+        // Clear page content out of the gameplay strip, then scan what's left
+        this.clearArenaZone();
         this.scanDomTargets();
 
         // Build defensive bunkers
@@ -368,6 +370,12 @@ class SpaceInvadersGame {
             }
         });
         this.domTargets = [];
+
+        // Restore content hidden out of the gameplay strip
+        this.clearedElements.forEach(el => {
+            el.style.visibility = '';
+        });
+        this.clearedElements = [];
     }
 
     resizeCanvas() {
@@ -481,6 +489,24 @@ class SpaceInvadersGame {
         return false;
     }
 
+    // Hide page content that sits in the bottom gameplay strip (bunkers,
+    // player ship, lives) so text doesn't overlap the arena; restored on stop()
+    clearArenaZone() {
+        this.clearedElements = [];
+        const cutoff = this.height - 190;
+        const selector = 'h1, h2, h3, p, img:not([src*="data:"]), a, button:not(#startInvaders), .writing-featured, .writing-item';
+
+        document.querySelectorAll(selector).forEach(el => {
+            if (el.closest('#invaders-canvas') || el.closest('.invader-trigger')) return;
+            if (el.style.visibility === 'hidden') return;
+            const rect = el.getBoundingClientRect();
+            if (rect.height > 0 && rect.top < this.height && rect.bottom > cutoff) {
+                el.style.visibility = 'hidden';
+                this.clearedElements.push(el);
+            }
+        });
+    }
+
     scanDomTargets() {
         // Clear existing targets
         this.domTargets = [];
@@ -492,6 +518,10 @@ class SpaceInvadersGame {
         elements.forEach(el => {
             // Skip elements that are part of the game or hidden
             if (el.closest('#invaders-canvas') || el.closest('.invader-trigger')) {
+                return;
+            }
+            // Skip content hidden by clearArenaZone (or inside a hidden parent)
+            if (getComputedStyle(el).visibility === 'hidden') {
                 return;
             }
 

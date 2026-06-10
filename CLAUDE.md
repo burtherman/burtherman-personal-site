@@ -62,6 +62,7 @@ Bottom-left alien button (`#startInvaders` with `title="Play Space Invaders"`) o
 - A UFO mystery ship (masthead-red pixel saucer, warbling siren) crosses the top every 12–20s; shooting it awards a random 50/100/150/300 bonus shown as a floating score popup
 - 3 lives with 1.5s of blinking invulnerability after a hit; reserve bows drawn bottom-left. An invader physically reaching the player is still instant game over
 - 4 destructible bunkers (3 on screens <500px) erode pixel-by-pixel from shots on both sides; descending invaders grind them away; rebuilt each level
+- Page content overlapping the bottom gameplay strip (bunkers/ship/lives, bottom ~190px) is hidden via `clearArenaZone()` when play begins and restored on quit
 
 ## Development Commands
 
