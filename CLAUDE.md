@@ -49,8 +49,8 @@ Tokens in `:root` at the top of `css/style.css`:
 
 - **Hero**: single profile photo + H1 name + tagline (`Co-founder, Hacks/Hackers · Brooklyn, NY`) + short bio + Full Bio modal trigger
 - **Recent writing**: up to two stacked featured pieces (bordered blocks with kicker/title/dek/CTA; adjacent blocks share one hairline via the `.writing-featured + .writing-featured` rule) + archive list (`<ol class="writing-list">` with rows laid out as `date | title | source` via CSS grid)
-- **Work with me**: contact CTA section with Email/LinkedIn SVG buttons + Hacks/Hackers link
-- **Footer**: copyright + location, mono small-caps
+- **Work with me**: contact CTA section with Email/LinkedIn SVG buttons
+- **Footer**: copyright only, mono small-caps (location lives in the tagline — don't repeat it)
 
 ## Easter Egg: Space Invaders
 

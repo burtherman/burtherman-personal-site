@@ -393,26 +393,6 @@ h1 {
     opacity: 1;
 }
 
-.social-links {
-    display: flex;
-    gap: 24px;
-    justify-content: center;
-    align-items: center;
-}
-
-
-.hh-logo-link {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 12px 24px;
-    color: var(--text-muted);
-    /* Override default color */
-    font-size: 0.95rem;
-    font-family: var(--font-mono);
-    letter-spacing: 0.05em;
-}
-
 .floating-contact-btn {
     position: fixed;
     top: 32px;
