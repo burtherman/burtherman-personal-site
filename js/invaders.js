@@ -218,7 +218,7 @@ class SpaceInvadersGame {
         // but pixel drawing is better for the vibe.
         // Load the profile photo for the mosaic enemies
         this.sprites.profile = new Image();
-        this.sprites.profile.src = 'images/profile-2.jpg';
+        this.sprites.profile.src = 'images/profile-4.jpg';
     }
 
     start() {
