@@ -261,6 +261,10 @@ h1 {
     font-weight: 400;
 }
 
+.bio-short p + p {
+    margin-top: 1em;
+}
+
 /* Shared Button Style */
 .btn-glass {
     background: rgba(235, 232, 225, 0.025);
