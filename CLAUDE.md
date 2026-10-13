@@ -122,4 +122,6 @@ The social card (`og:image`/`twitter:image`) is `images/og-card.png`, a 1200×63
 
 Content-Security-Policy is declared via `<meta>` in each HTML file. Self-hosted fonts mean `font-src 'self'` — no third-party font origins. If re-adding a Google Font (not recommended), the CSP must be updated in both `index.html` and `404.html`.
 
+Cloudflare Web Analytics is on for the zone and Cloudflare injects its beacon into every page, so `script-src` in both files allows `https://static.cloudflareinsights.com`. The beacon reports to the site's own `/cdn-cgi/rum`, which `connect-src 'self'` covers.
+
 `script-src` carries no `'unsafe-inline'`: **inline `<script>` blocks and `onclick=`-style attributes are blocked** — all JS must live in external files (the GA bootstrap is in `js/script.js`). `index.html`'s `style-src` also has no `'unsafe-inline'`, so no `style=""` attributes there either (JS styling via CSSOM, e.g. `el.style.x = …`, is fine and is what `invaders.js` uses). The JSON-LD block is a data block, not a script, so CSP doesn't apply to it. Cache-busting: bump the `?v=` query on `style.css`, `script.js`, and `invaders.js` together when shipping changes.
