@@ -48,7 +48,7 @@ Tokens in `:root` at the top of `css/style.css`:
 ## Key Sections in `index.html`
 
 - **Hero**: single profile photo + H1 name + tagline (`Co-founder, Hacks/Hackers · Brooklyn, NY`) + short bio + Full Bio modal trigger
-- **Datelines** (datelines.burtherman.com, the AP passport archive) is personal, not a project: its link is the second paragraph of the short bio and stays there permanently. It is also linked from the AP paragraph of the full bio
+- **Datelines** (datelines.burtherman.com, AP stories and the passport) is personal, not a project: its link is the second paragraph of the short bio and stays there permanently. It is also linked from the AP paragraph of the full bio
 - **Recent writing**: up to two stacked featured pieces (bordered blocks with kicker/title/dek/CTA; adjacent blocks share one hairline via the `.writing-featured + .writing-featured` rule) + archive list (`<ol class="writing-list">` with rows laid out as `date | title | source` via CSS grid)
 - **Projects**: things built rather than written, each a `.writing-featured` block under its own `<h2>` (same markup as a featured piece, with who it is for in `.source`). Add, rotate or drop them freely
 - **Work with me**: contact CTA section with Email/LinkedIn SVG buttons
