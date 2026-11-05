@@ -241,8 +241,6 @@ class SpaceInvadersGame {
         this.canvas.style.position = 'fixed';
         this.canvas.style.top = '0';
         this.canvas.style.left = '0';
-        this.canvas.style.width = '100vw';
-        this.canvas.style.height = '100vh';
         this.canvas.style.zIndex = '99999';
         this.canvas.style.pointerEvents = 'none';
         document.body.appendChild(this.canvas);
@@ -379,26 +377,151 @@ class SpaceInvadersGame {
     }
 
     resizeCanvas() {
+        const oldWidth = this.width;
+        const oldHeight = this.height;
         this.width = window.innerWidth;
         this.height = window.innerHeight;
         this.canvas.width = this.width;
         this.canvas.height = this.height;
+        // Size the element in px, not 100vw/100vh: on iOS Safari 100vh is the
+        // toolbar-collapsed height, which stretches the canvas past the visible
+        // area and pushes the ship and lives under the browser chrome
+        this.canvas.style.width = this.width + 'px';
+        this.canvas.style.height = this.height + 'px';
         if (this.ctx) this.ctx.imageSmoothingEnabled = false;
-        if (this.player) this.player.y = this.height - 60;
+        if (this.player) {
+            this.player.y = this.height - 60;
+            this.player.x = Math.max(0, Math.min(this.width - this.player.width, this.player.x));
+        }
+        if (oldWidth && (oldWidth !== this.width || oldHeight !== this.height)) {
+            this.relayoutAfterResize();
+        }
+    }
+
+    // Vertical layout of the play field. Short screens (phones in landscape,
+    // foldable inner displays) get smaller bunkers and a shorter alien grid
+    // so the formation never spawns on top of the ship
+    layoutMetrics() {
+        const compact = this.height < 560;
+        const playerY = this.height - 60;
+        const bunkerPixel = compact ? 3 : 5;
+        const bunkerY = compact ? playerY - 70 : playerY - 110;
+        const startY = compact ? 56 : 80;
+        return { compact, playerY, bunkerPixel, bunkerY, startY };
+    }
+
+    gridMetrics() {
+        const { compact, bunkerY, startY } = this.layoutMetrics();
+        // Grid takes at most 60% of the width and 65% of the space above the
+        // bunkers, leaving room for the formation to descend
+        const maxGridWidth = this.width * 0.6;
+        const maxGridHeight = (bunkerY - startY) * 0.65;
+        const cols = this.width < 500 ? 4 : 6;
+        const rows = this.width < 500 ? 5 : 6;
+        const padding = compact ? 4 : (this.width < 500 ? 6 : 10);
+        const byWidth = (maxGridWidth - (cols - 1) * padding) / cols;
+        const byHeight = (maxGridHeight - (rows - 1) * padding) / rows;
+        const size = Math.max(8, Math.floor(Math.min(50, byWidth, byHeight)));
+        const gridWidth = (cols * size) + ((cols - 1) * padding);
+        return {
+            cols, rows, padding, size, startY,
+            startX: (this.width - gridWidth) / 2,
+            drop: Math.max(10, Math.min(30, Math.round(size * 0.6)))
+        };
+    }
+
+    // Re-fit an in-progress game to a new viewport (rotation, Safari toolbar
+    // showing/hiding, folding/unfolding) without killing the player
+    relayoutAfterResize() {
+        if (this.readyPhase) {
+            if (this.enemies.length) this.generateEnemies();
+            return;
+        }
+        if (this.gameOver) return;
+
+        // Page text reflows on rotation: un-hide what was cleared for the old
+        // strip, clear the new one, and re-measure the shootable elements
+        // (keeping already-shot ones listed so stop() restores them)
+        this.clearedElements.forEach(el => { el.style.visibility = ''; });
+        this.clearArenaZone();
+        const shot = this.domTargets.filter(t => !t.alive);
+        this.scanDomTargets();
+        this.domTargets.push(...shot);
+
+        const grid = this.lastGrid;
+        if (grid && this.enemies.length === grid.cols * grid.rows) {
+            // How far the formation has marched from its starting spot
+            const ref = this.enemies.findIndex(e => e.alive);
+            let dx = 0;
+            let drops = 0;
+            if (ref >= 0) {
+                const r = Math.floor(ref / grid.cols);
+                const c = ref % grid.cols;
+                const e = this.enemies[ref];
+                dx = e.x - (grid.startX + c * (grid.size + grid.padding));
+                drops = Math.round((e.y - (grid.startY + r * (grid.size + grid.padding))) / grid.drop);
+            }
+
+            const next = this.gridMetrics();
+            const { bunkerY } = this.layoutMetrics();
+            const gridWidth = next.cols * next.size + (next.cols - 1) * next.padding;
+            const gridHeight = next.rows * next.size + (next.rows - 1) * next.padding;
+            // Keep the formation on screen and above the bunkers
+            let shiftY = Math.max(0, drops) * next.drop;
+            shiftY = Math.min(shiftY, Math.max(0, bunkerY - 10 - next.startY - gridHeight));
+            let shiftX = dx * (this.width / Math.max(1, this.lastLayoutWidth || this.width));
+            shiftX = Math.max(20 - next.startX, Math.min(this.width - 20 - next.startX - gridWidth, shiftX));
+
+            if (grid.cols === next.cols && grid.rows === next.rows) {
+                this.enemies.forEach((e, i) => {
+                    const r = Math.floor(i / next.cols);
+                    const c = i % next.cols;
+                    e.x = next.startX + shiftX + c * (next.size + next.padding);
+                    e.y = next.startY + shiftY + r * (next.size + next.padding);
+                    e.width = next.size;
+                    e.height = next.size;
+                });
+                this.lastGrid = next;
+                this.enemyDropDistance = next.drop;
+                this.lastLayoutWidth = this.width;
+            } else {
+                // Column/row count changed (crossed the 500px width line):
+                // rebuild the grid, keeping the same fraction of aliens dead
+                const deadShare = this.enemies.filter(e => !e.alive).length / this.enemies.length;
+                this.generateEnemies();
+                const kill = Math.round(deadShare * this.enemies.length);
+                for (let i = 0; i < kill; i++) this.enemies[this.enemies.length - 1 - i].alive = false;
+            }
+        }
+
+        // Bunkers: move them, keeping their damage if the shape still fits
+        const { bunkerY, bunkerPixel } = this.layoutMetrics();
+        const count = this.width < 500 ? 3 : 4;
+        if (this.bunkers.length === count && this.bunkers[0].pixel === bunkerPixel) {
+            const bunkerWidth = this.bunkers[0].cols * bunkerPixel;
+            const slot = this.width / (count + 1);
+            this.bunkers.forEach((b, i) => {
+                b.x = slot * (i + 1) - bunkerWidth / 2;
+                b.y = bunkerY;
+            });
+        } else if (this.bunkers.length) {
+            this.generateBunkers();
+        }
+    }
+
+    // Game-over/high-score overlay is ~420px tall; shrink it on short screens
+    overlayScale() {
+        return Math.min(1, (this.height - 20) / 420);
     }
 
     generateEnemies() {
-        // Adapt grid to screen size - grid should take at most 60% of width
-        const maxGridWidth = this.width * 0.6;
-        const cols = this.width < 500 ? 4 : 6;
-        const rows = this.width < 500 ? 5 : 6;
-        const padding = this.width < 500 ? 6 : 10;
-        const enemyWidth = Math.floor(Math.min(50, (maxGridWidth - (cols - 1) * padding) / cols));
+        const grid = this.gridMetrics();
+        const { cols, rows, padding, startX, startY } = grid;
+        const enemyWidth = grid.size;
         const enemyHeight = enemyWidth;
-
-        const gridWidth = (cols * enemyWidth) + ((cols - 1) * padding);
-        const startX = (this.width - gridWidth) / 2;
-        const startY = 80;
+        this.enemyDropDistance = grid.drop;
+        this.lastGrid = grid;
+        this.lastLayoutWidth = this.width;
 
         // Calculate source image slice size (use fallback if image not loaded)
         const img = this.sprites.profile;
@@ -431,7 +554,7 @@ class SpaceInvadersGame {
     generateBunkers() {
         this.bunkers = [];
         const count = this.width < 500 ? 3 : 4;
-        const pixel = 5;
+        const { bunkerY, bunkerPixel: pixel } = this.layoutMetrics();
         // Classic bunker silhouette with the arch notch underneath
         const pattern = [
             '0011111111111100',
@@ -450,7 +573,7 @@ class SpaceInvadersGame {
         for (let i = 0; i < count; i++) {
             this.bunkers.push({
                 x: slot * (i + 1) - bunkerWidth / 2,
-                y: this.height - 170,
+                y: bunkerY,
                 pixel: pixel,
                 cols: pattern[0].length,
                 rows: pattern.length,
@@ -493,7 +616,7 @@ class SpaceInvadersGame {
     // player ship, lives) so text doesn't overlap the arena; restored on stop()
     clearArenaZone() {
         this.clearedElements = [];
-        const cutoff = this.height - 190;
+        const cutoff = this.layoutMetrics().bunkerY - 20;
         const selector = 'h1, h2, h3, p, img:not([src*="data:"]), a, button:not(#startInvaders), .writing-featured, .writing-item';
 
         document.querySelectorAll(selector).forEach(el => {
@@ -1006,9 +1129,10 @@ class SpaceInvadersGame {
             return; // Don't draw game elements during ready phase
         }
 
-        // Draw Score (bitmap style)
+        // Draw Score (bitmap style); smaller on narrow screens so SCORE and
+        // LEVEL don't collide
         this.ctx.save();
-        this.ctx.font = 'bold 32px "Courier New", monospace';
+        this.ctx.font = `bold ${this.width < 500 ? 20 : 32}px "Courier New", monospace`;
         this.ctx.textAlign = 'left';
         this.ctx.textBaseline = 'top';
         // Shadow for depth
@@ -1184,6 +1308,13 @@ class SpaceInvadersGame {
             this.ctx.fillStyle = 'rgba(0, 0, 0, 0.85)';
             this.ctx.fillRect(0, 0, this.width, this.height);
 
+            // Scale the overlay around the center so it fits short screens
+            const s = this.overlayScale();
+            this.ctx.save();
+            this.ctx.translate(this.width / 2, this.height / 2);
+            this.ctx.scale(s, s);
+            this.ctx.translate(-this.width / 2, -this.height / 2);
+
             this.ctx.textAlign = 'center';
             this.ctx.textBaseline = 'middle';
 
@@ -1274,6 +1405,7 @@ class SpaceInvadersGame {
                 const exitText = this.isTouchDevice ? "Tap anywhere to return" : "Press 'ESC' or 'Q' to return";
                 this.ctx.fillText(exitText, this.width / 2, this.height / 2 + 220);
             }
+            this.ctx.restore();
         }
 
         // Show instructions briefly at game start (first 4 seconds)
@@ -1432,6 +1564,11 @@ class SpaceInvadersGame {
 
     handleNameTouch(tx, ty) {
         if (!this.enteringName) return;
+
+        // Map the tap into the (possibly scaled) overlay's coordinates
+        const s = this.overlayScale();
+        tx = this.width / 2 + (tx - this.width / 2) / s;
+        ty = this.height / 2 + (ty - this.height / 2) / s;
 
         const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ ';
         const letterSpacing = 50;
