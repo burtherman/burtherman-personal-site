@@ -66,12 +66,18 @@ class SpaceInvadersGame {
             alien2: null
         };
 
-        // Touch state
+        // Touch state. Movement is relative, like a trackpad: the ship moves by
+        // how far the steering finger slides (times dragGain), never jumps to
+        // where the finger is, so a thumb can steer from anywhere on screen
+        // without covering the ship and a plain tap only fires
         this.touch = {
             active: false,
-            x: 0,
-            lastTap: 0
+            id: null,      // identifier of the steering finger
+            lastX: 0,
+            lastShot: 0
         };
+        this.dragGain = 1.5;          // ship px per finger px
+        this.holdFireInterval = 300;  // ms between shots while a finger is down
 
         // Detect touch capability
         this.isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
@@ -191,25 +197,47 @@ class SpaceInvadersGame {
             return;
         }
 
-        this.touch.active = true;
-        this.touch.x = tx;
+        // The first finger down steers; any new finger also fires
+        if (!this.touch.active) {
+            const t = e.changedTouches[0];
+            this.touch.active = true;
+            this.touch.id = t.identifier;
+            this.touch.lastX = t.clientX;
+        }
 
         const now = Date.now();
-        if (now - this.touch.lastTap > 150) {
+        if (now - this.touch.lastShot > 150) {
             this.fireBullet();
-            this.touch.lastTap = now;
+            this.touch.lastShot = now;
         }
     }
 
     handleTouchMove(e) {
         if (!this.active || !this.touch.active) return;
         e.preventDefault();
-        this.touch.x = e.touches[0].clientX;
+        if (this.readyPhase || this.gameOver) return;
+        for (const t of e.changedTouches) {
+            if (t.identifier !== this.touch.id) continue;
+            const dx = t.clientX - this.touch.lastX;
+            this.touch.lastX = t.clientX;
+            this.player.x += dx * this.dragGain;
+            this.player.x = Math.max(0, Math.min(this.width - this.player.width, this.player.x));
+        }
     }
 
-    handleTouchEnd() {
+    handleTouchEnd(e) {
         if (!this.active) return;
-        this.touch.active = false;
+        const ended = [...e.changedTouches].some(t => t.identifier === this.touch.id);
+        if (!ended) return;
+        // Hand steering to another finger still on the glass, if any
+        const next = e.touches[0];
+        if (next) {
+            this.touch.id = next.identifier;
+            this.touch.lastX = next.clientX;
+        } else {
+            this.touch.active = false;
+            this.touch.id = null;
+        }
     }
 
     loadSprites() {
@@ -676,14 +704,13 @@ class SpaceInvadersGame {
         if (this.keys.ArrowLeft) this.player.x -= this.player.speed * dt;
         if (this.keys.ArrowRight) this.player.x += this.player.speed * dt;
 
-        // Player Movement - Touch (ship follows finger x position)
+        // Touch: movement happens in handleTouchMove; holding a finger down
+        // keeps firing at a steady rate
         if (this.touch.active) {
-            const targetX = this.touch.x - this.player.width / 2;
-            const diff = targetX - this.player.x;
-            const moveSpeed = this.player.speed * 1.5 * dt;
-
-            if (Math.abs(diff) > 5) {
-                this.player.x += Math.sign(diff) * Math.min(Math.abs(diff), moveSpeed);
+            const now = Date.now();
+            if (now - this.touch.lastShot > this.holdFireInterval) {
+                this.fireBullet();
+                this.touch.lastShot = now;
             }
         }
 
@@ -1099,7 +1126,7 @@ class SpaceInvadersGame {
             this.ctx.fillStyle = '#ffffff';
             this.ctx.font = `${instrSize}px "Courier New", monospace`;
             if (this.isTouchDevice) {
-                this.ctx.fillText("DRAG to move \u2022 TAP to shoot", this.width / 2, this.height / 2 + 15);
+                this.ctx.fillText("DRAG anywhere to move \u2022 TAP to shoot", this.width / 2, this.height / 2 + 15);
             } else {
                 this.ctx.fillText("\u2190 \u2192 to move \u2022 SPACE to shoot \u2022 ESC to quit", this.width / 2, this.height / 2 + 15);
             }
