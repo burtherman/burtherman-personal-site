@@ -72,6 +72,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Space Invaders easter egg trigger
     function launchInvaders() {
+        // Create the game's audio now, inside the click/keypress: iOS Safari
+        // keeps audio created later (in the setTimeout below) muted
+        window.spaceInvaders.initAudio();
         // Scroll to top for better arena
         window.scrollTo({ top: 0, behavior: 'smooth' });
         setTimeout(() => window.spaceInvaders.start(), 500);

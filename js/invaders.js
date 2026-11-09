@@ -128,6 +128,7 @@ class SpaceInvadersGame {
 
     handleKeyDown(e) {
         if (!this.active) return;
+        this.unlockAudio();
 
         // Skip ready screen on any key
         if (this.readyPhase) {
@@ -227,6 +228,7 @@ class SpaceInvadersGame {
 
     handleTouchEnd(e) {
         if (!this.active) return;
+        this.unlockAudio();
         const ended = [...e.changedTouches].some(t => t.identifier === this.touch.id);
         if (!ended) return;
         // Hand steering to another finger still on the glass, if any
@@ -1640,14 +1642,34 @@ class SpaceInvadersGame {
     }
 
     // Audio Methods
+    // iOS Safari only lets an AudioContext make sound if it is created or
+    // resumed inside a user gesture (click, touchend, keydown; touchstart
+    // doesn't count). script.js calls this from the launch click, and the
+    // game's touchend/keydown handlers call unlockAudio() as a fallback.
     initAudio() {
-        if (this.audioCtx) return;
-        try {
-            this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        } catch (e) {
-            // Audio not supported
-            this.audioCtx = null;
+        if (!this.audioCtx || this.audioCtx.state === 'closed') {
+            try {
+                this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            } catch (e) {
+                // Audio not supported
+                this.audioCtx = null;
+                return;
+            }
         }
+        this.unlockAudio();
+    }
+
+    unlockAudio() {
+        const ctx = this.audioCtx;
+        if (!ctx || ctx.state === 'running') return;
+        ctx.resume().catch(() => {});
+        // Older iOS also wants a sound started during the gesture
+        try {
+            const src = ctx.createBufferSource();
+            src.buffer = ctx.createBuffer(1, 1, 22050);
+            src.connect(ctx.destination);
+            src.start(0);
+        } catch (e) { /* ignore */ }
     }
 
     playReadySound() {
