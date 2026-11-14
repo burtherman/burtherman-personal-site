@@ -22,7 +22,7 @@ Personal website for Burt Herman — static single-page site at burtherman.com, 
 │   ├── script.js       # GA bootstrap + <dialog> modal + mobile-header-bar + copyright year + invaders trigger
 │   └── invaders.js     # Space Invaders easter egg (self-contained)
 ├── fonts/              # iA Writer Quattro/Mono variable WOFF2 + TTF fallback + SIL OFL license
-├── images/             # Profile photos (profile-2.jpg is the active hero) + favicon.svg (pixel alien) + og-card.png (1200×630 social card)
+├── images/             # Profile photos (profile-4.jpg is the active hero) + favicon.svg (pixel alien) + og-card.png (1200×630 social card)
 ├── CNAME               # Custom domain config — do not delete
 ├── .gitignore
 ├── README.md           # Public repo readme
@@ -36,7 +36,9 @@ Tokens in `:root` at the top of `css/style.css`:
 - `--accent: #d94f48` — masthead red (WCAG AA passes 4.86:1 on `--bg-dark`)
 - `--accent-soft: rgba(217, 79, 72, 0.22)` — focus-ring glow
 - `--bg-dark: #0c0a08` — warm near-black (page background)
-- `--bg-darker: #08070a` — modal content background
+- `--bg-darker: #090807` — modal content background
+- `--radius: 10px` — one corner radius for buttons, the modal and the skip link
+- `color-scheme: dark` on `:root` — keeps native scrollbars dark
 - `--text-light: #ebe8e1` — warm paper (primary text)
 - `--text-muted: #9a958a` — warm-tinted gray (secondary text)
 - `--border: #2a2622` — warm-tinted hairline
@@ -47,19 +49,21 @@ Tokens in `:root` at the top of `css/style.css`:
 
 ## Key Sections in `index.html`
 
-- **Hero**: single profile photo + H1 name + tagline (`Co-founder, Hacks/Hackers · Brooklyn, NY`) + short bio + Full Bio modal trigger
+- **Layout**: one left-aligned 780px column (`.container > header, main, footer`) carries everything. Don't re-centre the hero, contact section or footer
+- **Hero**: a masthead. Red kicker rule (`header::before`, the same mark as the social card), then a 128px profile photo beside the H1 name and tagline (`Co-founder, Hacks/Hackers`). The short bio opens with a wire-style dateline (`.dateline`, `Brooklyn, N.Y. —`), which is where the location lives on the page, then the Full Bio modal trigger
 - **Datelines** (datelines.burtherman.com, AP stories and the passport) is personal, not a project: its link is the second paragraph of the short bio and stays there permanently. It is also linked from the AP paragraph of the full bio
+- **Section labels**: every `<h2>` on the page (`.writing-heading`) is a small mono-caps label with a hairline running to the column edge, so the piece titles are the largest type in each section. The first `.writing-featured` after a label drops its own top border, and the last one in a section drops its bottom border, so no two hairlines sit back to back
 - **Recent writing**: up to two stacked featured pieces (bordered blocks with kicker/title/dek/CTA; adjacent blocks share one hairline via the `.writing-featured + .writing-featured` rule) + archive list (`<ol class="writing-list">` with rows laid out as `date | title | source` via CSS grid)
 - **Projects**: things built rather than written, each a `.writing-featured` block under its own `<h2>` (same markup as a featured piece, with who it is for in `.source`). Add, rotate or drop them freely
 - **Work with me**: contact CTA section with Email/LinkedIn SVG buttons
-- **Footer**: copyright only, mono small-caps (location lives in the tagline — don't repeat it)
+- **Footer**: copyright only, mono small-caps (location lives in the bio dateline, don't repeat it). Right-aligned under 768px so it clears the alien button
 
 ## Easter Egg: Space Invaders
 
 Bottom-left alien button (`#startInvaders` with `title="Play Space Invaders"`) or the Konami code (↑↑↓↓←→←→BA, handled in `js/script.js`). Game is self-contained in `js/invaders.js`.
 - **Desktop**: arrow keys to move, space to shoot, ESC/Q to quit
 - **Mobile**: drag to move, tap to shoot
-- Enemies are a pixelated mosaic of `images/profile-2.jpg`
+- Enemies are a pixelated mosaic of `images/profile-4.jpg`
 - Can also shoot DOM elements (selector: `h1, h2, h3, p, img, a, button:not(#startInvaders), .writing-featured, .writing-item`); wiping every element off the page awards a one-time `SITE DESTROYED +1000` bonus
 - A UFO mystery ship (masthead-red pixel saucer, warbling siren) crosses the top every 12–20s; shooting it awards a random 50/100/150/300 bonus shown as a floating score popup
 - 3 lives with 1.5s of blinking invulnerability after a hit; reserve bows drawn bottom-left. An invader physically reaching the player is still instant game over
@@ -114,7 +118,7 @@ These are the lessons from the April 2026 redesign — re-introducing them would
 
 ## SEO & Meta
 
-Maintain consistency across `<title>`, meta description, Open Graph, Twitter card, and JSON-LD when updating bio or role. Current tagline (`Co-founder, Hacks/Hackers · Brooklyn, NY`) is mirrored in the `jobTitle` field of the Person schema.
+Maintain consistency across `<title>`, meta description, Open Graph, Twitter card, and JSON-LD when updating bio or role. The visible tagline (`Co-founder, Hacks/Hackers`) is mirrored in the `jobTitle` field of the Person schema; the social card and `og:image:alt` still carry the longer `Co-founder, Hacks/Hackers · Brooklyn, NY`.
 
 The social card (`og:image`/`twitter:image`) is `images/og-card.png`, a 1200×630 dark editorial card rendered with the site fonts and palette (name, tagline, domain, pixel alien). If the name/tagline changes, regenerate it — PIL script pattern: render text with `fonts/iAWriterQuattroV.ttf`/`iAWriterMonoV.ttf` on `--bg-dark` with the `--accent` kicker rule. JSON-LD `image` stays the profile photo (it describes the person, not the page).
 

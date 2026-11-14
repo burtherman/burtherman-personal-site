@@ -87,7 +87,7 @@
     }
     </script>
 
-    <link rel="stylesheet" href="css/style.css?v=20261109a">
+    <link rel="stylesheet" href="css/style.css?v=20261114f">
 </head>
 
 <body>
@@ -112,14 +112,15 @@
                 <div class="name-header">
                     <h1 class="glitch-text" data-text="Burt Herman">Burt Herman</h1>
                     <p class="tagline">Co-founder, <a href="https://hackshackers.com" target="_blank"
-                            rel="noopener noreferrer" class="tagline-link">Hacks/Hackers</a> · Brooklyn, NY</p>
+                            rel="noopener noreferrer" class="tagline-link">Hacks/Hackers</a></p>
                 </div>
             </div>
         </header>
 
         <main id="main-content">
             <div class="bio-short">
-                <p><strong class="text-light font-normal">Journalist turned builder.</strong> I run <a
+                <p><span class="dateline">Brooklyn, N.Y. <span class="dateline-dash" aria-hidden="true">—</span></span>
+                    <strong class="text-light font-normal">Journalist turned builder.</strong> I run <a
                         href="https://hackshackers.com" target="_blank" rel="noopener noreferrer"
                         class="text-accent no-decoration"><strong class="font-normal">Hacks/Hackers</strong></a> —
                     convening events around AI and journalism, working with newsrooms to adopt new technology and
@@ -131,7 +132,7 @@
                     carried, stamp by stamp.</p>
             </div>
 
-            <div class="text-center">
+            <div>
                 <button class="read-more-btn btn-glass" aria-expanded="false" aria-controls="bioModal">Full
                     Bio</button>
             </div>
@@ -293,7 +294,12 @@
     <!-- Modal -->
     <dialog id="bioModal" class="modal" aria-labelledby="modal-title">
         <div class="modal-content">
-            <button class="close-btn btn-glass" aria-label="Close modal">&times;</button>
+            <button class="close-btn btn-glass" aria-label="Close bio">
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor"
+                    stroke-width="1.75" stroke-linecap="round" aria-hidden="true">
+                    <path d="M2 2l10 10M12 2 2 12"></path>
+                </svg>
+            </button>
             <h2 id="modal-title">About Burt Herman</h2>
             <p>As co-founder and principal of <a href="https://hackshackers.com" target="_blank"
                     rel="noopener noreferrer" class="text-accent no-decoration">Hacks/Hackers</a>, I've spent
@@ -320,10 +326,10 @@
     </dialog>
 
     <section class="section contact-section" aria-labelledby="contact-heading">
-        <h2 id="contact-heading" class="text-light text-3xl font-medium mb-24 text-center">Work with me</h2>
+        <h2 id="contact-heading" class="writing-heading">Work with me</h2>
 
-        <div class="max-w-700 mx-auto mb-32 text-center">
-            <p class="text-lg text-muted font-normal leading-relaxed">Available for <strong
+        <div class="contact-pitch">
+            <p>Available for <strong
                     class="text-light font-normal">consulting</strong>, <strong class="text-light font-normal">speaking</strong>
                 and <strong class="text-light font-normal">workshops</strong> on AI, journalism and the future of
                 trusted media.</p>
@@ -383,8 +389,8 @@
         </svg>
     </button>
 
-    <script src="js/script.js?v=20261109a"></script>
-    <script src="js/invaders.js?v=20261109a"></script>
+    <script src="js/script.js?v=20261114f"></script>
+    <script src="js/invaders.js?v=20261114f"></script>
 </body>
 
 </html>
