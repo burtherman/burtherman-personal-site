@@ -60,7 +60,7 @@ Tokens in `:root` at the top of `css/style.css`:
 - **Writing and talks** (the heading; the list mixes written pieces and videos): up to two stacked featured pieces (bordered blocks with kicker/title/dek/CTA; adjacent blocks share one hairline via the `.writing-featured + .writing-featured` rule) + archive list (`<ol class="writing-list">` with rows laid out as `date | title | source` via CSS grid). Rows from the current and previous year stay visible; older rows live in a second `<ol class="writing-list">` inside `<details class="writing-more">`. Update the year range and the count in its `<summary>` when rows move. Video rows use `Video` as the source, not the host. Hacks/Hackers pieces carry no source label, on rows or on featured pieces (the masthead already says it); only outside publications and `Video` get one
 - **Projects**: no section at the moment. It was dropped in November 2026 because its only entry, Voter Guide Commons, repeated the top featured piece. To bring it back, add a `<section class="section writing">` after Writing and talks with an `<h2 class="writing-heading">` and one `.writing-featured` block per project (same markup as a featured piece, with who it is for in `.source`)
 - **Work with me**: contact CTA section with Email/LinkedIn SVG buttons
-- **Footer**: copyright only, mono small-caps (location lives in the bio dateline, don't repeat it). Right-aligned under 768px so it clears the alien button
+- **Footer**: copyright and a `Markdown` link to `index.md`, on one line, mono small-caps (location lives in the bio dateline, don't repeat it). Right-aligned under 768px so it clears the alien button
 
 ## Easter Egg: Space Invaders
 

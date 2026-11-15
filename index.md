@@ -6,6 +6,14 @@ Brooklyn, N.Y. — Journalist turned builder. I run [Hacks/Hackers](https://hack
 
 Earlier in my career I spent 12 years at The Associated Press, most of them as a correspondent and bureau chief. [Datelines](https://datelines.burtherman.com) has stories I wrote and the passport I carried.
 
+## About
+
+As co-founder and principal of [Hacks/Hackers](https://hackshackers.com), I've spent more than 15 years connecting journalists with technologists. The network grew from a San Francisco meetup in 2010 to dozens of chapters worldwide. Today the organization is focused on AI — convening practitioners around journalism's AI moment and helping newsrooms put new tools to work.
+
+I also co-founded Storify in 2010 — a platform for curating social media into coherent narratives at a moment when that felt new. It reached millions of users before being acquired by Livefyre, then Adobe. I helped launch the Lenfest Institute for Journalism, working on how to sustain local news. I later served as a product director on the Condé Nast technology platform team, and most recently as CEO of Lede, building publishing tools for independent newsrooms.
+
+Before all that, I spent 12 years at The Associated Press, most of them reporting from Korea, Moscow, Central Asia and Berlin. Stories I wrote and the passport I carried are at [Datelines](https://datelines.burtherman.com). I was a JSK fellow at Stanford, where I earned my bachelor's and master's degrees and served as editor-in-chief of The Stanford Daily.
+
 ## Writing and talks
 
 ### [People are asking AI who to vote for. We built a way for newsroom voter guides to answer](https://www.hackshackers.com/voter-guide-commons/)
@@ -39,14 +47,6 @@ May 2026. Ask-AI buttons, an MCP server and an llms.txt file: small changes that
 - Jun 2024: [How Apple AI signals the decline of apps and the web itself](https://www.hackshackers.com/how-apple-signals-the-decline-of-apps-and-the-web-itself/)
 - Dec 2023: [More open source AI](https://www.niemanlab.org/2023/12/more-open-source-ai/) (Nieman Lab)
 - Dec 2022: [The year AI truly arrives and with it the reckoning](https://www.niemanlab.org/2022/12/the-year-ai-truly-arrives-and-with-it-the-reckoning/) (Nieman Lab)
-
-## About
-
-As co-founder and principal of [Hacks/Hackers](https://hackshackers.com), I've spent more than 15 years connecting journalists with technologists. The network grew from a San Francisco meetup in 2010 to dozens of chapters worldwide. Today the organization is focused on AI — convening practitioners around journalism's AI moment and helping newsrooms put new tools to work.
-
-I also co-founded Storify in 2010 — a platform for curating social media into coherent narratives at a moment when that felt new. It reached millions of users before being acquired by Livefyre, then Adobe. I helped launch the Lenfest Institute for Journalism, working on how to sustain local news. I later served as a product director on the Condé Nast technology platform team, and most recently as CEO of Lede, building publishing tools for independent newsrooms.
-
-Before all that, I spent 12 years at The Associated Press, most of them reporting from Korea, Moscow, Central Asia and Berlin. Stories I wrote and the passport I carried are at [Datelines](https://datelines.burtherman.com). I was a JSK fellow at Stanford, where I earned my bachelor's and master's degrees and served as editor-in-chief of The Stanford Daily.
 
 ## Work with me
 

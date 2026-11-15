@@ -13,6 +13,11 @@ bio = re.search(r'<div class="bio-short">(.*?)</div>', s, re.S).group(1)
 for p in re.findall(r'<p>(.*?)</p>', bio, re.S):
     out.append(md_inline(p) + '\n')
 
+out.append('## About\n')
+modal = re.search(r'<h2 id="modal-title">.*?</h2>(.*?)</div>\s*</dialog>', s, re.S).group(1)
+for p in re.findall(r'<p>(.*?)</p>', modal, re.S):
+    out.append(md_inline(p) + '\n')
+
 out.append('## Writing and talks\n')
 for art in re.findall(r'<article class="writing-featured">(.*?)</article>', s, re.S):
     date = clean(re.search(r'<time[^>]*>(.*?)</time>', art).group(1))
@@ -37,11 +42,6 @@ for li in re.findall(r'<li class="writing-item">(.*?)</li>', s, re.S):
 out.append('### More\n')
 out += rows
 out.append('')
-
-out.append('## About\n')
-modal = re.search(r'<h2 id="modal-title">.*?</h2>(.*?)</div>\s*</dialog>', s, re.S).group(1)
-for p in re.findall(r'<p>(.*?)</p>', modal, re.S):
-    out.append(md_inline(p) + '\n')
 
 out.append('## Work with me\n')
 pitch = re.search(r'<div class="contact-pitch">\s*<p>(.*?)</p>', s, re.S).group(1)
