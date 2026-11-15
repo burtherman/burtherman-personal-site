@@ -111,6 +111,13 @@ header::before {
 
 .header-content {
     display: flex;
+    /* Photo sits on the right so the portrait, which faces left, looks into the text */
+    flex-direction: row-reverse;
+    justify-content: space-between;
+    /* Same measure as .bio-short (62ch at its font size) so the photo's right
+       edge lines up with the right edge of the bio text */
+    font-size: 1.125rem;
+    max-width: 62ch;
     align-items: flex-end;
     gap: 28px;
 }
@@ -519,6 +526,8 @@ footer {
 
     .header-content {
         gap: 18px;
+        /* Tracks the phone .bio-short font size so the 62ch measure still matches */
+        font-size: 1rem;
     }
 
     .name-header {
