@@ -68,6 +68,7 @@ Bottom-left alien button (`#startInvaders` with `title="Play Space Invaders"`) o
 - A UFO mystery ship (masthead-red pixel saucer, warbling siren) crosses the top every 12–20s; shooting it awards a random 50/100/150/300 bonus shown as a floating score popup
 - 3 lives with 1.5s of blinking invulnerability after a hit; reserve bows drawn bottom-left. An invader physically reaching the player is still instant game over
 - 4 destructible bunkers (3 on screens <500px) erode pixel-by-pixel from shots on both sides; descending invaders grind them away; rebuilt each level
+- The game-over screen opens with a wire bulletin (`composeBulletin()`): a `BULLETIN` slug and a one-sentence dispatch with the `BROOKLYN, N.Y. —` dateline, the day of the week, level and score, with a variant when the page was wiped. Name entry and high scores sit below it; keep the dispatch short enough to stay at six lines on a phone
 - Page content overlapping the bottom gameplay strip (bunkers/ship/lives, bottom ~190px) is hidden via `clearArenaZone()` when play begins and restored on quit
 
 ## Development Commands
@@ -97,7 +98,7 @@ Responsive breakpoint: **768px** (mobile layout engages; writing archive goes si
 </li>
 ```
 
-**Promoting a new featured piece**: There are up to two featured slots, newest first. Add or swap a `.writing-featured` anchor (`href`, source `.source`, date `<time>`, title `.writing-featured-title`, dek `.writing-featured-dek`, CTA label). When a piece rotates out of the featured slots, demote it to its chronological spot in the archive list.
+**Promoting a new featured piece**: There are up to two featured slots, newest first. Add or swap a `.writing-featured` `<article>` (source `.source`, date `<time>`, title link inside `.writing-featured-title`, dek `.writing-featured-dek`, and a `.writing-featured-links` row). The block itself is not a link: the title links to the piece, the first `.writing-cta` repeats that link (`tabindex="-1" aria-hidden="true"`) and an optional second `.writing-cta` links to the project the piece describes. This replaced the Projects section. When a piece rotates out of the featured slots, demote it to its chronological spot in the archive list.
 
 **Updating bio**: short bio around line 120 in `index.html`; full bio in the modal below. The modal is a native `<dialog>` (`#bioModal`) opened with `showModal()` in `js/script.js` — focus trapping, ESC, and background inerting come free from the browser; don't re-add manual focus-trap code.
 

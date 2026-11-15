@@ -541,7 +541,7 @@ class SpaceInvadersGame {
 
     // Game-over/high-score overlay is ~420px tall; shrink it on short screens
     overlayScale() {
-        return Math.min(1, (this.height - 20) / 420);
+        return Math.min(1, (this.height - 20) / 450);
     }
 
     generateEnemies() {
@@ -914,12 +914,43 @@ class SpaceInvadersGame {
         this.score += 500 * (this.level - 1);
     }
 
+    // The game-over dispatch, written once when the game ends so the day
+    // of the week does not change under a player who leaves the screen open
+    composeBulletin() {
+        const day = new Date().toLocaleDateString('en-US', { weekday: 'long' });
+        const points = this.score === 0
+            ? 'no points'
+            : `${this.score.toLocaleString('en-US')} ${this.score === 1 ? 'point' : 'points'}`;
+        const lede = this.pageClearedAwarded
+            ? `Invaders overran what was left of burtherman.com on ${day}, after its defender had already destroyed the site.`
+            : `Invaders overran burtherman.com on ${day}.`;
+        return `BROOKLYN, N.Y. \u2014 ${lede} The defense reached Level ${this.level} and scored ${points}.`;
+    }
+
+    // Break text into lines no wider than maxWidth, using the current ctx.font
+    wrapText(text, maxWidth) {
+        const lines = [];
+        let line = '';
+        for (const word of text.split(' ')) {
+            const candidate = line ? `${line} ${word}` : word;
+            if (line && this.ctx.measureText(candidate).width > maxWidth) {
+                lines.push(line);
+                line = word;
+            } else {
+                line = candidate;
+            }
+        }
+        if (line) lines.push(line);
+        return lines;
+    }
+
     triggerGameOver() {
         this.gameOver = true;
         this.ufo = null;
         this.stopUfoSound();
         this.stopRhythm();
         this.playGameOverSound();
+        this.bulletinText = this.composeBulletin();
 
         // Check if this is a high score
         if (this.score > 0 && this.isHighScore(this.score)) {
@@ -1347,18 +1378,28 @@ class SpaceInvadersGame {
             this.ctx.textAlign = 'center';
             this.ctx.textBaseline = 'middle';
 
-            // Game Over title
-            this.ctx.fillStyle = '#ff0000';
-            this.ctx.font = 'bold 48px "Courier New", monospace';
-            this.ctx.fillText("GAME OVER", this.width / 2, this.height / 2 - 140);
+            // Wire-bulletin ending: a slug, then a one-sentence dispatch with the
+            // site's dateline, set flush left in a block centred on the screen
+            const bodySize = this.width < 500 ? 15 : 18;
+            const lineHeight = bodySize + 6;
+            const blockWidth = Math.min(520, this.width - 40);
+            const blockX = this.width / 2 - blockWidth / 2;
+            this.ctx.textAlign = 'left';
+            this.ctx.font = `${bodySize}px "Courier New", monospace`;
+            const lines = this.wrapText(this.bulletinText, blockWidth);
+            // The last line always ends just above the name entry / high scores
+            const firstLineY = this.height / 2 - 68 - (lines.length - 1) * lineHeight;
 
-            // Final Score and Level
-            this.ctx.fillStyle = '#ffffff';
-            this.ctx.font = 'bold 32px "Courier New", monospace';
-            this.ctx.fillText(`SCORE: ${this.score}`, this.width / 2, this.height / 2 - 85);
-            this.ctx.fillStyle = '#22d3ee';
-            this.ctx.font = '24px "Courier New", monospace';
-            this.ctx.fillText(`LEVEL ${this.level}`, this.width / 2, this.height / 2 - 50);
+            this.ctx.fillStyle = '#d94f48';
+            this.ctx.font = 'bold 20px "Courier New", monospace';
+            this.ctx.fillText('BULLETIN', blockX, firstLineY - 32);
+
+            this.ctx.fillStyle = '#ebe8e1';
+            this.ctx.font = `${bodySize}px "Courier New", monospace`;
+            lines.forEach((line, i) => {
+                this.ctx.fillText(line, blockX, firstLineY + i * lineHeight);
+            });
+            this.ctx.textAlign = 'center';
 
             if (this.enteringName) {
                 // Name entry UI

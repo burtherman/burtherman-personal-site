@@ -743,8 +743,23 @@ footer {
     margin-bottom: 48px;
 }
 
-.writing-featured:hover {
-    border-color: var(--accent);
+/* The title and the links below it are the only links in a featured block,
+   so a piece can link to the project it describes as well as to itself */
+.writing-featured-title a {
+    color: inherit;
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.writing-featured-title a:hover {
+    color: var(--accent);
+}
+
+.writing-featured-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 28px;
+    margin: 0;
 }
 
 /* Stacked featured pieces share one hairline: the negative top margin
@@ -809,16 +824,13 @@ footer {
     font-family: var(--font-mono);
     font-size: 0.8125rem;
     color: var(--accent);
+    text-decoration: none;
     letter-spacing: 0.02em;
     opacity: 0.8;
     transition: opacity 0.2s ease, transform 0.2s ease;
 }
 
-.writing-featured:hover .writing-featured-title {
-    color: var(--accent);
-}
-
-.writing-featured:hover .writing-cta {
+.writing-cta:hover {
     opacity: 1;
 }
 
