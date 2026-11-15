@@ -54,7 +54,7 @@ Tokens in `:root` at the top of `css/style.css`:
 - **Datelines** (datelines.burtherman.com, AP stories and the passport) is personal, not a project: its link is the second paragraph of the short bio and stays there permanently. It is also linked from the AP paragraph of the full bio
 - **Section labels**: every `<h2>` on the page (`.writing-heading`) is a small mono-caps label with a hairline running to the column edge, so the piece titles are the largest type in each section. The first `.writing-featured` after a label drops its own top border, and the last one in a section drops its bottom border, so no two hairlines sit back to back
 - **Recent writing**: up to two stacked featured pieces (bordered blocks with kicker/title/dek/CTA; adjacent blocks share one hairline via the `.writing-featured + .writing-featured` rule) + archive list (`<ol class="writing-list">` with rows laid out as `date | title | source` via CSS grid)
-- **Projects**: things built rather than written, each a `.writing-featured` block under its own `<h2>` (same markup as a featured piece, with who it is for in `.source`). Add, rotate or drop them freely
+- **Projects**: no section at the moment. It was dropped in November 2026 because its only entry, Voter Guide Commons, repeated the top featured piece. To bring it back, add a `<section class="section writing">` after Recent writing with an `<h2 class="writing-heading">` and one `.writing-featured` block per project (same markup as a featured piece, with who it is for in `.source`)
 - **Work with me**: contact CTA section with Email/LinkedIn SVG buttons
 - **Footer**: copyright only, mono small-caps (location lives in the bio dateline, don't repeat it). Right-aligned under 768px so it clears the alien button
 
