@@ -53,8 +53,8 @@ Tokens in `:root` at the top of `css/style.css`:
 - **Hero**: a masthead. Red kicker rule (`header::before`, the same mark as the social card), then the H1 name and tagline (`Co-founder, Hacks/Hackers`) on the left with a 128px profile photo on the right. The portrait faces left, so it goes on the right to look into the text, and `.header-content` shares the 62ch measure of `.bio-short` so the photo and the bio text end on the same right edge (keep their font sizes in step, including under 768px). The short bio opens with a wire-style dateline (`.dateline`, `Brooklyn, N.Y. —`), which is where the location lives on the page, then the Full Bio modal trigger
 - **Datelines** (datelines.burtherman.com, AP stories and the passport) is personal, not a project: its link is the second paragraph of the short bio and stays there permanently. It is also linked from the AP paragraph of the full bio
 - **Section labels**: every `<h2>` on the page (`.writing-heading`) is a small mono-caps label with a hairline running to the column edge, so the piece titles are the largest type in each section. The first `.writing-featured` after a label drops its own top border, and the last one in a section drops its bottom border, so no two hairlines sit back to back
-- **Recent writing**: up to two stacked featured pieces (bordered blocks with kicker/title/dek/CTA; adjacent blocks share one hairline via the `.writing-featured + .writing-featured` rule) + archive list (`<ol class="writing-list">` with rows laid out as `date | title | source` via CSS grid)
-- **Projects**: no section at the moment. It was dropped in November 2026 because its only entry, Voter Guide Commons, repeated the top featured piece. To bring it back, add a `<section class="section writing">` after Recent writing with an `<h2 class="writing-heading">` and one `.writing-featured` block per project (same markup as a featured piece, with who it is for in `.source`)
+- **Writing and talks** (the heading; the list mixes written pieces and videos): up to two stacked featured pieces (bordered blocks with kicker/title/dek/CTA; adjacent blocks share one hairline via the `.writing-featured + .writing-featured` rule) + archive list (`<ol class="writing-list">` with rows laid out as `date | title | source` via CSS grid)
+- **Projects**: no section at the moment. It was dropped in November 2026 because its only entry, Voter Guide Commons, repeated the top featured piece. To bring it back, add a `<section class="section writing">` after Writing and talks with an `<h2 class="writing-heading">` and one `.writing-featured` block per project (same markup as a featured piece, with who it is for in `.source`)
 - **Work with me**: contact CTA section with Email/LinkedIn SVG buttons
 - **Footer**: copyright only, mono small-caps (location lives in the bio dateline, don't repeat it). Right-aligned under 768px so it clears the alien button
 
@@ -97,6 +97,8 @@ Responsive breakpoint: **768px** (mobile layout engages; writing archive goes si
     </a>
 </li>
 ```
+
+**Linking an archive row to its project**: add a second link after the row's main `<a>`, inside the same `<li>`: `<a href="…" class="writing-cta writing-item-project">See the demo →</a>`. It sits under the title.
 
 **Promoting a new featured piece**: There are up to two featured slots, newest first. Add or swap a `.writing-featured` `<article>` (source `.source`, date `<time>`, title link inside `.writing-featured-title`, dek `.writing-featured-dek`, and a `.writing-featured-links` row). The block itself is not a link: the title links to the piece, the first `.writing-cta` repeats that link (`tabindex="-1" aria-hidden="true"`) and an optional second `.writing-cta` links to the project the piece describes. This replaced the Projects section. When a piece rotates out of the featured slots, demote it to its chronological spot in the archive list.
 

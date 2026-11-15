@@ -697,7 +697,7 @@ footer {
     max-width: 700px;
 }
 
-/* Recent Writing — editorial index */
+/* Writing and talks — editorial index */
 .writing {
     max-width: 780px;
     margin-left: auto;
@@ -885,6 +885,16 @@ footer {
     color: var(--accent);
 }
 
+/* Optional second link on an archive row, to the project the piece describes.
+   It sits under the title, in the title's grid column */
+.writing-item > a.writing-item-project {
+    display: inline-block;
+    padding: 6px 0;
+    margin: -12px 0 10px calc(5.25rem + 24px + 2px);
+    color: var(--accent);
+    background: none;
+}
+
 .writing-source {
     font-family: var(--font-mono);
     font-size: 0.6875rem;
@@ -898,6 +908,11 @@ footer {
 /* Phone overrides for the writing index. These sit after the base rules
    above on purpose: inside the earlier 768px block they were overridden */
 @media (max-width: 768px) {
+    .writing-item > a.writing-item-project {
+        padding: 6px 0;
+        margin-left: 2px;
+    }
+
     .writing {
         max-width: 100%;
     }
