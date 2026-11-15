@@ -23,6 +23,10 @@ Personal website for Burt Herman — static single-page site at burtherman.com, 
 │   └── invaders.js     # Space Invaders easter egg (self-contained)
 ├── fonts/              # iA Writer Quattro/Mono variable WOFF2 + TTF fallback + SIL OFL license
 ├── images/             # Profile photos (profile-4.jpg is the active hero) + favicon.svg (pixel alien) + og-card.png (1200×630 social card)
+├── index.md            # Markdown copy of the page for AI agents — generated, don't hand-edit
+├── llms.txt            # Pointer file for AI agents (hand-written)
+├── tools/make_md.py    # Regenerates index.md from index.html
+├── .nojekyll           # Makes GitHub Pages serve .md files as-is — do not delete
 ├── CNAME               # Custom domain config — do not delete
 ├── .gitignore
 ├── README.md           # Public repo readme
@@ -118,6 +122,18 @@ These are the lessons from the April 2026 redesign — re-introducing them would
 - **Do not** use Inter, Roboto, Open Sans, Montserrat, or similar overused fonts. iA Writer Quattro/Mono is the chosen pair.
 - **Do not** use pure `#000000` or `#ffffff` anywhere. Neutrals carry a warm tint to match the accent temperature.
 - **Do not** skip heading levels. The bento grid used to jump from `<h2>` section to `<h4>` card titles — card titles are now `<h3>` to preserve the outline for screen readers.
+
+## Agent-readable copy
+
+`index.md` is a Markdown copy of the page (bio, full bio, every writing and video link, contact) and `llms.txt` points agents to it. `index.html` advertises it with `<link rel="alternate" type="text/markdown">`.
+
+**After any content change to `index.html`, regenerate the copy** and commit both files together:
+
+```bash
+python3 tools/make_md.py > index.md
+```
+
+The script reads the page's own markup (`.bio-short`, `.writing-featured`, `.writing-item`, the bio modal, the contact section), so new rows need no extra work. If those class names change, update the script. Edit `llms.txt` by hand only when the linked sites change. `.nojekyll` must stay: without it GitHub Pages turns `.md` files into HTML pages.
 
 ## SEO & Meta
 

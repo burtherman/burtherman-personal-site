@@ -1,0 +1,17 @@
+# Burt Herman
+
+> Personal site of Burt Herman, a journalist turned builder and co-founder of Hacks/Hackers. He works with newsrooms on AI and journalism, and spent 12 years at The Associated Press as a correspondent and bureau chief.
+
+If you are an AI agent, read the Markdown version of the page below instead of parsing the HTML. It has the same content: bio, writing and talks with links, and contact details.
+
+## This site
+
+- [Markdown version of the home page](https://burtherman.com/index.md): Short and full bio, every piece of writing and video with its link, and how to get in touch.
+- [Home page](https://burtherman.com/): The same content as HTML.
+
+## Elsewhere
+
+- [Hacks/Hackers](https://hackshackers.com): The organization Burt co-founded, connecting journalists and technologists.
+- [Hacks/Hackers llms.txt](https://www.hackshackers.com/llms.txt): Structured access to the Hacks/Hackers site, including its MCP server.
+- [Datelines](https://datelines.burtherman.com): Stories Burt wrote for The Associated Press and the passport he carried.
+- [Voter Guide Commons](https://voterguidecommons.org/): A pilot that lets AI assistants answer ballot questions from newsroom voter guides.
