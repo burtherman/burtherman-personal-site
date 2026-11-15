@@ -114,10 +114,6 @@ header::before {
     /* Photo sits on the right so the portrait, which faces left, looks into the text */
     flex-direction: row-reverse;
     justify-content: space-between;
-    /* Same measure as .bio-short (62ch at its font size) so the photo's right
-       edge lines up with the right edge of the bio text */
-    font-size: 1.125rem;
-    max-width: 62ch;
     align-items: flex-end;
     gap: 28px;
 }
@@ -279,7 +275,6 @@ h1 {
     line-height: 1.65;
     margin-bottom: 32px;
     color: var(--text-muted);
-    max-width: 62ch;
     animation: fadeIn 0.8s ease-out 0.2s both;
     font-weight: 400;
 }
@@ -297,6 +292,11 @@ h1 {
 
 .dateline-dash {
     color: var(--text-muted);
+}
+
+/* Avoid a lone last word on its own line */
+.bio-short p {
+    text-wrap: pretty;
 }
 
 .bio-short p + p {
@@ -526,8 +526,6 @@ footer {
 
     .header-content {
         gap: 18px;
-        /* Tracks the phone .bio-short font size so the 62ch measure still matches */
-        font-size: 1rem;
     }
 
     .name-header {
@@ -800,6 +798,7 @@ footer {
 }
 
 .writing-featured-title {
+    text-wrap: balance;
     font-size: 2rem;
     font-weight: 500;
     line-height: 1.15;
@@ -826,12 +825,12 @@ footer {
     color: var(--accent);
     text-decoration: none;
     letter-spacing: 0.02em;
-    opacity: 0.8;
-    transition: opacity 0.2s ease, transform 0.2s ease;
+    /* Full-strength accent: at reduced opacity these small links fell under 4.5:1 */
+    text-underline-offset: 3px;
 }
 
 .writing-cta:hover {
-    opacity: 1;
+    text-decoration: underline;
 }
 
 .writing-list {
@@ -842,6 +841,50 @@ footer {
 
 .writing-item {
     border-bottom: 1px solid var(--border);
+}
+
+/* Older rows fold away under a native <details>; no script involved */
+.writing-more > summary {
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+    padding: 16px 2px;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+    list-style: none;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-light);
+    transition: color 0.2s ease;
+}
+
+.writing-more > summary::-webkit-details-marker {
+    display: none;
+}
+
+.writing-more > summary::before {
+    content: '+';
+    width: 1ch;
+    color: var(--accent);
+}
+
+.writing-more[open] > summary::before {
+    content: '\2212';
+}
+
+.writing-more > summary:hover {
+    color: var(--accent);
+}
+
+.writing-more-count {
+    color: var(--text-muted);
+}
+
+/* The summary's rule already separates it from the first folded row */
+.writing-more .writing-item:first-child {
+    border-top: none;
 }
 
 .writing-item:first-child {
