@@ -898,10 +898,6 @@ footer a:hover {
     color: var(--accent);
 }
 
-.writing-more-count {
-    color: var(--text-muted);
-}
-
 /* The summary's rule already separates it from the first folded row */
 .writing-more .writing-item:first-child {
     border-top: none;
